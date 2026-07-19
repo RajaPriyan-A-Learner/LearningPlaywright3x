@@ -2,7 +2,7 @@
 
 ## Overview
 
-This note builds on [[Identifier_Rules_Basics_IQ]] and covers the edge cases most likely to come up in an interview: reserved keywords, Unicode identifiers, Unicode escape sequences, and a consolidated view of naming conventions. Based on `03_chapter_identifier/06_Identifier_IQ.js`.
+This note builds on [[03_Identifier_Rules_Basics_IQ]] and covers the edge cases most likely to come up in an interview: reserved keywords, Unicode identifiers, Unicode escape sequences, and a consolidated view of naming conventions. Based on `03_chapter_identifier/06_Identifier_IQ.js`.
 
 ---
 
@@ -117,7 +117,7 @@ Also illegal — a digit as the very first character:
 
 ## 6. Naming Conventions Recap
 
-The same file also re-demonstrates the five conventional naming styles (covered in depth in [[Identifier_Naming_Conventions_IQ]]):
+The same file also re-demonstrates the five conventional naming styles (covered in depth in [[04_Identifier_Naming_Conventions_IQ]]):
 
 ```javascript
 // camelCase — variables & functions

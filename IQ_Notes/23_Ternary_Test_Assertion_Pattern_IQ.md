@@ -26,7 +26,7 @@ Test assertions should never allow type coercion to mask a real bug. If `actualS
 "200" === 200;   // false — correctly flags the type mismatch as a real failure
 ```
 
-Using `===` here means a test fails loudly if either the *value* or the *type* is wrong — exactly the behavior you want from an assertion. See [[Operators_IQ]] for the full `==` vs `===` breakdown.
+Using `===` here means a test fails loudly if either the *value* or the *type* is wrong — exactly the behavior you want from an assertion. See [[13_Operators_IQ]] for the full `==` vs `===` breakdown.
 
 ---
 
@@ -48,4 +48,4 @@ This is essentially a miniature, hand-rolled version of what assertion libraries
 
 **Key Takeaway:** `actual === expected ? "PASS" : "FAIL"` is a minimal but real assertion pattern — strict equality is what makes it trustworthy, since loose equality (`==`) could coerce a wrong-typed value into a false pass.
 
-**Related notes:** [[Operators_IQ]], [[Ternary_Operator_Basics_IQ]]
+**Related notes:** [[13_Operators_IQ]], [[22_Ternary_Operator_Basics_IQ]]

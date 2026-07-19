@@ -2,7 +2,7 @@
 
 ## Overview
 
-Covers `05_chapter_Operator/31_Type_Op.js` — a focused look at `typeof` across primitives and arrays, reinforcing the array/object quirk already flagged in [[Literals_and_Numbers_IQ]] and [[Operators_IQ]].
+Covers `05_chapter_Operator/31_Type_Op.js` — a focused look at `typeof` across primitives and arrays, reinforcing the array/object quirk already flagged in [[07_Literals_and_Numbers_IQ]] and [[13_Operators_IQ]].
 
 ---
 
@@ -29,12 +29,12 @@ console.log(typeof []);        // "object"
 | `typeof 31.4` | `"number"` | same as above — no separate `float` type |
 | `typeof true` | `"boolean"` | |
 | `typeof undefined` | `"undefined"` | |
-| `typeof null` | `"object"` | historic bug, see [[Null_vs_Undefined]] |
+| `typeof null` | `"object"` | historic bug, see [[08_Null_vs_Undefined]] |
 | `typeof []` | `"object"` | arrays are objects, not their own type |
 | `typeof {}` | `"object"` | |
 | `typeof function(){}` | `"function"` | the one exception — functions get their own typeof result despite being objects |
 | `typeof Symbol()` | `"symbol"` | |
-| `typeof 10n` | `"bigint"` | see [[Literals_and_Numbers_IQ]] |
+| `typeof 10n` | `"bigint"` | see [[07_Literals_and_Numbers_IQ]] |
 
 ---
 
@@ -61,4 +61,4 @@ typeof [] === "object";   // true, but tells you nothing array-specific
 
 **Key Takeaway:** `typeof` distinguishes primitives (`string`, `number`, `boolean`, `undefined`, `bigint`, `symbol`) from everything else, which all report `"object"` — except functions, which get their own `"function"` result despite technically being callable objects. Never use `typeof` to detect arrays; use `Array.isArray()`.
 
-**Related notes:** [[Literals_and_Numbers_IQ]], [[Operators_IQ]], [[Null_vs_Undefined]], [[JavaScript_Quirks_and_Known_Bugs_IQ]]
+**Related notes:** [[07_Literals_and_Numbers_IQ]], [[13_Operators_IQ]], [[08_Null_vs_Undefined]], [[JavaScript_Quirks_and_Known_Bugs_IQ]]

@@ -66,7 +66,7 @@ console.log(`Status ${statusCode}: ${category}`);   // template literal — inte
 console.log("Status :" + statusCode, category);      // + concatenation, then a separate comma-arg
 ```
 
-The second line mixes two different techniques: `"Status :" + statusCode` concatenates into one string (numbers are coerced to strings by `+`), while `category` is passed as a *separate* `console.log` argument — so the output has a comma-driven space between `404` and `Client Error` that isn't part of either string. See [[String_Operator_IQ]] for why multi-argument `console.log` behaves differently from `+`.
+The second line mixes two different techniques: `"Status :" + statusCode` concatenates into one string (numbers are coerced to strings by `+`), while `category` is passed as a *separate* `console.log` argument — so the output has a comma-driven space between `404` and `Client Error` that isn't part of either string. See [[21_String_Operator_IQ]] for why multi-argument `console.log` behaves differently from `+`.
 
 ---
 
@@ -74,4 +74,4 @@ The second line mixes two different techniques: `"Status :" + statusCode` concat
 
 **Key Takeaway:** Chained ternaries (`a ? x : b ? y : c ? z : w`) work like a compact `if/else if/else` ladder thanks to right-associativity — useful for categorizing a value into 3+ buckets, but readability degrades fast without consistent staircase indentation.
 
-**Related notes:** [[Nested_Ternary_Two_Level_IQ]], [[Nested_Ternary_Temperature_Scale_IQ]], [[String_Operator_IQ]]
+**Related notes:** [[28_Nested_Ternary_Two_Level_IQ]], [[30_Nested_Ternary_Temperature_Scale_IQ]], [[21_String_Operator_IQ]]

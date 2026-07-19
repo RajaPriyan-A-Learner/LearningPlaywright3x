@@ -58,4 +58,4 @@ No type coercion happens here because nothing is being combined with `+` — eac
 
 **Key Takeaway:** `+`/`+=` on strings concatenate (no automatic spacing); `console.log(a, b, c)` logs each argument separately, space-joined by the console itself, regardless of type — the two are easy to conflate but behave differently.
 
-**Related notes:** [[Operators_IQ]]
+**Related notes:** [[13_Operators_IQ]]

@@ -54,6 +54,6 @@ Even compound boolean expressions don't need the ternary — `&&`/`||`/compariso
 
 ## Summary
 
-**Key Takeaway:** `condition ? true : false` is functionally identical to just `condition` (or `Boolean(condition)`/`!!condition` if `condition` isn't already a strict boolean) — this is a style smell, not a bug, but recognizing it prevents unnecessary code. Contrast with [[Ternary_CI_Browser_Mode_IQ]], where the branches return genuinely different string values and the ternary is doing real work.
+**Key Takeaway:** `condition ? true : false` is functionally identical to just `condition` (or `Boolean(condition)`/`!!condition` if `condition` isn't already a strict boolean) — this is a style smell, not a bug, but recognizing it prevents unnecessary code. Contrast with [[24_Ternary_CI_Browser_Mode_IQ]], where the branches return genuinely different string values and the ternary is doing real work.
 
-**Related notes:** [[Ternary_Operator_Basics_IQ]], [[Ternary_CI_Browser_Mode_IQ]]
+**Related notes:** [[22_Ternary_Operator_Basics_IQ]], [[24_Ternary_CI_Browser_Mode_IQ]]

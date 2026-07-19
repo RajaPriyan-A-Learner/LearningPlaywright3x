@@ -26,7 +26,7 @@ console.log(`What is the SLA time ? - ${sla}`); // "What is the SLA time ? - 100
 ```javascript
 let slaStatus = responseTime <= sla ? "Within SLA ✅" : "SLA breached ❌";
 ```
-`<=` is a relational comparison operator (see [[Operators_IQ]]) — evaluates to `true`/`false`, and the ternary converts that boolean into a human-readable label.
+`<=` is a relational comparison operator (see [[13_Operators_IQ]]) — evaluates to `true`/`false`, and the ternary converts that boolean into a human-readable label.
 
 **Step 2 — Template literal interpolates it:**
 ```javascript
@@ -63,4 +63,4 @@ console.log(`Response: ${responseTime}ms — ${slaStatus}`);
 
 **Key Takeaway:** Ternaries compute a value; template literals interpolate values into strings. Combining them — compute the label with a ternary, then drop it into a `` `${...}` `` — is cleaner than manual `+` string-building and is a very common real-world pairing.
 
-**Related notes:** [[Operators_IQ]], [[Ternary_Operator_Basics_IQ]], [[String_Operator_IQ]]
+**Related notes:** [[13_Operators_IQ]], [[22_Ternary_Operator_Basics_IQ]], [[21_String_Operator_IQ]]

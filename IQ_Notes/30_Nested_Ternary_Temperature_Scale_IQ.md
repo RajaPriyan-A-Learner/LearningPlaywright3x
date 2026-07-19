@@ -21,7 +21,7 @@ console.log("7. Temperature:", temp, "| Feel:", feel); // "7. Temperature: 35 | 
 
 ## 2. Parenthesized Conditions — Style Choice, Not Required
 
-Compare with [[Nested_Ternary_HTTP_Status_Category_IQ]], which wrote conditions bare (`statusCode < 300`). Here every condition is wrapped: `(temp >= 40)`. Functionally identical — parentheses around a condition never change how a ternary evaluates, they're purely for visual grouping/readability, same role as the parentheses around an `if` condition.
+Compare with [[29_Nested_Ternary_HTTP_Status_Category_IQ]], which wrote conditions bare (`statusCode < 300`). Here every condition is wrapped: `(temp >= 40)`. Functionally identical — parentheses around a condition never change how a ternary evaluates, they're purely for visual grouping/readability, same role as the parentheses around an `if` condition.
 
 ```javascript
 (temp >= 40) ? "Very Hot" : ...   // parenthesized
@@ -32,7 +32,7 @@ temp >= 40 ? "Very Hot" : ...     // equivalent, unparenthesized
 
 ## 3. Order of Buckets Matters
 
-Because this is a chain of `else if`-equivalent checks (see [[Nested_Ternary_HTTP_Status_Category_IQ]] for the right-associativity explanation), the buckets **must** be ordered from most-restrictive to least-restrictive (highest threshold first). With `temp = 35`:
+Because this is a chain of `else if`-equivalent checks (see [[29_Nested_Ternary_HTTP_Status_Category_IQ]] for the right-associativity explanation), the buckets **must** be ordered from most-restrictive to least-restrictive (highest threshold first). With `temp = 35`:
 
 - `35 >= 40` → false
 - `35 >= 30` → **true** → `"Hot"`
@@ -53,4 +53,4 @@ let feel = (temp >= 10) ? "Cool" :
 
 **Key Takeaway:** Threshold-based chained ternaries must be ordered from the most specific/highest condition down to the most general — the first branch whose condition is `true` wins, and later branches are never reached. Parenthesizing each condition is a style choice with zero effect on evaluation.
 
-**Related notes:** [[Nested_Ternary_HTTP_Status_Category_IQ]], [[Nested_Ternary_Two_Level_IQ]]
+**Related notes:** [[29_Nested_Ternary_HTTP_Status_Category_IQ]], [[28_Nested_Ternary_Two_Level_IQ]]

@@ -18,7 +18,7 @@ console.log("Launching browser in:", browserMode, "mode"); // "Launching browser
 
 ## 2. The Pattern
 
-A boolean condition (`isCI`) selects between two *string* config values, not two booleans — this is the more typical real-world use of a ternary than the boolean-returning example in [[Ternary_Redundant_Boolean_Antipattern_IQ]].
+A boolean condition (`isCI`) selects between two *string* config values, not two booleans — this is the more typical real-world use of a ternary than the boolean-returning example in [[27_Ternary_Redundant_Boolean_Antipattern_IQ]].
 
 ```javascript
 let isCI = true;
@@ -42,7 +42,7 @@ const browserMode = process.env.CI ? "headless" : "headed"; // string label — 
 
 ## 3. When a Ternary Is the Right Tool Here
 
-Unlike assigning a `true`/`false` literal (redundant — see [[Ternary_Redundant_Boolean_Antipattern_IQ]]), this example assigns **different string values** per branch — there's no shorter equivalent than the ternary itself, since the condition and the two possible results are genuinely different types of "shape" (boolean in, string out).
+Unlike assigning a `true`/`false` literal (redundant — see [[27_Ternary_Redundant_Boolean_Antipattern_IQ]]), this example assigns **different string values** per branch — there's no shorter equivalent than the ternary itself, since the condition and the two possible results are genuinely different types of "shape" (boolean in, string out).
 
 ---
 
@@ -50,4 +50,4 @@ Unlike assigning a `true`/`false` literal (redundant — see [[Ternary_Redundant
 
 **Key Takeaway:** Ternaries are most useful when the branches return values that *aren't* already booleans — mapping a flag to a config label (`"headless"`/`"headed"`) is a legitimate, idiomatic use, distinct from the redundant `condition ? true : false` anti-pattern.
 
-**Related notes:** [[Ternary_Operator_Basics_IQ]], [[Ternary_Redundant_Boolean_Antipattern_IQ]]
+**Related notes:** [[22_Ternary_Operator_Basics_IQ]], [[27_Ternary_Redundant_Boolean_Antipattern_IQ]]

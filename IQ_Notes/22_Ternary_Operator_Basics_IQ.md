@@ -58,6 +58,6 @@ Ternaries shine for short, single-value conditional assignments; `if/else` is us
 
 ## Summary
 
-**Key Takeaway:** The ternary operator `condition ? a : b` is a compact expression-form of `if/else` — useful for assigning one of two values based on a condition in a single line. See [[Nested_Ternary_Two_Level_IQ]] for what happens when ternaries are chained/nested, and [[Ternary_Redundant_Boolean_Antipattern_IQ]] for a common misuse to avoid.
+**Key Takeaway:** The ternary operator `condition ? a : b` is a compact expression-form of `if/else` — useful for assigning one of two values based on a condition in a single line. See [[28_Nested_Ternary_Two_Level_IQ]] for what happens when ternaries are chained/nested, and [[27_Ternary_Redundant_Boolean_Antipattern_IQ]] for a common misuse to avoid.
 
-**Related notes:** [[Operators_IQ]]
+**Related notes:** [[13_Operators_IQ]]

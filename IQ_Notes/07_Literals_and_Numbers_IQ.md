@@ -77,7 +77,7 @@ null === undefined;  // false  (different types, strict equality fails)
 
 This is a bug baked into JavaScript since its first implementation in 1995 and has never been fixed (fixing it would break the web). `null` is a primitive, not an object — never rely on `typeof` to detect it. Use `value === null` instead.
 
-See [[Null_vs_Undefined]] for the full deep-dive with real-world examples, nullish coalescing (`??`), and optional chaining (`?.`).
+See [[08_Null_vs_Undefined]] for the full deep-dive with real-world examples, nullish coalescing (`??`), and optional chaining (`?.`).
 
 ---
 
@@ -202,4 +202,4 @@ Number.isNaN(NaN);  // true  <-- correct way to test for NaN
 - Use `Number.isNaN()`, not `=== NaN`, to check for `NaN`.
 - Use `BigInt` (suffix `n`) only when integers exceed `Number.MAX_SAFE_INTEGER`.
 
-**Related notes:** [[Null_vs_Undefined]], [[Identifiers_and_Literals_in_JS]]
+**Related notes:** [[08_Null_vs_Undefined]], [[Identifiers_and_Literals_in_JS]]

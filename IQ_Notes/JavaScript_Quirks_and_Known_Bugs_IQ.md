@@ -18,7 +18,7 @@ console.log(typeof null); // "object"  ❌ misleading — null is NOT an object
 
 **Correct way to check for `null`:** always use `value === null`, never `typeof value === "object"`.
 
-→ [[Null_vs_Undefined]], [[Literals_and_Numbers_IQ]]
+→ [[08_Null_vs_Undefined]], [[07_Literals_and_Numbers_IQ]]
 
 ### 1.2 `typeof NaN === "number"`
 
@@ -29,7 +29,7 @@ console.log(0 / 0);          // NaN
 console.log(typeof NaN);     // "number"
 ```
 
-→ [[Literals_and_Numbers_IQ]]
+→ [[07_Literals_and_Numbers_IQ]]
 
 ### 1.3 `typeof undefined === "undefined"` but `undefined` isn't a literal
 
@@ -41,7 +41,7 @@ console.log(userName);        // undefined  (JS supplied this automatically)
 console.log(typeof userName); // "undefined"
 ```
 
-→ [[Null_vs_Undefined]]
+→ [[08_Null_vs_Undefined]]
 
 ### 1.4 `typeof BigInt` is its own type: `"bigint"`
 
@@ -52,7 +52,7 @@ let big = 123456789012345678901234567890n;
 console.log(typeof big); // "bigint" — not "number"
 ```
 
-→ [[Literals_and_Numbers_IQ]]
+→ [[07_Literals_and_Numbers_IQ]]
 
 ### 1.5 `array` and `NaN` are not real "types"
 
@@ -60,7 +60,7 @@ Despite being commonly listed alongside `string`/`number`/`boolean`, neither is 
 - An array is just an `object` (`typeof [] === "object"`).
 - `NaN` is just a special value of type `"number"`.
 
-→ [[Operators_IQ]], [[Literals_and_Numbers_IQ]]
+→ [[13_Operators_IQ]], [[07_Literals_and_Numbers_IQ]]
 
 ---
 
@@ -76,7 +76,7 @@ console.log("" == "0");   // false  → both strings, no coercion between two st
 
 Basic algebra says if `A == B` and `B == C`, then `A == C`. Loose equality breaks this: `"" == 0` and `"0" == 0` are both `true`, yet `"" == "0"` is `false`. This single example is one of the strongest arguments for defaulting to `===`.
 
-→ [[Operators_IQ]]
+→ [[13_Operators_IQ]]
 
 ### 2.2 `null == undefined` is `true`, but `null === undefined` is `false`
 
@@ -85,7 +85,7 @@ console.log(null == undefined);   // true  — special-cased: null and undefined
 console.log(null === undefined);  // false — different types
 ```
 
-→ [[Null_vs_Undefined]], [[Operators_IQ]]
+→ [[08_Null_vs_Undefined]], [[13_Operators_IQ]]
 
 ### 2.3 `null >= 0` is `true`, but `null == 0` is `false` — the sharpest gotcha in the list
 
@@ -98,7 +98,7 @@ console.log(null == 0 || null > 0); // false … even though null >= 0 is true �
 
 **Why:** `==` has a special spec rule that makes `null` loosely equal only to `undefined`/`null` — never to a number. But relational operators (`>`, `<`, `>=`, `<=`) don't use that special rule; they convert `null` via `Number(null)`, which is `0`. So `null >= 0` silently becomes `0 >= 0` (`true`), while `null == 0` stays `false`. Two different coercion algorithms, applied to the same operand, producing seemingly contradictory results.
 
-→ [[Operators_IQ]], [[Null_vs_Undefined]]
+→ [[13_Operators_IQ]], [[08_Null_vs_Undefined]]
 
 ### 2.4 `NaN` is the only value in JS that is not equal to itself
 
@@ -110,7 +110,7 @@ console.log(Number.isNaN(NaN));  // true   — the only reliable way to test for
 
 This follows the IEEE 754 spec (which JS's number type implements) — `NaN` is defined to compare unequal to everything, including itself, so that any computation that produces `NaN` can never be silently mistaken for a valid, comparable number.
 
-→ [[Literals_and_Numbers_IQ]]
+→ [[07_Literals_and_Numbers_IQ]]
 
 ### 2.5 `5 != "5"` vs `5 !== "5"`
 
@@ -121,7 +121,7 @@ console.log(5 !== "5");  // true  — different types, so "not strictly equal" i
 
 Same underlying `==` vs `===` coercion distinction, just phrased as inequality.
 
-→ [[Operators_IQ]]
+→ [[13_Operators_IQ]]
 
 ---
 
@@ -202,7 +202,7 @@ let Function = "invalid"; // actually VALID
 
 JS keyword matching is exactly case-sensitive. Only the literal lowercase `function` is reserved — capitalize a single letter and it's just a normal (if confusing) identifier.
 
-→ [[Identifier_Rules_Advanced_IQ]]
+→ [[06_Identifier_Rules_Advanced_IQ]]
 
 ### 4.2 `Name` and `name` are unrelated variables
 
@@ -215,7 +215,7 @@ console.log(name); // "priyan"
 
 Case sensitivity applies to all identifiers, not just keywords — this is also the technical reason PascalCase (classes) and camelCase (variables) can safely coexist as separate naming conventions in the same codebase.
 
-→ [[Identifier_Rules_Basics_IQ]], [[Identifier_Naming_Conventions_IQ]]
+→ [[03_Identifier_Rules_Basics_IQ]], [[04_Identifier_Naming_Conventions_IQ]]
 
 ### 4.3 Unicode letters and Unicode escapes are valid in identifiers
 
@@ -227,7 +227,7 @@ let A = "Unicode escape for A";      // decodes to the letter A — valid
 
 The spec defines identifier characters via Unicode `ID_Start`/`ID_Continue` categories, not plain ASCII — so non-English letters (and even escaped Unicode code points) are legal, even though virtually no real codebase uses them.
 
-→ [[Identifier_Rules_Advanced_IQ]]
+→ [[06_Identifier_Rules_Advanced_IQ]]
 
 ### 4.4 `$` and `_` behave like letters
 
@@ -238,7 +238,7 @@ var _ = 10;      // valid — _ alone is a legal identifier
 
 Deliberately special-cased in the spec so tools like jQuery (`$`) and lodash/private-variable conventions (`_prop`) could exist.
 
-→ [[Identifier_Rules_Basics_IQ]]
+→ [[03_Identifier_Rules_Basics_IQ]]
 
 ### 4.5 Block comments cannot be nested
 
@@ -248,7 +248,7 @@ Deliberately special-cased in the spec so tools like jQuery (`$`) and lodash/pri
 
 The comment closes at the **first** `*/` it finds. Everything after that (`still outer */`) is left as dangling, invalid code — a classic "gotcha" when someone tries to comment out a block that already contains a block comment.
 
-→ [[Comments_IQ]]
+→ [[05_Comments_IQ]]
 
 ### 4.6 A digit can appear anywhere in an identifier — except first
 
@@ -257,13 +257,13 @@ let item1 = "ok";     // valid
 // let 1stPlace = "x"; // SyntaxError — cannot start with a digit
 ```
 
-→ [[Identifier_Rules_Basics_IQ]], [[Identifier_Rules_Advanced_IQ]]
+→ [[03_Identifier_Rules_Basics_IQ]], [[06_Identifier_Rules_Advanced_IQ]]
 
 ---
 
 ## 5. Numeric Precision Quirks (implied by IEEE 754)
 
-JS numbers (aside from `BigInt`) are always IEEE 754 double-precision floats — there's no separate `int` type. This is directly responsible for a well-known quirk that follows from the number literal rules in [[Literals_and_Numbers_IQ]]:
+JS numbers (aside from `BigInt`) are always IEEE 754 double-precision floats — there's no separate `int` type. This is directly responsible for a well-known quirk that follows from the number literal rules in [[07_Literals_and_Numbers_IQ]]:
 
 ```javascript
 console.log(0.1 + 0.2);          // 0.30000000000000004, not 0.3
@@ -280,7 +280,7 @@ Math.abs((0.1 + 0.2) - 0.3) < Number.EPSILON; // true
 
 This is also why `Number.MAX_SAFE_INTEGER` (2^53 - 1) exists — beyond it, integers start silently losing precision, which is the entire reason `BigInt` was added to the language.
 
-→ [[Literals_and_Numbers_IQ]]
+→ [[07_Literals_and_Numbers_IQ]]
 
 ---
 
@@ -303,7 +303,7 @@ console.log(x, y); // 11 11
 
 This decoupling is also what makes `arr[i++]` a useful idiom: it reads the current index *and* advances it in a single expression.
 
-→ [[Increment_Decrement_Operators_IQ]]
+→ [[32_Increment_Decrement_Operators_IQ]]
 
 ---
 
@@ -360,4 +360,4 @@ add("x", "y"); // unexpected type → V8 deoptimizes add() back to bytecode
 
 Defaulting to `===` over `==`, `let`/`const` over `var`, and being explicit about numeric comparisons (epsilon tolerance, `Number.isNaN`) sidesteps the majority of this list in real code.
 
-**Source notes:** [[Null_vs_Undefined]], [[Literals_and_Numbers_IQ]], [[Operators_IQ]], [[Let_Keyword_and_Loops_IQ]], [[Identifier_Rules_Basics_IQ]], [[Identifier_Rules_Advanced_IQ]], [[Identifier_Naming_Conventions_IQ]], [[Comments_IQ]], [[Compilation_vs_Interpretation_vs_JIT_IQ]], [[Source_Code_ByteCODE_Binary_IQ]], [[Identifiers_and_Literals_in_JS]], [[Increment_Decrement_Operators_IQ]], [[Type_Operator_typeof_Deep_Dive_IQ]]
+**Source notes:** [[08_Null_vs_Undefined]], [[07_Literals_and_Numbers_IQ]], [[13_Operators_IQ]], [[Let_Keyword_and_Loops_IQ]], [[03_Identifier_Rules_Basics_IQ]], [[06_Identifier_Rules_Advanced_IQ]], [[04_Identifier_Naming_Conventions_IQ]], [[05_Comments_IQ]], [[Compilation_vs_Interpretation_vs_JIT_IQ]], [[Source_Code_ByteCODE_Binary_IQ]], [[Identifiers_and_Literals_in_JS]], [[32_Increment_Decrement_Operators_IQ]], [[31_Type_Operator_typeof_Deep_Dive_IQ]]

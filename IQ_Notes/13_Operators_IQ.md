@@ -19,7 +19,7 @@ JavaScript has 7 primitive types + 1 non-primitive (reference) type:
 // array, NaN
 ```
 
-> `array` is not a separate type — it's an `object`. `NaN` is not a separate type either — it's a special value of type `"number"`. See [[Literals_and_Numbers_IQ]] for a full breakdown of `NaN`, `Infinity`, and `BigInt`.
+> `array` is not a separate type — it's an `object`. `NaN` is not a separate type either — it's a special value of type `"number"`. See [[07_Literals_and_Numbers_IQ]] for a full breakdown of `NaN`, `Infinity`, and `BigInt`.
 
 ---
 
@@ -203,7 +203,7 @@ console.log(null == 0 || null > 0); // false … but null >= 0 is true! 🤯
 - `==` has a special case: `null` is only loosely equal to `undefined` (and itself) — never to `0` or any other number.
 - `>=`, `>`, `<`, `<=` convert `null` to `Number(null)` which is `0` — so `null >= 0` becomes `0 >= 0`, which is `true`.
 
-This inconsistency is one of the most cited "JavaScript is weird" examples — see [[Null_vs_Undefined]] for more on how `null` and `undefined` behave differently across contexts.
+This inconsistency is one of the most cited "JavaScript is weird" examples — see [[08_Null_vs_Undefined]] for more on how `null` and `undefined` behave differently across contexts.
 
 ---
 
@@ -228,4 +228,4 @@ This inconsistency is one of the most cited "JavaScript is weird" examples — s
 - `&&` is AND (both truthy), `||` is OR (either truthy), `!` inverts.
 - `==` coercion is not transitive (`"" == 0` and `"0" == 0` are both true, but `"" == "0"` is false) and relational operators (`>=`) coerce `null` differently than `==` does (`null >= 0` is true, but `null == 0` is false) — always prefer `===` to sidestep both traps.
 
-**Related notes:** [[Literals_and_Numbers_IQ]], [[Null_vs_Undefined]]
+**Related notes:** [[07_Literals_and_Numbers_IQ]], [[08_Null_vs_Undefined]]

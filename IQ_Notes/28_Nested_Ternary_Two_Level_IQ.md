@@ -73,6 +73,6 @@ The parentheses around the inner ternary aren't strictly required (the ternary o
 
 ## Summary
 
-**Key Takeaway:** Nesting a ternary inside another ternary's branch encodes "if A then (if B then C else D) else E" in one line — legal, but readability drops fast, and mixing return types (`string`/`boolean`) across branches is a common bug source once the result is used in a condition. See [[Nested_Ternary_HTTP_Status_Category_IQ]] and [[Nested_Ternary_Temperature_Scale_IQ]] for the "chained" nested-ternary style, which reads more like a switch/else-if ladder.
+**Key Takeaway:** Nesting a ternary inside another ternary's branch encodes "if A then (if B then C else D) else E" in one line — legal, but readability drops fast, and mixing return types (`string`/`boolean`) across branches is a common bug source once the result is used in a condition. See [[29_Nested_Ternary_HTTP_Status_Category_IQ]] and [[30_Nested_Ternary_Temperature_Scale_IQ]] for the "chained" nested-ternary style, which reads more like a switch/else-if ladder.
 
-**Related notes:** [[Ternary_Operator_Basics_IQ]]
+**Related notes:** [[22_Ternary_Operator_Basics_IQ]]

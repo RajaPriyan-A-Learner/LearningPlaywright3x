@@ -87,4 +87,4 @@ console.log(--n);  // n becomes 3 first, logs 3
 
 **Key Takeaway:** `++a`/`--a` (prefix) increment/decrement *then* return the new value; `a++`/`a--` (postfix) return the *old* value *then* increment/decrement. The variable's final value is the same either way — only what the surrounding expression sees differs. This is a distinct quirk from anything covered in [[JavaScript_Quirks_and_Known_Bugs_IQ]] so far and has been added there.
 
-**Related notes:** [[Operators_IQ]], [[JavaScript_Quirks_and_Known_Bugs_IQ]]
+**Related notes:** [[13_Operators_IQ]], [[JavaScript_Quirks_and_Known_Bugs_IQ]]

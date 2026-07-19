@@ -36,13 +36,13 @@ let baseUrl = environment === "prod"
 
 ## 3. Why `===` Matters Here Too
 
-Comparing `environment === "prod"` with strict equality avoids the same coercion risk covered in [[Ternary_Test_Assertion_Pattern_IQ]] — if `environment` were ever accidentally a non-string value (e.g., `1` from a misconfigured env var parser), `===` correctly falls through to the `else` branch instead of silently coercing and possibly matching the wrong environment.
+Comparing `environment === "prod"` with strict equality avoids the same coercion risk covered in [[23_Ternary_Test_Assertion_Pattern_IQ]] — if `environment` were ever accidentally a non-string value (e.g., `1` from a misconfigured env var parser), `===` correctly falls through to the `else` branch instead of silently coercing and possibly matching the wrong environment.
 
 ---
 
 ## 4. Real-World Extension — More Than Two Environments
 
-This two-branch ternary only handles "prod" vs "everything else." A real config typically needs three or more environments, which is exactly the nested-ternary chain pattern shown in [[Nested_Ternary_HTTP_Status_Category_IQ]]:
+This two-branch ternary only handles "prod" vs "everything else." A real config typically needs three or more environments, which is exactly the nested-ternary chain pattern shown in [[29_Nested_Ternary_HTTP_Status_Category_IQ]]:
 
 ```javascript
 let baseUrl =
@@ -57,4 +57,4 @@ let baseUrl =
 
 **Key Takeaway:** Multi-line ternary formatting is just a style convention — the engine evaluates it identically to a single-line ternary. This is a standard pattern for environment-based config, and belongs with `===` to avoid accidental environment-string coercion bugs.
 
-**Related notes:** [[Ternary_Test_Assertion_Pattern_IQ]], [[Nested_Ternary_HTTP_Status_Category_IQ]], [[Operators_IQ]]
+**Related notes:** [[23_Ternary_Test_Assertion_Pattern_IQ]], [[29_Nested_Ternary_HTTP_Status_Category_IQ]], [[13_Operators_IQ]]
