@@ -284,9 +284,32 @@ This is also why `Number.MAX_SAFE_INTEGER` (2^53 - 1) exists — beyond it, inte
 
 ---
 
-## 6. Engine-Level "Quirks" (Not Bugs, But Surprising)
+## 6. Operator Evaluation-Order Quirks
 
-### 6.1 JIT de-optimization when types change mid-loop
+### 6.1 `a++` returns the OLD value, `++a` returns the NEW value
+
+```javascript
+let a = 10;
+let b = a++;   // b = 10 (old value) — THEN a becomes 11
+console.log(b); // 10
+console.log(a); // 11
+
+let x = 10;
+let y = ++x;   // x becomes 11 FIRST — THEN y = 11
+console.log(x, y); // 11 11
+```
+
+**Why it's confusing:** the variable's *side effect* (incrementing) always happens, but postfix (`a++`) hands the surrounding expression the **pre-increment** value while prefix (`++a`) hands it the **post-increment** value. This is exactly why `let b = a++; console.log(b);` prints `10`, not `11` — a common first-glance mistake.
+
+This decoupling is also what makes `arr[i++]` a useful idiom: it reads the current index *and* advances it in a single expression.
+
+→ [[Increment_Decrement_Operators_IQ]]
+
+---
+
+## 7. Engine-Level "Quirks" (Not Bugs, But Surprising)
+
+### 7.1 JIT de-optimization when types change mid-loop
 
 V8 compiles "hot" functions to machine code assuming stable argument types. If a function called thousands of times with numbers is suddenly called with a string, V8 has to **deoptimize** back to the interpreter to stay correct — a real (if invisible) performance cliff that pure interpretation or pure compilation wouldn't have.
 
@@ -300,7 +323,7 @@ add("x", "y"); // unexpected type → V8 deoptimizes add() back to bytecode
 
 ---
 
-## 7. Master Cheat Sheet
+## 8. Master Cheat Sheet
 
 | # | Quirk | Code | Result | Category |
 |---|---|---|---|---|
@@ -324,6 +347,7 @@ add("x", "y"); // unexpected type → V8 deoptimizes add() back to bytecode
 | 18 | Nested block comments | `/* outer /* inner */ still outer */` | breaks at first `*/` | Syntax |
 | 19 | Float precision | `0.1 + 0.2 === 0.3` | `false` | Precision |
 | 20 | JIT deopt on type change | hot loop, then call with mismatched types | silent perf cliff | Engine |
+| 21 | Postfix vs prefix increment | `let a=10; let b=a++;` then `console.log(b)` | `10`, not `11` | Operator order |
 
 ---
 
@@ -336,4 +360,4 @@ add("x", "y"); // unexpected type → V8 deoptimizes add() back to bytecode
 
 Defaulting to `===` over `==`, `let`/`const` over `var`, and being explicit about numeric comparisons (epsilon tolerance, `Number.isNaN`) sidesteps the majority of this list in real code.
 
-**Source notes:** [[Null_vs_Undefined]], [[Literals_and_Numbers_IQ]], [[Operators_IQ]], [[Let_Keyword_and_Loops_IQ]], [[Identifier_Rules_Basics_IQ]], [[Identifier_Rules_Advanced_IQ]], [[Identifier_Naming_Conventions_IQ]], [[Comments_IQ]], [[Compilation_vs_Interpretation_vs_JIT_IQ]], [[Source_Code_ByteCODE_Binary_IQ]], [[Identifiers_and_Literals_in_JS]]
+**Source notes:** [[Null_vs_Undefined]], [[Literals_and_Numbers_IQ]], [[Operators_IQ]], [[Let_Keyword_and_Loops_IQ]], [[Identifier_Rules_Basics_IQ]], [[Identifier_Rules_Advanced_IQ]], [[Identifier_Naming_Conventions_IQ]], [[Comments_IQ]], [[Compilation_vs_Interpretation_vs_JIT_IQ]], [[Source_Code_ByteCODE_Binary_IQ]], [[Identifiers_and_Literals_in_JS]], [[Increment_Decrement_Operators_IQ]], [[Type_Operator_typeof_Deep_Dive_IQ]]
