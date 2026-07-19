@@ -305,6 +305,28 @@ This decoupling is also what makes `arr[i++]` a useful idiom: it reads the curre
 
 → [[32_Increment_Decrement_Operators_IQ]]
 
+### 6.2 Combining `++`/`--` on the same variable multiple times in one expression
+
+```javascript
+let a = 10;
+console.log(++a + a);       // 22, not 21 — the second `a` sees the already-incremented value
+console.log(a);               // 11
+
+let i = 1;
+let result = i++ + ++i;      // 1 + 3 = 4  (i++ gives 1 then i=2; ++i makes i=3 then gives 3)
+console.log(result, i);       // 4 3
+
+let x = 10;
+console.log(++x + ++x);     // 11 + 12 = 23
+console.log(x);               // 12
+```
+
+**Why it's confusing:** operands of `+` are evaluated strictly left to right, and each `++`/`--` applies its side effect *immediately* at the point it's evaluated — so any later read of the same variable in that expression sees the updated value, not the value from the start of the statement. This compounds the confusion from §6.1: it's not just "old vs new value," it's "every subsequent operand sees whatever the variable currently holds right now."
+
+**In practice:** never write real code that mutates the same variable more than once in a single expression — this is purely an interview-trivia pattern, not something production code should rely on.
+
+→ [[34_Increment_Multiple_Expressions_IQ]], [[33_Advanced_Increment_Expression_IQ]]
+
 ---
 
 ## 7. Engine-Level "Quirks" (Not Bugs, But Surprising)
@@ -348,6 +370,7 @@ add("x", "y"); // unexpected type → V8 deoptimizes add() back to bytecode
 | 19 | Float precision | `0.1 + 0.2 === 0.3` | `false` | Precision |
 | 20 | JIT deopt on type change | hot loop, then call with mismatched types | silent perf cliff | Engine |
 | 21 | Postfix vs prefix increment | `let a=10; let b=a++;` then `console.log(b)` | `10`, not `11` | Operator order |
+| 22 | Chained increment in one expression | `let a=10; console.log(++a + a)` | `22`, not `21` | Operator order |
 
 ---
 
@@ -360,4 +383,4 @@ add("x", "y"); // unexpected type → V8 deoptimizes add() back to bytecode
 
 Defaulting to `===` over `==`, `let`/`const` over `var`, and being explicit about numeric comparisons (epsilon tolerance, `Number.isNaN`) sidesteps the majority of this list in real code.
 
-**Source notes:** [[08_Null_vs_Undefined]], [[07_Literals_and_Numbers_IQ]], [[13_Operators_IQ]], [[Let_Keyword_and_Loops_IQ]], [[03_Identifier_Rules_Basics_IQ]], [[06_Identifier_Rules_Advanced_IQ]], [[04_Identifier_Naming_Conventions_IQ]], [[05_Comments_IQ]], [[Compilation_vs_Interpretation_vs_JIT_IQ]], [[Source_Code_ByteCODE_Binary_IQ]], [[Identifiers_and_Literals_in_JS]], [[32_Increment_Decrement_Operators_IQ]], [[31_Type_Operator_typeof_Deep_Dive_IQ]]
+**Source notes:** [[08_Null_vs_Undefined]], [[07_Literals_and_Numbers_IQ]], [[13_Operators_IQ]], [[Let_Keyword_and_Loops_IQ]], [[03_Identifier_Rules_Basics_IQ]], [[06_Identifier_Rules_Advanced_IQ]], [[04_Identifier_Naming_Conventions_IQ]], [[05_Comments_IQ]], [[Compilation_vs_Interpretation_vs_JIT_IQ]], [[Source_Code_ByteCODE_Binary_IQ]], [[Identifiers_and_Literals_in_JS]], [[32_Increment_Decrement_Operators_IQ]], [[31_Type_Operator_typeof_Deep_Dive_IQ]], [[33_Advanced_Increment_Expression_IQ]], [[34_Increment_Multiple_Expressions_IQ]]
