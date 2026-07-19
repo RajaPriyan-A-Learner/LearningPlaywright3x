@@ -1,0 +1,32 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/require-js-docs.js",
+            "if": "Bash(git *)",
+            "timeout": 15,
+            "statusMessage": "Checking for undocumented JS files..."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/git-fail-doc-reminder.js",
+            "if": "Bash(git *)",
+            "timeout": 15,
+            "statusMessage": "Checking git command result..."
+          }
+        ]
+      }
+    ]
+  }
+}
