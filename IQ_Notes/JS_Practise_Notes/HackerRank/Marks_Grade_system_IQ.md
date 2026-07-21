@@ -42,4 +42,4 @@ function processData(data) {
 
 **Key Takeaway:** A standard if/else-if grading ladder, notable for calling its own function before the declaration (safe due to hoisting) and for silently misreporting any non-numeric input as the lowest grade (`"FF"`) rather than erroring, since every comparison against `NaN` is `false`.
 
-**Related notes:** [[51_Node_Fs_Stdin_Input_IQ]], [[37_If_Else_Statement_Basics_IQ]], [[38_If_Else_If_Ladder_Grade_Calculator_IQ]]
+**Related notes:** [[51_Node_Fs_Stdin_Input_IQ]], [[37_If_Else_Statement_Basics_IQ]], [[38_If_Else_If_Ladder_Grade_Calculator_IQ]], [[Number_Switch_IQ]]
