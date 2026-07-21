@@ -10,6 +10,13 @@
             "if": "Bash(git *)",
             "timeout": 15,
             "statusMessage": "Checking for undocumented JS files..."
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/create-js-practise-notes.js",
+            "if": "Bash(git *)",
+            "timeout": 15,
+            "statusMessage": "Creating JS_Practise notes stubs..."
           }
         ]
       }
@@ -24,17 +31,6 @@
             "if": "Bash(git *)",
             "timeout": 15,
             "statusMessage": "Checking git command result..."
-          }
-        ]
-      },
-      {
-        "matcher": "Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node .claude/hooks/create-js-practise-notes.js",
-            "timeout": 15,
-            "statusMessage": "Creating JS_Practise notes stub..."
           }
         ]
       }

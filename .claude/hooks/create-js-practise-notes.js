@@ -2,6 +2,19 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
+function findJsFiles(dir) {
+  let results = [];
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      results = results.concat(findJsFiles(full));
+    } else if (entry.isFile() && entry.name.toLowerCase().endsWith('.js')) {
+      results.push(full);
+    }
+  }
+  return results;
+}
+
 let data = '';
 process.stdin.on('data', d => data += d);
 process.stdin.on('end', () => {
@@ -12,8 +25,8 @@ process.stdin.on('end', () => {
     return;
   }
 
-  const filePath = (input.tool_input && input.tool_input.file_path) || '';
-  if (!filePath.toLowerCase().endsWith('.js')) return;
+  const cmd = (input.tool_input && input.tool_input.command) || '';
+  if (!/\bgit\s+(commit|push)\b/.test(cmd)) return;
 
   let repoRoot;
   try {
@@ -23,48 +36,55 @@ process.stdin.on('end', () => {
   }
   repoRoot = repoRoot.replace(/\//g, path.sep);
 
-  const absFilePath = path.resolve(filePath);
-  const relFromRoot = path.relative(repoRoot, absFilePath);
-  const practiseRoot = 'JS_Practise' + path.sep;
-  if (!relFromRoot.startsWith(practiseRoot)) return;
+  const practiseDir = path.join(repoRoot, 'JS_Practise');
+  if (!fs.existsSync(practiseDir)) return;
 
-  const relFromPractise = relFromRoot.slice(practiseRoot.length);
-  const relMd = relFromPractise.replace(/\.js$/i, '_IQ.md');
-  const mdPath = path.join(repoRoot, 'IQ_Notes', 'JS_Practise_Notes', relMd);
+  const created = [];
 
-  if (fs.existsSync(mdPath)) return;
+  for (const jsFile of findJsFiles(practiseDir)) {
+    const relFromPractise = path.relative(practiseDir, jsFile);
+    const relMd = relFromPractise.replace(/\.js$/i, '_IQ.md');
+    const mdPath = path.join(repoRoot, 'IQ_Notes', 'JS_Practise_Notes', relMd);
 
-  const baseName = path.basename(relFromPractise, '.js');
-  const stub = [
-    `# ${baseName} — Practice Notes`,
-    '',
-    '## Overview',
-    '',
-    `Covers \`JS_Practise/${relFromPractise.replace(/\\/g, '/')}\` — TODO: describe what this file demonstrates.`,
-    '',
-    '---',
-    '',
-    '## Notes',
-    '',
-    'TODO: add explanation, worked examples, and any gotchas.',
-    '',
-    '---',
-    '',
-    '## Summary',
-    '',
-    '**Key Takeaway:** TODO.',
-    ''
-  ].join('\n');
+    if (fs.existsSync(mdPath)) continue;
 
-  fs.mkdirSync(path.dirname(mdPath), { recursive: true });
-  fs.writeFileSync(mdPath, stub, 'utf8');
+    const baseName = path.basename(relFromPractise, '.js');
+    const stub = [
+      `# ${baseName} — Practice Notes`,
+      '',
+      '## Overview',
+      '',
+      `Covers \`JS_Practise/${relFromPractise.replace(/\\/g, '/')}\` — TODO: describe what this file demonstrates.`,
+      '',
+      '---',
+      '',
+      '## Notes',
+      '',
+      'TODO: add explanation, worked examples, and any gotchas.',
+      '',
+      '---',
+      '',
+      '## Summary',
+      '',
+      '**Key Takeaway:** TODO.',
+      ''
+    ].join('\n');
 
-  const relMdForward = path.relative(repoRoot, mdPath).replace(/\\/g, '/');
-  console.log(JSON.stringify({
-    systemMessage: `Created stub notes file: ${relMdForward}`,
-    hookSpecificOutput: {
-      hookEventName: 'PostToolUse',
-      additionalContext: `A new JS file was created under JS_Practise/. A stub notes file was auto-created at ${relMdForward} — fill it in with real explanation, worked examples, and gotchas for this file.`
+    fs.mkdirSync(path.dirname(mdPath), { recursive: true });
+    fs.writeFileSync(mdPath, stub, 'utf8');
+
+    const relMdForward = path.relative(repoRoot, mdPath).replace(/\\/g, '/');
+    try {
+      execSync('git add ' + JSON.stringify(relMdForward), { cwd: repoRoot });
+    } catch (e) {
+      // best effort; leave file on disk unstaged if `git add` fails
     }
+    created.push(relMdForward);
+  }
+
+  if (created.length === 0) return;
+
+  console.log(JSON.stringify({
+    systemMessage: `Created and staged ${created.length} notes stub(s):\n` + created.map(f => '  - ' + f).join('\n')
   }));
 });
