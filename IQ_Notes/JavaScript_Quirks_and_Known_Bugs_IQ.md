@@ -345,7 +345,75 @@ add("x", "y"); // unexpected type → V8 deoptimizes add() back to bytecode
 
 ---
 
-## 8. Master Cheat Sheet
+## 8. `switch` Statement Quirks
+
+### 8.1 `switch` matches with `===`, never `==`
+
+```javascript
+let status = 0;
+switch (status) {
+    case false:
+        console.log("false matched"); // never runs
+        break;
+    case 0:
+        console.log("0 matched");     // runs
+        break;
+}
+```
+
+A common misconception is that `switch` coerces types the way `==` does. It doesn't — the spec defines case-matching via the Strict Equality Comparison algorithm, identical to `===`. `0 === false` is `false`, so `case false` is skipped even though `0 == false` is `true`.
+
+→ [[47_Switch_Strict_Equality_IQ]]
+
+### 8.2 Fall-through: a matched case runs every statement below it until `break`
+
+```javascript
+switch (2) {
+    case 1: console.log("one");
+    case 2: console.log("two");
+    case 3: console.log("three");
+    default: console.log("default");
+}
+// "two", "three", "default" — NOT just "two"
+```
+
+`switch` doesn't re-check later `case` conditions once it has matched — it just keeps running statements top-to-bottom until a `break` (or the closing brace). This is used deliberately for grouping (stacked empty `case` labels sharing one body) but is a frequent accidental bug when a case's own body forgets its `break`.
+
+→ [[40_Switch_Fallthrough_No_Break_IQ]], [[43_Switch_Case_Grouping_IQ]], [[44_Switch_Unintentional_Fallthrough_Bug_IQ]]
+
+### 8.3 Duplicate `case` values are legal — the second is silently unreachable
+
+```javascript
+switch (10) {
+    case 10: console.log("first"); break;  // runs
+    case 10: console.log("second"); break; // dead code, never runs
+}
+```
+
+JS never checks `case` values for uniqueness; it evaluates them top-to-bottom and commits to the first `===` match. A duplicate case value is not a `SyntaxError` — it's just permanently unreachable code that only a linter (not the engine) will flag.
+
+→ [[46_Switch_Duplicate_Case_Values_IQ]]
+
+### 8.4 `let`/`const` inside one `case` are scoped to the WHOLE switch block
+
+```javascript
+switch (x) {
+    case 1:
+        let a = 1;
+        break;
+    case 2:
+        let a = 2; // ❌ SyntaxError: 'a' has already been declared
+        break;
+}
+```
+
+A `switch` body is a single block unless each case wraps its own `{ }` — so `let`/`const` declared in one `case` collides with the same name declared in a sibling `case`, throwing at parse time regardless of which branch would actually execute.
+
+→ [[39_Switch_Statement_Basics_IQ]]
+
+---
+
+## 9. Master Cheat Sheet
 
 | # | Quirk | Code | Result | Category |
 |---|---|---|---|---|
@@ -371,6 +439,10 @@ add("x", "y"); // unexpected type → V8 deoptimizes add() back to bytecode
 | 20 | JIT deopt on type change | hot loop, then call with mismatched types | silent perf cliff | Engine |
 | 21 | Postfix vs prefix increment | `let a=10; let b=a++;` then `console.log(b)` | `10`, not `11` | Operator order |
 | 22 | Chained increment in one expression | `let a=10; console.log(++a + a)` | `22`, not `21` | Operator order |
+| 23 | `switch` uses `===`, not `==` | `switch(0){case false:...; case 0:...}` | `case 0` matches, `case false` doesn't | Switch |
+| 24 | `switch` fall-through without `break` | `switch(2){case 1:...case 2:...case 3:...default:...}` | runs case 2, 3, default | Switch |
+| 25 | Duplicate `case` values | `switch(10){case 10:...;case 10:...}` | first wins, second is dead code, no error | Switch |
+| 26 | `let` redeclared across sibling `case`s | `case 1: let a=1; break; case 2: let a=2;` | `SyntaxError` (parse time) | Switch |
 
 ---
 
@@ -383,4 +455,4 @@ add("x", "y"); // unexpected type → V8 deoptimizes add() back to bytecode
 
 Defaulting to `===` over `==`, `let`/`const` over `var`, and being explicit about numeric comparisons (epsilon tolerance, `Number.isNaN`) sidesteps the majority of this list in real code.
 
-**Source notes:** [[08_Null_vs_Undefined]], [[07_Literals_and_Numbers_IQ]], [[13_Operators_IQ]], [[Let_Keyword_and_Loops_IQ]], [[03_Identifier_Rules_Basics_IQ]], [[06_Identifier_Rules_Advanced_IQ]], [[04_Identifier_Naming_Conventions_IQ]], [[05_Comments_IQ]], [[Compilation_vs_Interpretation_vs_JIT_IQ]], [[Source_Code_ByteCODE_Binary_IQ]], [[Identifiers_and_Literals_in_JS]], [[32_Increment_Decrement_Operators_IQ]], [[31_Type_Operator_typeof_Deep_Dive_IQ]], [[33_Advanced_Increment_Expression_IQ]], [[34_Increment_Multiple_Expressions_IQ]]
+**Source notes:** [[08_Null_vs_Undefined]], [[07_Literals_and_Numbers_IQ]], [[13_Operators_IQ]], [[Let_Keyword_and_Loops_IQ]], [[03_Identifier_Rules_Basics_IQ]], [[06_Identifier_Rules_Advanced_IQ]], [[04_Identifier_Naming_Conventions_IQ]], [[05_Comments_IQ]], [[Compilation_vs_Interpretation_vs_JIT_IQ]], [[Source_Code_ByteCODE_Binary_IQ]], [[Identifiers_and_Literals_in_JS]], [[32_Increment_Decrement_Operators_IQ]], [[31_Type_Operator_typeof_Deep_Dive_IQ]], [[33_Advanced_Increment_Expression_IQ]], [[34_Increment_Multiple_Expressions_IQ]], [[39_Switch_Statement_Basics_IQ]], [[40_Switch_Fallthrough_No_Break_IQ]], [[43_Switch_Case_Grouping_IQ]], [[44_Switch_Unintentional_Fallthrough_Bug_IQ]], [[46_Switch_Duplicate_Case_Values_IQ]], [[47_Switch_Strict_Equality_IQ]]
