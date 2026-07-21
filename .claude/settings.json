@@ -26,6 +26,17 @@
             "statusMessage": "Checking git command result..."
           }
         ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/create-js-practise-notes.js",
+            "timeout": 15,
+            "statusMessage": "Creating JS_Practise notes stub..."
+          }
+        ]
       }
     ]
   }
