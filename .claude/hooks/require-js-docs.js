@@ -2,6 +2,19 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
+function findMdFiles(dir) {
+  let results = [];
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      results = results.concat(findMdFiles(full));
+    } else if (entry.isFile() && entry.name.toLowerCase().endsWith('.md')) {
+      results.push(full);
+    }
+  }
+  return results;
+}
+
 let data = '';
 process.stdin.on('data', d => data += d);
 process.stdin.on('end', () => {
@@ -44,8 +57,8 @@ process.stdin.on('end', () => {
   const iqNotesDir = path.join(repoRoot, 'IQ_Notes');
   let mdContent = '';
   try {
-    const mdFiles = fs.readdirSync(iqNotesDir).filter(f => f.endsWith('.md'));
-    mdContent = mdFiles.map(f => fs.readFileSync(path.join(iqNotesDir, f), 'utf8')).join('\n');
+    const mdFiles = findMdFiles(iqNotesDir);
+    mdContent = mdFiles.map(f => fs.readFileSync(f, 'utf8')).join('\n');
   } catch (e) {
     mdContent = '';
   }
