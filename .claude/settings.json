@@ -6,6 +6,13 @@
         "hooks": [
           {
             "type": "command",
+            "command": "node .claude/hooks/validate-md-quality.js",
+            "if": "Bash(git add *)",
+            "timeout": 15,
+            "statusMessage": "Validating markdown note quality before staging..."
+          },
+          {
+            "type": "command",
             "command": "node .claude/hooks/require-js-docs.js",
             "if": "Bash(git *)",
             "timeout": 15,
