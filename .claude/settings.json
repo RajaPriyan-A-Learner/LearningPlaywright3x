@@ -24,6 +24,13 @@
             "if": "Bash(git *)",
             "timeout": 15,
             "statusMessage": "Creating JS_Practise notes stubs..."
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/generate-chapter-master-iq.js",
+            "if": "Bash(git commit *)",
+            "timeout": 20,
+            "statusMessage": "Checking for missing MASTER chapter IQ files..."
           }
         ]
       }
