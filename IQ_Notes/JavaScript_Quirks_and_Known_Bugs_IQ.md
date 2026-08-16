@@ -345,9 +345,63 @@ add("x", "y"); // unexpected type → V8 deoptimizes add() back to bytecode
 
 ---
 
-## 8. `switch` Statement Quirks
+## 8. Array Method Quirks
 
-### 8.1 `switch` matches with `===`, never `==`
+### 8.1 Array.sort() defaults to lexicographic (string) order, not numeric
+
+⚠️ **Gotcha:** calling `sort()` without a comparator converts elements to strings and sorts alphabetically, even for numbers.
+
+```javascript
+let nums = [10, 1, 21, 2];
+console.log(nums.sort()); // [1, 10, 2, 21] — NOT numeric order!
+// Because "10" < "2" alphabetically (compare first char: "1" vs "2")
+```
+
+Always provide a numeric comparator:
+```javascript
+nums.sort((a, b) => a - b); // Correct: [1, 2, 10, 21]
+```
+
+→ [[74_Sorting_IQ]]
+
+### 8.2 Missing semicolon before `[` triggers ASI misparse for methods ending in `)`
+
+Automatic Semicolon Insertion can misinterpret a missing semicolon before `[` as an **index access** on the previous expression, not a new statement.
+
+```javascript
+console.log([80, 90, 85].every(s => s >= 70))  // ← missing semicolon
+[80, 60, 85].some(s => s < 70);                // ← parsed as index on .every() result → TypeError
+```
+
+**Fix:** always terminate statements with `;`.
+
+→ [[77_Array_Checking_IQ]]
+
+### 8.3 Assignment `=` creates a reference, not a copy
+
+⚠️ **Critical gotcha:** simple assignment does NOT copy an array — both variables point to the same array in memory.
+
+```javascript
+let original = [1, 2, 3];
+let ref = original;      // NOT a copy — ref points to the same array
+ref.push(99);
+console.log(original);   // [1, 2, 3, 99] — original was also mutated!
+```
+
+Use shallow-copy methods instead:
+```javascript
+let copy = [...original];     // Spread
+let copy2 = original.slice(); // slice()
+let copy3 = original.concat(); // concat()
+```
+
+→ [[78_Copy_IQ]]
+
+---
+
+## 9. `switch` Statement Quirks
+
+### 9.1 `switch` matches with `===`, never `==`
 
 ```javascript
 let status = 0;
@@ -365,7 +419,7 @@ A common misconception is that `switch` coerces types the way `==` does. It does
 
 → [[47_Switch_Strict_Equality_IQ]]
 
-### 8.2 Fall-through: a matched case runs every statement below it until `break`
+### 9.2 Fall-through: a matched case runs every statement below it until `break`
 
 ```javascript
 switch (2) {
@@ -381,7 +435,7 @@ switch (2) {
 
 → [[40_Switch_Fallthrough_No_Break_IQ]], [[43_Switch_Case_Grouping_IQ]], [[44_Switch_Unintentional_Fallthrough_Bug_IQ]]
 
-### 8.3 Duplicate `case` values are legal — the second is silently unreachable
+### 9.3 Duplicate `case` values are legal — the second is silently unreachable
 
 ```javascript
 switch (10) {
@@ -394,7 +448,7 @@ JS never checks `case` values for uniqueness; it evaluates them top-to-bottom an
 
 → [[46_Switch_Duplicate_Case_Values_IQ]]
 
-### 8.4 `let`/`const` inside one `case` are scoped to the WHOLE switch block
+### 9.4 `let`/`const` inside one `case` are scoped to the WHOLE switch block
 
 ```javascript
 switch (x) {
@@ -443,6 +497,9 @@ A `switch` body is a single block unless each case wraps its own `{ }` — so `l
 | 24 | `switch` fall-through without `break` | `switch(2){case 1:...case 2:...case 3:...default:...}` | runs case 2, 3, default | Switch |
 | 25 | Duplicate `case` values | `switch(10){case 10:...;case 10:...}` | first wins, second is dead code, no error | Switch |
 | 26 | `let` redeclared across sibling `case`s | `case 1: let a=1; break; case 2: let a=2;` | `SyntaxError` (parse time) | Switch |
+| 27 | Array `sort()` is lexicographic by default | `[10, 1, 21, 2].sort()` | `[1, 10, 2, 21]` — NOT numeric | Array |
+| 28 | ASI misparse: missing `;` before `[` | `console.log(arr.every(x=>x>0))\n[1,2].some(...)` | TypeError — `[` parsed as index access | Syntax/ASI |
+| 29 | Assignment is reference, not copy | `let a=[1,2]; let b=a; b.push(3);` | `a` is now `[1,2,3]` too — same array! | Reference |
 
 ---
 
@@ -455,4 +512,4 @@ A `switch` body is a single block unless each case wraps its own `{ }` — so `l
 
 Defaulting to `===` over `==`, `let`/`const` over `var`, and being explicit about numeric comparisons (epsilon tolerance, `Number.isNaN`) sidesteps the majority of this list in real code.
 
-**Source notes:** [[08_Null_vs_Undefined]], [[07_Literals_and_Numbers_IQ]], [[13_Operators_IQ]], [[Let_Keyword_and_Loops_IQ]], [[03_Identifier_Rules_Basics_IQ]], [[06_Identifier_Rules_Advanced_IQ]], [[04_Identifier_Naming_Conventions_IQ]], [[05_Comments_IQ]], [[Compilation_vs_Interpretation_vs_JIT_IQ]], [[Source_Code_ByteCODE_Binary_IQ]], [[Identifiers_and_Literals_in_JS]], [[32_Increment_Decrement_Operators_IQ]], [[31_Type_Operator_typeof_Deep_Dive_IQ]], [[33_Advanced_Increment_Expression_IQ]], [[34_Increment_Multiple_Expressions_IQ]], [[39_Switch_Statement_Basics_IQ]], [[40_Switch_Fallthrough_No_Break_IQ]], [[43_Switch_Case_Grouping_IQ]], [[44_Switch_Unintentional_Fallthrough_Bug_IQ]], [[46_Switch_Duplicate_Case_Values_IQ]], [[47_Switch_Strict_Equality_IQ]]
+**Source notes:** [[08_Null_vs_Undefined]], [[07_Literals_and_Numbers_IQ]], [[13_Operators_IQ]], [[Let_Keyword_and_Loops_IQ]], [[03_Identifier_Rules_Basics_IQ]], [[06_Identifier_Rules_Advanced_IQ]], [[04_Identifier_Naming_Conventions_IQ]], [[05_Comments_IQ]], [[Compilation_vs_Interpretation_vs_JIT_IQ]], [[Source_Code_ByteCODE_Binary_IQ]], [[Identifiers_and_Literals_in_JS]], [[32_Increment_Decrement_Operators_IQ]], [[31_Type_Operator_typeof_Deep_Dive_IQ]], [[33_Advanced_Increment_Expression_IQ]], [[34_Increment_Multiple_Expressions_IQ]], [[39_Switch_Statement_Basics_IQ]], [[40_Switch_Fallthrough_No_Break_IQ]], [[43_Switch_Case_Grouping_IQ]], [[44_Switch_Unintentional_Fallthrough_Bug_IQ]], [[46_Switch_Duplicate_Case_Values_IQ]], [[47_Switch_Strict_Equality_IQ]], [[74_Sorting_IQ]], [[77_Array_Checking_IQ]], [[78_Copy_IQ]]
