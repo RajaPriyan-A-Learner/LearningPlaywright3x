@@ -1,5 +1,11 @@
 # Source Code vs Bytecode vs Binary Code
 
+## Overview
+
+Every program exists in three forms: human-readable source code (e.g., `.js`, `.c`), intermediate bytecode that a VM interprets (e.g., V8's Ignition bytecode), and binary/machine code that the CPU executes directly. JavaScript uniquely traverses all three: the source is parsed to bytecode, then hot paths are JIT-compiled to machine code. Understanding this pipeline clarifies how JavaScript achieves both portability and speed while compiled languages prioritize one or the other.
+
+---
+
 ## Breakdown Table
 
 | | Source Code | Bytecode | Binary Code |
@@ -72,9 +78,6 @@ console.log("Hello World");
  CPU executes directly ─────────────► output: "Hello World"
 ```
 
-## TL;DR
+## Summary
 
-- **Source code** = what you write, human-readable, useless to a CPU alone.
-- **Bytecode** = an in-between format a VM interprets; portable across CPUs, not portable across VMs.
-- **Binary code** = raw CPU instructions, fastest, but locked to one architecture.
-- JavaScript passes through all three: source → bytecode (Ignition) → machine code (TurboFan) for hot paths — automatically, with no manual compile step from you.
+**Key Takeaway:** Source code is human intent; bytecode is machine-portable instructions; binary is CPU-native execution. JavaScript seamlessly transitions through all three—source parses to bytecode (portable, reusable across machines running V8), which then JIT-compiles hot paths to native machine code (fast). Compiled languages choose: C prioritizes binary (fastest, locked to one CPU); Python traditionally stops at bytecode (portable, slower). This explains JavaScript's unique blend of portability and speed.

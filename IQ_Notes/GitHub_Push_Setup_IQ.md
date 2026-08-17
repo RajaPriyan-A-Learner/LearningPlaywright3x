@@ -1,5 +1,11 @@
 # Pushing a Local Project to a GitHub Public Repo (main branch) — Full Walkthrough
 
+## Overview
+
+Pushing a local project to GitHub requires initialization (`git init`, `git branch -M main`), staging (`git add`), committing, adding a remote origin, and handling authentication (PAT, `gh auth`, or SSH). This document records the real errors encountered during the first push of this project—unrelated histories, missing remotes, PAT handling—and their fixes, serving as a practical reference for future pushes.
+
+---
+
 Real record of setting up this project (`LearningPlaywright3x`) as a git repo and
 pushing it to `https://github.com/RajaPriyan-A-Learner/LearningPlaywright3x.git`,
 including every error hit along the way and how it was fixed. Written for future-me
@@ -191,3 +197,9 @@ git branch --set-upstream-to=origin/main main
    it was ever exposed in plaintext anywhere.
 
 See also: [[Source_Code_ByteCODE_Binary_IQ]], [[Compilation_vs_Interpretation_vs_JIT_IQ]]
+
+---
+
+## Summary
+
+**Key Takeaway:** Git workflow: `git init` → `git branch -M main` → `git add .` → `git commit` → `git remote add origin <url>` → `git push -u origin main`. Common blockers: (1) git not on PATH (fix: use Git Bash or add to system PATH); (2) missing `git remote add` (diagnose with `git remote -v`); (3) unrelated histories on remote (merge with `--allow-unrelated-histories`); (4) PAT goes in password field, not username; (5) never expose PAT in commit messages or chat—revoke immediately if leaked. Always create GitHub repo empty (no auto-generated README) to avoid history conflicts.

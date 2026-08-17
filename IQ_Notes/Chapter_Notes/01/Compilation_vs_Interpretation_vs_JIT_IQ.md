@@ -1,5 +1,11 @@
 # Compilation vs Interpretation vs JIT
 
+## Overview
+
+JavaScript uses Just-In-Time (JIT) compilation to balance startup speed and runtime performance. Understanding the three execution models—pure compilation (C, Rust), pure interpretation (naive Python), and JIT (V8, JVM)—reveals why modern engines dynamically optimize hot code paths while maintaining flexibility. This distinction is critical for interviews and performance optimization.
+
+---
+
 ## Breakdown Table
 
 | | Compilation | Interpretation | JIT (Just-In-Time) |
@@ -67,8 +73,6 @@ JIT (JavaScript / V8)
  deoptimize back to bytecode ────► stays correct, loses speed
 ```
 
-## TL;DR
+## Summary
 
-- **Compilation**: translate everything up front → fastest to run, slowest to start, output is locked to one CPU architecture.
-- **Interpretation**: translate on the fly, every time → fastest to start, slowest to run, most flexible/portable.
-- **JIT**: start as an interpreter, then compile only the "hot" code paths to machine code mid-run → best of both, which is why modern JS (V8), Java (JVM), and PyPy all use it instead of pure interpretation.
+**Key Takeaway:** JIT compilation is a hybrid strategy: interpret bytecode initially for portability and flexibility, then compile frequently-executed ("hot") code paths to native machine code for speed. This explains why JavaScript engines profile code at runtime and make mid-execution optimization decisions, balancing startup speed (no up-front compile time) with runtime performance (approaching compiled-language speeds for hot loops).

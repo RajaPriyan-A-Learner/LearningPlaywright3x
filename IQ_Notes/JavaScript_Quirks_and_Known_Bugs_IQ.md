@@ -1,5 +1,11 @@
 # JavaScript Quirks & Known "Bugs" — Master Reference
 
+## Overview
+
+JavaScript's most famous quirks—`typeof null === "object"`, `0.1 + 0.2 !== 0.3`, loose equality's lack of transitivity—are not random: they arise from three root causes: (1) historical baggage preserved for backward compatibility; (2) coercion algorithms that differ by operator (`==` vs `===` vs relational operators); (3) IEEE 754 floating-point representation. This reference maps 29+ quirks across type system, equality, scoping, syntax, precision, operators, arrays, and switch statements, explaining the *why* for each—critical for interviews and production debugging.
+
+---
+
 A consolidated list of every historical bug, spec quirk, and surprising behavior demonstrated across the chapters covered so far (`01_chapter_javascript` → `05_chapter_Operator`) and their accompanying `IQ_Notes`. Each entry links back to the detailed note where it's explained in full.
 
 Most of these aren't "bugs" a browser will ever fix — they're either baked into the ECMAScript spec for backward compatibility, or emergent behavior from how JS resolves types, scope, and equality. Knowing *why* each one happens (not just that it happens) is what interviewers actually test for.
