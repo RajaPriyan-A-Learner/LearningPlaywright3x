@@ -101,3 +101,4 @@ Write-Host "   2. Replace placeholder text with real explanations" -ForegroundCo
 Write-Host "   3. Keep the code block (already populated)" -ForegroundColor White
 Write-Host "   4. Remove placeholders when done" -ForegroundColor White
 Write-Host "   5. Run: .\.claude\scripts\go-pikachu.ps1" -ForegroundColor White
+
