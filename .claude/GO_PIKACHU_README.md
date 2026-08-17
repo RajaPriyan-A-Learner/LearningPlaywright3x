@@ -8,17 +8,17 @@ Go Pikachu is an automated workflow that validates, commits, and publishes chapt
 
 When you trigger "Go Pikachu", this workflow:
 
-1. **🔍 Scan** — Finds all chapter JS files missing IQ documentation
-2. **📝 Alert** — Lists missing IQ_Notes files that need creation
-3. **📦 Stage** — `git add -A` (stages all changes)
-4. **🪝 PreToolUse** — Runs configured pre-commit hooks from `settings.json`
-   - `validate-md-quality.js` — Checks IQ markdown quality
+1. **🔍 Scan** — Finds all chapter JS files and checks for matching IQ documentation
+2. **📝 Create** — Auto-generates IQ_Notes stubs (only for NEW JS files)
+3. **🪝 Validate** — Runs PreToolUse hooks from `settings.json`
+   - `validate-md-quality.js` — Checks IQ markdown quality, no placeholders
    - `require-js-docs.js` — Ensures all JS files have IQ docs
    - `create-js-practise-notes.js` — Generates practice stubs
    - `generate-chapter-master-iq.js` — Validates MASTER files
+4. **📦 Stage** — `git add -A` (stages all changes)
 5. **💾 Commit** — Creates commit with standardized message
 6. **🪝 PostToolUse** — Runs post-commit hooks
-   - `git-fail-doc-reminder.js` — Reminds on failures
+   - `git-fail-doc-reminder.js` — Logs reminders on failures
 7. **🚀 Push** — `git push origin main`
 
 ---
@@ -46,41 +46,62 @@ claude code "Go Pikachu"
 
 ### Success Flow ✅
 ```
-Scan → Stage → Validate (PreToolUse) → Commit → PostToolUse → Push
+Scan → Create Stubs → Validate (PreToolUse) → Stage → Commit → PostToolUse → Push
 ```
 
 **Output:**
 ```
 ⚡ GO PIKACHU ACTIVATED ⚡
 
-🔍 Scanning chapter JS files...
-✅ All chapter JS files have IQ documentation.
+🔍 Step 1: Scanning chapter JS files...
+   Found 5 JS file(s)
 
-📦 Staging all changes...
-🪝 Running PreToolUse hooks...
-💾 Creating commit...
-🪝 Running PostToolUse hooks...
-🚀 Pushing to main...
+📝 Step 2: Creating IQ stubs for new JS files...
+   ✓ Created: IQ_Notes/Chapter_Notes/11/80_Function_Basics1_IQ.md
+   ✓ Exists: IQ_Notes/Chapter_Notes/11/81_Function_Basics2_IQ.md
+   Summary: Created 1, Existing 4
+
+🪝 Step 3: Running PreToolUse hooks (validation)...
+   ⏳ Hooks validate quality, placeholders, MASTER files...
+
+🪝 Step 4: PostToolUse hooks (logging)...
+   ⏳ PostToolUse hooks will run after commit...
+
+📦 Step 5: Staging all changes...
+   ✓ All changes staged
+
+💾 Step 6: Creating commit...
+   ✓ Commit created
+
+🚀 Step 7: Pushing to main...
+   ✓ Pushed to main
 
 ✅ GO PIKACHU COMPLETE!
-   ⚡ All changes committed and pushed to main
+   Created: 1 | Existing: 4 | Staged & Pushed
 ```
 
 ### Blocked Flow ❌
-If IQ documentation is missing:
+If placeholder content remains in IQ files:
 ```
 ⚡ GO PIKACHU ACTIVATED ⚡
 
-🔍 Scanning chapter JS files...
-  ⚠️  Missing: IQ_Notes/92_NewTopic_IQ.md (for 11_chapter_Function/92_NewTopic.js)
+🔍 Step 1: Scanning chapter JS files...
+   Found 5 JS file(s)
 
-❌ 1 file(s) missing documentation.
+📝 Step 2: Creating IQ stubs for new JS files...
+   ✓ Exists: [files...]
 
-⚡ Note: Auto-generation of IQ notes requires manual creation.
-   Use the IQ_Notes template to document each JS file.
+🪝 Step 3: Running PreToolUse hooks (validation)...
+   ⏳ Hooks validate quality, placeholders, MASTER files...
+
+❌ Commit failed (hooks may have blocked it)
+   Read hook errors above to fix issues
 ```
 
-**Action required:** Create the missing IQ_Notes files using the template before re-running.
+**Action required:** 
+1. Fill in placeholder content in IQ files (Overview, Main Concept, Key Points, Summary)
+2. Replace template text with real explanations (no "Write a brief...", "Point 1", etc.)
+3. Run Go Pikachu again
 
 ---
 
@@ -148,16 +169,28 @@ More content.
 
 ### Adding a New Chapter
 
-1. **Create JS files** (e.g., `11_chapter_Function/80_Function_Basics1.js`)
-2. **Create IQ_Notes** (e.g., `IQ_Notes/80_Function_Basics1_IQ.md`)
-3. **Create MASTER file** (e.g., `IQ_Notes/Chapter_Notes/11/MASTER_Function_IQ.md`)
-4. **Say "Go Pikachu"** or run the script
-5. **Push complete** ✅
+1. **Create JS files** (e.g., `11_chapter_Function/80_Function_Basics1.js`, `81_Function_Basics2.js`)
+2. **Run Go Pikachu (first run)**
+   - Scans and finds new JS files
+   - Auto-creates IQ_Notes stubs in `IQ_Notes/Chapter_Notes/11/`
+3. **Fill IQ_Notes**
+   - Replace template placeholders with real content
+   - Overview, Main Concept, Code Example, Key Points, Common Mistakes, Summary
+4. **Create MASTER file** (e.g., `IQ_Notes/Chapter_Notes/11/MASTER_Function_IQ.md`)
+   - Must have all 9 required sections
+5. **Run Go Pikachu (final run)**
+   - Validates all content (no placeholders, quality checks)
+   - Commits and pushes to main
+6. **Push complete** ✅
 
 ### If Blocked
 
-1. Read the hook error message
-2. Fix the issue (missing IQ file, placeholder content in markdown, etc.)
+1. Read hook error message (tells exact issue)
+2. Fix the issue:
+   - **Missing IQ file:** Already created by Go Pikachu step 2
+   - **Placeholder content:** Fill in real explanations in IQ files
+   - **Missing MASTER file:** Create with 9 required sections
+   - **Missing code block:** Add ``` example block to IQ file
 3. Run Go Pikachu again
 
 ---
@@ -181,21 +214,41 @@ To modify hook behavior, edit `settings.json` or the hook scripts in `.claude/ho
 
 ## Troubleshooting
 
-### "N file(s) missing documentation"
-**Cause:** JS files in chapter folders lack corresponding IQ_Notes.
-**Fix:** Create IQ_Notes/[filename]_IQ.md for each missing file.
+### "Commit failed (hooks may have blocked it)"
+**Most Common Cause:** IQ files contain placeholder content (template text not replaced).
+**Fix:** Fill in all IQ file sections with real content:
+- Replace "Write a brief description..." with actual explanation
+- Replace "Point 1", "Point 2" with real points
+- Replace "Mistake 1", "Mistake 2" with real mistakes
+- Ensure `## Overview` and `## Summary` sections have real content
 
 ### "Blocking git add: N markdown file(s) failed quality checks"
-**Cause:** IQ files missing required sections or code blocks.
-**Fix:** Add `## Overview`, `## Summary`, and code examples to IQ files.
+**Cause:** IQ files missing required sections, code blocks, or contain placeholders.
+**Fix:** 
+1. Add `## Overview` and `## Summary` sections
+2. Add code blocks with ``` fences
+3. Replace all template placeholder text with real content
+
+### "Missing: IQ_Notes/Chapter_Notes/11/80_Topic_IQ.md"
+**Cause:** Go Pikachu didn't create file (unlikely).
+**Fix:** Re-run Go Pikachu — it should create stubs for new JS files.
 
 ### "Blocking commit: 1 chapter(s) are missing their MASTER IQ file"
-**Cause:** MASTER_[TopicName]_IQ.md doesn't exist or is incomplete.
-**Fix:** Create MASTER file with all 9 required sections (see template).
+**Cause:** MASTER_[TopicName]_IQ.md doesn't exist or missing required sections.
+**Fix:** Create MASTER file in `IQ_Notes/Chapter_Notes/11/` with all 9 sections:
+1. Syntax Reference — End to End
+2. Built-in Functions & Methods
+3. Deep Insights & Gotchas
+4. Interview-Ready Definitions
+5. Tricky Interview Questions
+6. Controversial Topics & Ongoing Debates
+7. Quick Reference Cheat Sheet
+8. Memory Map & Visual Flowchart
+9. LinkedIn-Style Post
 
-### "Push failed (likely due to missing documentation)"
-**Cause:** Remote branch also enforces documentation rules.
-**Fix:** Ensure all files have complete IQ documentation locally first.
+### "Push failed"
+**Cause:** Remote branch enforces same validation rules.
+**Fix:** Ensure all local files pass validation first (no placeholder text, all sections filled).
 
 ---
 

@@ -32,12 +32,13 @@ bash ./.claude/scripts/go-pikachu.sh
 ```
 
 #### What Happens
-1. Scans chapter JS files for missing IQ documentation
-2. Stages all changes (`git add -A`)
-3. Runs PreToolUse hooks (validation)
-4. Creates commit with standardized message
-5. Runs PostToolUse hooks (logging/reminders)
-6. Pushes to main
+1. **Scans** chapter JS files for missing IQ documentation
+2. **Creates** IQ_Notes stubs (only for NEW JS files, not existing)
+3. **Validates** with PreToolUse hooks (quality checks, no placeholders, MASTER file)
+4. **Stages** all changes (`git add -A`)
+5. **Commits** with standardized message
+6. **PostToolUse hooks** run (logging/reminders)
+7. **Pushes** to main
 
 #### Success Criteria
 - ✅ All chapter JS files have matching IQ_Notes
@@ -85,14 +86,17 @@ Configured in `.claude/settings.json` under `hooks`:
 
 1. **Create directory** — `NN_chapter_Name/` (e.g., `11_chapter_Function/`)
 2. **Add JS files** — `NN_Topic.js` (e.g., `80_Function_Basics1.js`)
-3. **Create IQ_Notes** — `IQ_Notes/NN_Topic_IQ.md` (one per JS file)
-   - Must have: Overview, Summary, code blocks
-   - No placeholder tasks (fill-in-the-blank placeholders)
-4. **Create MASTER** — `IQ_Notes/Chapter_Notes/NN/MASTER_Topic_IQ.md`
+3. **Run Go Pikachu** (first run) — Auto-creates IQ_Notes stubs in `IQ_Notes/Chapter_Notes/NN/`
+4. **Fill IQ_Notes** — Replace template placeholders with real content
+   - Overview, Main Concept, Code Example, Key Points, Common Mistakes, Summary
+   - No placeholder text ("Write a brief...", "Point 1", etc.)
+5. **Create MASTER IQ** — `IQ_Notes/Chapter_Notes/NN/MASTER_Topic_IQ.md`
    - Must have: 9 sections (see template in hook error)
-5. **Run Go Pikachu** — Validates and publishes
+6. **Run Go Pikachu** (final run) — Validates and publishes
 
 ### IQ_Notes Template
+
+Go Pikachu auto-creates stubs. Fill in these sections:
 
 ```markdown
 # NN_FileName — Descriptive Title
@@ -102,21 +106,43 @@ Configured in `.claude/settings.json` under `hooks`:
 ## Overview
 [What this topic is about — 2-3 sentences]
 
-## [Main Concept 1]
-[Explanation with working code]
+---
 
-```javascript
-// Code example
-```
+## Main Concept
 
-## [Main Concept 2]
-[More explanation]
+[Explanation of primary concept/pattern]
+
+### Code Example
+
+\`\`\`javascript
+// Working code from NN_FileName.js
+\`\`\`
+
+### Key Points
+
+- Point 1 (real content, not placeholder)
+- Point 2
+- Point 3
+
+---
+
+## Common Mistakes
+
+- Mistake 1 (real content)
+- Mistake 2
 
 ---
 
 ## Summary
+
 **Key Takeaway:** [One-liner—the most important idea]
 ```
+
+**Quality Checks:**
+- 200-400 words
+- No placeholder text ("Write a brief...", "Point 1", "Mistake 1")
+- Code blocks with ``` fences
+- Must have `## Overview` and `## Summary`
 
 ### MASTER IQ Template
 
