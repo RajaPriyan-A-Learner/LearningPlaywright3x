@@ -1,5 +1,13 @@
 # Identifiers and Literals in JavaScript
 
+**File:** `03_chapter_identifier/identifiers_and_literals.js`
+
+## Overview
+
+Identifiers and literals are fundamental building blocks of JavaScript. Identifiers are names for variables, functions, and classes that follow specific syntax rules and avoid reserved keywords. Literals are fixed values written directly in code (strings, numbers, booleans, objects, arrays). Understanding both is essential for writing valid JavaScript and following community conventions.
+
+---
+
 ## 1. Identifiers
 
 An **identifier** is a name used to refer to variables, functions, classes, or any other user-defined items in JavaScript.
