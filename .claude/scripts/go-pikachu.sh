@@ -1,37 +1,33 @@
 #!/bin/bash
-# GO PIKACHU — Auto-generate IQ notes for chapter JS files + commit
-# Workflow: Scan → Create IQ stubs → Validate hooks → Stage → Commit → PostHooks → Push
+# GO PIKACHU — Create IQ note stubs for new chapter JS files
+# Only creates missing IQ files. Does NOT edit/remove existing files or commit.
 
 set -e
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
 cd "$REPO_ROOT"
 
-echo "⚡ GO PIKACHU ACTIVATED ⚡"
+echo "GO PIKACHU: Creating IQ stubs for new JS files"
 echo ""
 
-# Step 1: SCAN — Find all chapter JS files
-echo "🔍 Step 1: Scanning chapter JS files..."
-
-FILES_CREATED=0
-FILES_EXISTING=0
+# Find all chapter JS files
 JS_FILES=()
-
 while IFS= read -r js_file; do
     JS_FILES+=("$js_file")
 done < <(find . -path "./[0-9][0-9]_chapter_*/*.js" -type f | sort)
 
 if [ ${#JS_FILES[@]} -eq 0 ]; then
-    echo "⚠️  No chapter JS files found."
+    echo "No new chapter JS files found."
     exit 0
 fi
 
-echo "   Found ${#JS_FILES[@]} JS file(s)"
-
-# Step 2: CREATE missing IQ files (only for NEW JS files, not existing)
+echo "Found ${#JS_FILES[@]} JS file(s)"
 echo ""
-echo "📝 Step 2: Creating IQ stubs for new JS files..."
 
+FILES_CREATED=0
+FILES_EXISTING=0
+
+# Create IQ stubs only for new JS files
 for js_file in "${JS_FILES[@]}"; do
     BASE=$(basename "$js_file" .js)
     CHAPTER_DIR=$(dirname "$js_file")
@@ -42,7 +38,6 @@ for js_file in "${JS_FILES[@]}"; do
 
     if [ -f "$IQ_FILE" ]; then
         ((FILES_EXISTING++))
-        echo "   ✓ Exists: $IQ_FILE"
     else
         mkdir -p "$IQ_DIR"
 
@@ -88,61 +83,10 @@ Explain the primary concept or pattern shown in this file.
 TEMPLATE
 
         ((FILES_CREATED++))
-        echo "   ✓ Created: $IQ_FILE"
+        echo "Created: $IQ_FILE"
     fi
 done
 
 echo ""
-echo "   Summary: Created $FILES_CREATED, Existing $FILES_EXISTING"
-
-# Step 3: VALIDATE — Run PreToolUse hooks
-echo ""
-echo "🪝 Step 3: Running PreToolUse hooks (validation)..."
-echo "   ⏳ Hooks validate quality, placeholders, MASTER files..."
-
-# Step 4: RUN PostToolUse hooks info
-echo ""
-echo "🪝 Step 4: PostToolUse hooks (logging)..."
-echo "   ⏳ PostToolUse hooks will run after commit..."
-
-# Step 5: STAGE all changes (AFTER validation, BEFORE commit)
-echo ""
-echo "📦 Step 5: Staging all changes..."
-
-git add -A
-echo "   ✓ All changes staged"
-
-# Step 6: COMMIT
-echo ""
-echo "💾 Step 6: Creating commit..."
-
-git commit -m "$(cat <<'EOF'
-feat: add/update chapter IQ documentation
-
-- Created new IQ note(s)
-- Validated existing documentation
-- All files pass quality checks
-
-Triggered by: Go Pikachu
-Co-Authored-By: Claude Haiku 4.5 <noreply@anthropic.com>
-EOF
-)" || {
-    echo "❌ Commit failed (hooks may have blocked it)"
-    echo "   Read hook errors above to fix issues"
-    exit 1
-}
-echo "   ✓ Commit created"
-
-# Step 7: PUSH
-echo ""
-echo "🚀 Step 7: Pushing to main..."
-
-git push origin main || {
-    echo "❌ Push failed"
-    exit 1
-}
-echo "   ✓ Pushed to main"
-
-echo ""
-echo "✅ GO PIKACHU COMPLETE!"
-echo "   Created: $FILES_CREATED | Existing: $FILES_EXISTING | Staged & Pushed"
+echo "Summary: Created $FILES_CREATED new files | $FILES_EXISTING already exist"
+echo "Done. Manually stage, commit, and push when ready."
