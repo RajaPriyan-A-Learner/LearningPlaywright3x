@@ -1,0 +1,54 @@
+# 34_Incre_Part2 — Operator
+
+**File:** ${jsFile.Name}
+
+## Overview
+
+Write a brief description of what this file demonstrates.
+
+---
+
+## Main Concept
+
+Explain the primary concept or pattern shown in this file.
+
+### Code Example
+
+\\\javascript
+// let a = 10;
+// console.log(++a + a + a++);
+// console.log(a);
+
+// let i = 1;
+// let result = i++ + ++i;
+// console.log(result, i);
+
+
+// let a = 10;
+// console.log(++a + ++a);
+// console.log(a);
+
+let a = 34;
+let result = a++;
+console.log(result);
+console.log(a);
+\\\
+
+### Key Points
+
+- Point 1
+- Point 2
+- Point 3
+
+---
+
+## Common Mistakes
+
+- Mistake 1
+- Mistake 2
+
+---
+
+## Summary
+
+**Key Takeaway:** Write the most important takeaway from this lesson in one sentence.
