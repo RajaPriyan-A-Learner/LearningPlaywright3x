@@ -1,6 +1,10 @@
-# 78_Copy — Shallow Copy vs. Reference (Deep Copy)
+# 78_Copy_IQ — Shallow Copy vs. Reference (Deep Copy)
 
-**Demonstrates:** the critical difference between copying an array and referencing it.
+**File:** `78_Copy.js`
+
+## Overview
+
+The critical distinction between creating an independent copy of an array versus creating another reference to the same array. Simple assignment creates a reference; dedicated methods create shallow copies.
 
 ## Shallow Copy — Independent Array
 
@@ -60,6 +64,6 @@ For deeply nested structures, you'd need recursive copying or `JSON.parse(JSON.s
 
 ---
 
-## Key Takeaway
+## Summary
 
 Assignment (`let b = a`) creates a reference; shallow-copy methods (`...`, `slice()`, `concat()`, `Array.from()`) create independent arrays. For arrays of primitives, shallow copy is usually sufficient.

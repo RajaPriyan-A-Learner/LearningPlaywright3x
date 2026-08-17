@@ -1,6 +1,10 @@
-# 73_Array_Transform — map() & filter()
+# 73_Array_Transform_IQ — map() & filter()
 
-**Demonstrates:** transforming and filtering arrays without mutating the original.
+**File:** `73_Array_Transform.js`
+
+## Overview
+
+Array transformation methods that create new arrays without mutating the original. `map()` transforms every element by applying a callback, while `filter()` creates a new array containing only elements that pass a test.
 
 ## map() — Transform Each Element
 
@@ -31,6 +35,6 @@ console.log(passing); // [82, 91, 73]
 
 ---
 
-## Key Takeaway
+## Summary
 
 Both `map()` and `filter()` are **non-mutating** transformations — they always return a fresh array, leaving the original untouched. This is why they're the default choice over imperative loops when you need to transform data.

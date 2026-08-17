@@ -1,6 +1,10 @@
-# 79_Destructing — Array Destructuring & Rest Pattern
+# 79_Destructing_IQ — Array Destructuring & Rest Pattern
 
-**Demonstrates:** unpacking array elements into variables and using the rest pattern.
+**File:** `79_Destructing.js`
+
+## Overview
+
+Array destructuring syntax for unpacking elements into individual variables. Includes rest patterns for collecting remaining elements, defaults for missing values, and elegant variable swapping.
 
 ## Basic Destructuring
 
@@ -62,6 +66,6 @@ console.log(p, q); // 2 1
 
 ---
 
-## Key Takeaway
+## Summary
 
 Destructuring makes unpacking cleaner than indexed access. Rest patterns handle variable-length collections. Swaps become one-liners. Defaults handle missing values gracefully.

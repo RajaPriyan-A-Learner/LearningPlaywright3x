@@ -1,6 +1,10 @@
-# 75_Slicing — Array.slice()
+# 75_Slicing_IQ — Array.slice()
 
-**Demonstrates:** extracting subsets of arrays without mutation, using positive/negative indices.
+**File:** `75_Slicing.js`
+
+## Overview
+
+The `slice()` method extracts a shallow copy of a portion of an array without mutating the original. Supports both positive indices (from start) and negative indices (from end).
 
 ## slice(start, end) — Non-Mutating Substring
 
@@ -38,6 +42,6 @@ arr.slice(-3, -5);     // [] — invalid range (start after end) returns empty
 
 ---
 
-## Key Takeaway
+## Summary
 
 `slice()` never mutates; it always returns a new array. Use negative indices for "from the end" logic.

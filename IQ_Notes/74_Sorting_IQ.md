@@ -1,6 +1,10 @@
-# 74_Sorting — Array.sort()
+# 74_Sorting_IQ — Array.sort()
 
-**Demonstrates:** default lexicographic (string-based) sorting quirk, and custom comparators.
+**File:** `74_Sorting.js`
+
+## Overview
+
+Array sorting with a critical gotcha: the default `sort()` uses lexicographic (string-based) comparison, not numeric. Custom comparators enable proper numeric sorting in ascending or descending order.
 
 ## Default sort() is Lexicographic, Not Numeric
 
@@ -35,6 +39,6 @@ nums.reverse();                  // Also reverses: [1, 2, 10, 21]
 
 ---
 
-## Key Takeaway
+## Summary
 
 Always provide a comparator for numeric arrays. **Never rely on default `sort()` for numbers** — it will silently produce wrong results by doing string comparison.

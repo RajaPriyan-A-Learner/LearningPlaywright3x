@@ -1,6 +1,10 @@
-# 77_Array_Checking — Array.isArray(), every(), some()
+# 77_Array_Checking_IQ — Array.isArray(), every(), some()
 
-**Demonstrates:** checking array types and validating array elements with predicates.
+**File:** `77_Array_Checking.js`
+
+## Overview
+
+Methods for type-checking arrays and validating elements. `Array.isArray()` reliably distinguishes arrays from objects, while `every()` and `some()` test whether elements pass a predicate.
 
 ## Array.isArray() — The Only Reliable Way
 
@@ -47,6 +51,6 @@ Without the semicolon after `every(...)`, the parser treats `[80, 60, 85]` as an
 
 ---
 
-## Key Takeaway
+## Summary
 
 Always use `Array.isArray()` to check for arrays. Use `every()` and `some()` for convenient predicate checks. Always terminate statements with semicolons to avoid ASI misinterpreting the next line's `[` as an index.

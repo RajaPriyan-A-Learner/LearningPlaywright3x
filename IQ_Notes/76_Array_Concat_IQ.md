@@ -1,6 +1,10 @@
-# 76_Array_Concat — concat(), Spread Operator, join()
+# 76_Array_Concat_IQ — concat(), Spread Operator, join()
 
-**Demonstrates:** combining arrays and converting arrays to strings.
+**File:** `76_Array_Concat.js`
+
+## Overview
+
+Methods for combining arrays and converting arrays to strings. `concat()` and the spread operator combine arrays, while `join()` converts arrays into formatted strings.
 
 ## concat() — Combine Arrays (Non-Mutating)
 
@@ -44,6 +48,6 @@ console.log(s);  // "pass | fail | skip"
 
 ---
 
-## Key Takeaway
+## Summary
 
 Use `concat()` or spread `...` to combine arrays. Use `join()` to create a formatted string from array elements.
