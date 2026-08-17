@@ -3,6 +3,10 @@
 Covers the files in `05_chapter_Operator/`:
 `13_DataType.js`, `14_Assignment_Operator.js`, `15_Arithmetic_Operator.js`, `16_Comparison_Operator.js`, `17_Logical_Operator.js`, `18_Confusing_Comparison.js`, `18_Confusing_Comparison_P2.js`, `20_Question.js`
 
+## Overview
+
+JavaScript provides rich operator support for manipulating data: assignment (=, +=), arithmetic (+, -, *, /, %, **), comparison (===, ==, !=, >, <), and logical (&&, ||, !). Mastering operators is foundational—they underpin every expression. This section covers operator precedence, type coercion in loose equality (==), and gotchas like null/undefined comparison inconsistencies.
+
 ---
 
 ## 1. Data Types Recap
