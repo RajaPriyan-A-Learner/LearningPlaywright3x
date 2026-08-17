@@ -1,6 +1,8 @@
 # 04 — Literals & Data Types: Complete Interview & Reference Guide
 
-> A literal is a fixed value written directly in code — `42`, `"hello"`, `true`, `null`. JavaScript has 7 primitive types (string, number, bigint, boolean, undefined, null, symbol) and one complex type (object). This chapter covers all literal forms, the special values `null` and `undefined`, JavaScript's single unified `number` type (IEEE 754), and the `typeof` operator.
+## Overview
+
+A literal is a fixed value written directly in code — `42`, `"hello"`, `true`, `null`. JavaScript has 7 primitive types (string, number, bigint, boolean, undefined, null, symbol) and one complex type (object). This chapter covers all literal forms, the special values `null` and `undefined`, JavaScript's single unified `number` type (IEEE 754), and the `typeof` operator. Understanding data types is crucial for avoiding common JavaScript gotchas.
 
 ---
 
@@ -480,3 +482,9 @@ console.log(x == undefined);// true
 |------|-------|
 | [07_Literals_and_Numbers_IQ.md](./07_Literals_and_Numbers_IQ.md) | All literal types, number bases (decimal/binary/octal/hex/exponential), `typeof` |
 | [08_Null_vs_Undefined.md](./08_Null_vs_Undefined.md) | `null` vs `undefined` — meaning, `typeof`, equality traps |
+
+---
+
+## Summary
+
+**Key Takeaway:** Literals are fixed values in code. JavaScript has 7 primitive types (string, number, bigint, boolean, undefined, null, symbol) and objects. Remember: `typeof null === "object"` is a historical bug, and `undefined` means "no value yet" while `null` means "intentionally no value".

@@ -1,6 +1,8 @@
 # 10 — Arrays: Complete Interview & Reference Guide
 
-> Arrays are JavaScript's primary ordered collection type — zero-indexed, dynamically-sized, and capable of holding mixed types. This chapter covers every aspect of working with arrays: creation methods, element access and mutation, adding and removing items, searching, and all five iteration patterns. For testers, arrays are everywhere — test data sets, browser lists, assertion collections, and API response payloads.
+## Overview
+
+Arrays are JavaScript's primary ordered collection type — zero-indexed, dynamically-sized, and capable of holding mixed types. This chapter covers every aspect of working with arrays: creation methods, element access and mutation, adding and removing items, searching, and all five iteration patterns. For testers, arrays are everywhere — test data sets, browser lists, assertion collections, and API response payloads.
 
 ---
 
@@ -727,3 +729,9 @@ nums.sort();
 | [70_Array_searching_IQ.md](./70_Array_searching_IQ.md) | indexOf/lastIndexOf/includes — when to use each |
 | [71_IQ_IQ.md](./71_IQ_IQ.md) | find/findIndex/findLast/findLastIndex |
 | [72_Array_iterate_IQ.md](./72_Array_iterate_IQ.md) | All 5 iteration styles compared, for...in gotcha |
+
+---
+
+## Summary
+
+**Key Takeaway:** Arrays are zero-indexed collections. Use `push/pop` for stack operations (end), `unshift/shift` for queue operations (start), and `splice` for arbitrary insertions/deletions. For iteration, prefer `for...of` over `for...in`. Remember: array indices are properties, and `for...in` iterates over all enumerable keys, not just indices.

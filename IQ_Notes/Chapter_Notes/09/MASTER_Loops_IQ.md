@@ -1,6 +1,8 @@
 # 09 — Loops: Complete Interview & Reference Guide
 
-> Loops are JavaScript's mechanism for executing a block of code repeatedly until a condition is met. This chapter covers every loop construct — `for`, `while`, `do...while`, and nested loops — along with the increment/decrement operators that drive them. Mastery of loops is fundamental for any developer or tester: they power iteration over data, retry logic, and all time-based or count-based control flow.
+## Overview
+
+Loops are JavaScript's mechanism for executing a block of code repeatedly until a condition is met. This chapter covers every loop construct — `for`, `while`, `do...while`, and nested loops — along with the increment/decrement operators that drive them. Mastery of loops is fundamental for any developer or tester: they power iteration over data, retry logic, and all time-based or count-based control flow.
 
 ---
 
@@ -695,3 +697,9 @@ let c = ++a;  // pre
 | [61_Do_while_IQ.md](./61_Do_while_IQ.md) | `do...while` syntax reference |
 | [62_DoWhile_Vs_While_IQ.md](./62_DoWhile_Vs_While_IQ.md) | At-least-once guarantee proven |
 | [63_Nested_For_Loops_IQ.md](./63_Nested_For_Loops_IQ.md) | 2D grid iteration, O(N²) complexity |
+
+---
+
+## Summary
+
+**Key Takeaway:** Use `for` for counted iterations with a known range. Use `while` for condition-based iteration when the count is unknown. Use `do...while` when you need at least one execution before checking the condition. Nested loops multiply complexity — keep nesting depth shallow.

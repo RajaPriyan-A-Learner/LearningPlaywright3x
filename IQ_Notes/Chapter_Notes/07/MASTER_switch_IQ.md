@@ -1,6 +1,8 @@
 # 07 — Switch Statement: Complete Interview & Reference Guide
 
-> The `switch` statement evaluates an expression and compares it against a series of `case` values using **strict equality (`===`)**. It is the go-to alternative to long `else if` chains when matching a single variable against multiple exact values. Key concepts: `break` to prevent fallthrough, `default` as catch-all, case grouping, the `switch(true)` pattern, and common bugs like missing `break` or duplicate cases.
+## Overview
+
+The `switch` statement evaluates an expression and compares it against a series of `case` values using **strict equality (`===`)**. It is the go-to alternative to long `else if` chains when matching a single variable against multiple exact values. Key concepts: `break` to prevent fallthrough, `default` as catch-all, case grouping, the `switch(true)` pattern, and common bugs like missing `break` or duplicate cases are covered thoroughly.
 
 ---
 
@@ -629,3 +631,9 @@ Output: `"one"  "two"  "three"`
 | [45_Switch_True_Pattern_IQ.md](./45_Switch_True_Pattern_IQ.md) | `switch(true)` for range checks |
 | [46_Switch_Duplicate_Case_Values_IQ.md](./46_Switch_Duplicate_Case_Values_IQ.md) | Duplicate case — dead code |
 | [47_Switch_Strict_Equality_IQ.md](./47_Switch_Strict_Equality_IQ.md) | `===` in switch — type matching |
+
+---
+
+## Summary
+
+**Key Takeaway:** `switch` uses strict equality (`===`) to match cases. Always add `break` or `return` to prevent fallthrough. Use `default` as a catch-all for unmatched cases, and remember the `switch(true)` pattern for range checks when an `if/else if` ladder would be verbose.

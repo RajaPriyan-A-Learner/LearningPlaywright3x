@@ -1,6 +1,8 @@
 # 06 — Conditional Statements: Complete Interview & Reference Guide
 
-> Conditional statements control which block of code runs based on whether a condition is truthy or falsy. JavaScript provides `if`, `if/else`, the `else if` ladder, and nested `if/else`. These are fundamental to all decision-making in code — from a simple browser check to a multi-tier grade calculator.
+## Overview
+
+Conditional statements control which block of code runs based on whether a condition is truthy or falsy. JavaScript provides `if`, `if/else`, the `else if` ladder, and nested `if/else`. These are fundamental to all decision-making in code — from a simple browser check to a multi-tier grade calculator. Understanding truthiness, falsy values, and proper condition structure is critical for bug-free logic.
 
 ---
 
@@ -488,3 +490,9 @@ if ("0") { console.log("runs"); }
 | [37_If_Else_Statement_Basics_IQ.md](./37_If_Else_Statement_Basics_IQ.md) | `if/else` basics, truthy/falsy |
 | [38_If_Else_If_Ladder_Grade_Calculator_IQ.md](./38_If_Else_If_Ladder_Grade_Calculator_IQ.md) | `else if` ladder — grade calculator with range checks |
 | [38_Nested_If_Else_Statement_IQ.md](./38_Nested_If_Else_Statement_IQ.md) | Nested `if/else` — login + role check pattern |
+
+---
+
+## Summary
+
+**Key Takeaway:** Conditions evaluate to truthy or falsy. Falsy: `false`, `0`, `""`, `null`, `undefined`, `NaN`. Everything else is truthy. Use `if/else if/else` for sequential conditions, not multiple nested `if` statements — it's clearer and avoids cascading checks.

@@ -1,6 +1,8 @@
 # 01 — What is JavaScript: Complete Interview & Reference Guide
 
-> JavaScript is a high-level, interpreted (JIT-compiled), single-threaded, dynamically typed, garbage-collected scripting language that conforms to the ECMAScript standard. It is the only language natively understood by web browsers and — via Node.js — runs on servers, CLIs, and embedded systems. Every line you write goes through a pipeline: source code → parsing → bytecode (V8 Ignition) → optional JIT compilation to machine code (V8 TurboFan) for hot paths.
+## Overview
+
+JavaScript is a high-level, JIT-compiled, single-threaded, dynamically typed, garbage-collected scripting language that conforms to the ECMAScript standard. It is the only language natively understood by web browsers and — via Node.js — runs on servers, CLIs, and embedded systems. This chapter covers the complete pipeline from source code to machine code execution, built-in functions, interview-ready definitions, and deep performance insights into the V8 engine.
 
 ---
 
@@ -395,3 +397,9 @@ console.log("3");
 |------|-------|
 | [Compilation_vs_Interpretation_vs_JIT_IQ.md](./Compilation_vs_Interpretation_vs_JIT_IQ.md) | Compilation vs Interpretation vs JIT — full comparison table + V8 walkthrough |
 | [Source_Code_ByteCODE_Binary_IQ.md](./Source_Code_ByteCODE_Binary_IQ.md) | Source code → Bytecode → Binary pipeline with V8 diagram |
+
+---
+
+## Summary
+
+**Key Takeaway:** JavaScript is JIT-compiled at runtime, not purely interpreted. Understanding the V8 pipeline—source code → bytecode → machine code—explains why type consistency matters for performance and why seemingly old features like `typeof null === "object"` remain unfixed.

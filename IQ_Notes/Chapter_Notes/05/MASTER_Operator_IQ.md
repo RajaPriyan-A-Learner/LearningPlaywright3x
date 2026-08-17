@@ -1,6 +1,8 @@
 # 05 — Operators: Complete Interview & Reference Guide
 
-> Operators are symbols or keywords that perform operations on values (operands). JavaScript has an extensive operator set: assignment (`=`), arithmetic (`+`, `-`, `*`, `/`, `%`, `**`), comparison (`==`, `===`, `!=`, `!==`, `>`, `<`, `>=`, `<=`), logical (`&&`, `||`, `!`, `??`), ternary (`?:`), `typeof`, string concatenation, increment/decrement (`++`, `--`), and the nullish coalescing operator (`??`). This is the largest chapter in the curriculum.
+## Overview
+
+Operators are symbols or keywords that perform operations on values (operands). JavaScript has an extensive operator set: assignment (`=`), arithmetic (`+`, `-`, `*`, `/`, `%`, `**`), comparison (`==`, `===`, `!=`, `!==`, `>`, `<`, `>=`, `<=`), logical (`&&`, `||`, `!`, `??`), ternary (`?:`), `typeof`, string concatenation, increment/decrement (`++`, `--`), and the nullish coalescing operator (`??`). Mastering operators is essential for writing correct, efficient JavaScript code.
 
 ---
 
@@ -561,3 +563,9 @@ flowchart TD
 | [34_Increment_Multiple_Expressions_IQ.md](./34_Increment_Multiple_Expressions_IQ.md) | Multiple increment in one statement |
 | [35_Decrement_Operator_Pre_Post_IQ.md](./35_Decrement_Operator_Pre_Post_IQ.md) | Decrement operator |
 | [36_Nullish_Coalescing_Operator_IQ.md](./36_Nullish_Coalescing_Operator_IQ.md) | `??` operator vs `\|\|` |
+
+---
+
+## Summary
+
+**Key Takeaway:** Use `===` for comparison (strict), never `==`. Understand operator precedence — multiplication before addition, comparison before logical AND. Remember: `??` (nullish coalescing) checks only for `null` and `undefined`, while `||` treats all falsy values the same.

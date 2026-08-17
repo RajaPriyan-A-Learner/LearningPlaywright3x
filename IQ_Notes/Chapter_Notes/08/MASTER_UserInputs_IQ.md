@@ -1,6 +1,8 @@
 # 08 — User Inputs: Complete Interview & Reference Guide
 
-> User input is how a program receives data at runtime. In JavaScript, the mechanism differs entirely between environments: browser-side uses `window.prompt()` (synchronous, modal), while Node.js has three main approaches: `readline` (async callback-based), `prompt-sync` (npm package, synchronous), and `fs.readFileSync('/dev/stdin')` (file system, synchronous). For Playwright testers, understanding Node.js input methods is essential for writing CLI test-data scripts and interactive automation helpers.
+## Overview
+
+User input is how a program receives data at runtime. In JavaScript, the mechanism differs entirely between environments: browser-side uses `window.prompt()` (synchronous, modal), while Node.js has three main approaches: `readline` (async callback-based), `prompt-sync` (npm package, synchronous), and `fs.readFileSync('/dev/stdin')` (file system, synchronous). For Playwright testers, understanding Node.js input methods is essential for writing CLI test-data scripts and interactive automation helpers.
 
 ---
 
@@ -519,3 +521,9 @@ console.log("A");
 | [49_Node_Readline_Input_IQ.md](./49_Node_Readline_Input_IQ.md) | `readline` — async callback, rl.close() |
 | [50_Node_Prompt_Sync_Input_IQ.md](./50_Node_Prompt_Sync_Input_IQ.md) | `prompt-sync` — synchronous npm package |
 | [51_Node_Fs_Stdin_Input_IQ.md](./51_Node_Fs_Stdin_Input_IQ.md) | `fs.readFileSync('/dev/stdin')` — Unix stdin |
+
+---
+
+## Summary
+
+**Key Takeaway:** Browser uses `window.prompt()` (synchronous, returns string or null). Node.js has three options: `readline` (async, production-standard), `prompt-sync` (sync, npm package), and `fs.readFileSync('/dev/stdin')` (sync, works on Unix). Always validate user input before using it.

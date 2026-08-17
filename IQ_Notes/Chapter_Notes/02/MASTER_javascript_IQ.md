@@ -1,6 +1,8 @@
 # 02 — Variables & `let`: Complete Interview & Reference Guide
 
-> Variables are named containers for values. JavaScript has three declaration keywords: `var` (function-scoped, legacy), `let` (block-scoped, ES6), and `const` (block-scoped, immutable binding). This chapter focuses on `let` — its scoping rules, Temporal Dead Zone (TDZ), per-iteration binding in loops, and how it solves the classic closure-in-loop bug that plagued `var` code.
+## Overview
+
+Variables are named containers for values. JavaScript has three declaration keywords: `var` (function-scoped, legacy), `let` (block-scoped, ES6), and `const` (block-scoped, immutable binding). This chapter focuses on `let` — its scoping rules, Temporal Dead Zone (TDZ), per-iteration binding in loops, and how it solves the classic closure-in-loop bug that plagued `var` code. Understanding `let` and `const` is essential for modern JavaScript development.
 
 ---
 
@@ -474,3 +476,9 @@ let x = 5;
 | File | Topic |
 |------|-------|
 | [Let_Keyword_and_Loops_IQ.md](./Let_Keyword_and_Loops_IQ.md) | `let` keyword — block scoping, TDZ, per-iteration binding, infinite loop from empty condition |
+
+---
+
+## Summary
+
+**Key Takeaway:** `let` and `const` are block-scoped, preventing the closure-in-loop bugs that haunted `var`. Each loop iteration gets its own `let` binding, solving the classic async problem where all callbacks shared a single variable reference.

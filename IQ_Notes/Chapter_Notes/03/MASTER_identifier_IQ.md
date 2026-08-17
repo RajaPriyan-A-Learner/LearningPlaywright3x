@@ -1,6 +1,8 @@
 # 03 — Identifiers & Comments: Complete Interview & Reference Guide
 
-> An identifier is any name given to a variable, function, class, or parameter in JavaScript. Identifiers follow strict rules: they must start with a letter, `$`, or `_`; can contain letters, digits, `$`, and `_`; are case-sensitive; and cannot be reserved keywords. This chapter also covers JS naming conventions (camelCase, PascalCase, snake_case, SCREAMING_SNAKE_CASE) and single-line / multi-line comments.
+## Overview
+
+An identifier is any name given to a variable, function, class, or parameter in JavaScript. Identifiers follow strict rules: they must start with a letter, `$`, or `_`; can contain letters, digits, `$`, and `_`; are case-sensitive; and cannot be reserved keywords. This chapter also covers JS naming conventions (camelCase, PascalCase, snake_case, SCREAMING_SNAKE_CASE) and single-line / multi-line comments — essential for writing readable, maintainable code.
 
 ---
 
@@ -453,3 +455,9 @@ The engine treats `totalAmount` and `totalamount` as **completely different name
 | [04_Identifier_Naming_Conventions_IQ.md](./04_Identifier_Naming_Conventions_IQ.md) | camelCase, PascalCase, snake_case, SCREAMING_SNAKE |
 | [05_Comments_IQ.md](./05_Comments_IQ.md) | Single-line, multi-line, JSDoc comments |
 | [06_Identifier_Rules_Advanced_IQ.md](./06_Identifier_Rules_Advanced_IQ.md) | Reserved keywords, Unicode identifiers, advanced gotchas |
+
+---
+
+## Summary
+
+**Key Takeaway:** Identifiers must start with a letter, underscore, or dollar sign — never a digit. Follow camelCase for variables and functions, PascalCase for classes, and SCREAMING_SNAKE_CASE for constants. JavaScript is case-sensitive, so naming discipline matters.
