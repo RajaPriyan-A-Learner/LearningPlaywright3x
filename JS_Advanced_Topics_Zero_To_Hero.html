@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Advanced Topics: Zero to Hero</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark-reasonable.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #0f1115;
+            --text-color: #e2e8f0;
+            --primary-accent: #3b82f6;
+            --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --card-hover: rgba(255, 255, 255, 0.06);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.7;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.15), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.15), transparent 25%);
+            background-attachment: fixed;
+        }
+
+        /* Typography */
+        h1, h2, h3 {
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 4rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            margin: 4rem 0 1rem;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #94a3b8;
+            margin-bottom: 4rem;
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-top: 3rem;
+            color: #fff;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            color: #cbd5e1;
+            margin-top: 2rem;
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+            color: #94a3b8;
+        }
+
+        /* Layout */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Glassmorphism Cards */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeIn 1s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .glass-panel:hover {
+            transform: translateY(-5px);
+            background: var(--card-hover);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Code Blocks */
+        pre {
+            background: #1e1e2e !important;
+            border-radius: 12px;
+            padding: 1.5rem !important;
+            margin: 1.5rem 0;
+            border: 1px solid var(--glass-border);
+            overflow-x: auto;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95rem;
+        }
+
+        /* Accordion for Interview Questions */
+        .faq-item {
+            margin-bottom: 1rem;
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .faq-item:hover {
+            border-color: var(--primary-accent);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.1);
+        }
+
+        .faq-question {
+            width: 100%;
+            text-align: left;
+            background: rgba(0,0,0,0.2);
+            padding: 1.2rem 1.5rem;
+            border: none;
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Inter', sans-serif;
+            transition: background 0.3s ease;
+        }
+
+        .faq-question:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .faq-icon {
+            transition: transform 0.3s ease;
+            font-size: 1.2rem;
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(0,0,0,0.1);
+        }
+
+        .faq-answer-inner {
+            padding: 1.5rem;
+            border-top: 1px solid var(--glass-border);
+            color: #94a3b8;
+        }
+
+        /* Tags/Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-right: 0.5rem;
+        }
+        
+        .badge-beginner { background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2); }
+        .badge-intermediate { background: rgba(59, 130, 246, 0.1); color: var(--primary-accent); border: 1px solid rgba(59, 130, 246, 0.2); }
+        .badge-advanced { background: rgba(245, 158, 11, 0.1); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.2); }
+        .badge-expert { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); }
+
+        /* Navigation / ToC */
+        .toc {
+            position: sticky;
+            top: 2rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 3rem;
+            z-index: 10;
+        }
+        .toc h3 { margin-top: 0; margin-bottom: 1rem; }
+        .toc ul { list-style: none; display: flex; flex-wrap: wrap; gap: 1rem; }
+        .toc a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.05);
+            transition: all 0.2s ease;
+        }
+        .toc a:hover {
+            color: #fff;
+            background: var(--primary-gradient);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+        .delay-4 { animation-delay: 0.8s; }
+        .delay-5 { animation-delay: 1.0s; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: var(--bg-color); }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>JS Async Architecture</h1>
+        <p class="subtitle">Deep Research & Zero-to-Hero Interview Guide</p>
+
+        <nav class="toc">
+            <h3>Quick Navigation</h3>
+            <ul>
+                <li><a href="#callback">Callback</a></li>
+                <li><a href="#promise">new Promise</a></li>
+                <li><a href="#promise-all">Promise.all</a></li>
+                <li><a href="#promise-race">Promise.race</a></li>
+                <li><a href="#async">Async</a></li>
+                <li><a href="#await">Await</a></li>
+            </ul>
+        </nav>
+
+        <!-- 1. Callback -->
+        <section id="callback" class="glass-panel delay-1">
+            <h2>1. Callback Functions</h2>
+            <p>At the lowest level of JavaScript's asynchronous capabilities lies the callback. Because JavaScript is single-threaded and runs on a non-blocking Event Loop, operations like Network Requests (I/O) or timers must not block the main execution thread.</p>
+            <p>A callback is simply a function passed as an argument to another function, intended to be invoked ("called back") at a later time. When dealing with asynchronous APIs (like <code>setTimeout</code> or Node's <code>fs.readFile</code>), the callback is handed off to the Web APIs / C++ APIs and placed onto the <strong>Task Queue (Macro-task queue)</strong> once the operation finishes.</p>
+            
+            <pre><code class="language-javascript">// The classic asynchronous callback pattern
+function fetchData(id, callback) {
+    console.log(`Fetching data for ${id}...`);
+    setTimeout(() => {
+        const data = { id: id, name: "Premium User" };
+        callback(null, data); // Error-first callback pattern
+    }, 1000);
+}
+
+fetchData(42, (err, result) => {
+    if (err) return console.error(err);
+    console.log("Data received:", result);
+});</code></pre>
+
+            <h3>The Dark Side: Inversion of Control & Callback Hell</h3>
+            <p>Callbacks suffer from two major flaws. First, <strong>Callback Hell (Pyramid of Doom)</strong>, where sequential async operations create deep horizontal nesting. Second, and more critically, <strong>Inversion of Control</strong>. When you pass a callback to a third-party library, you surrender control of your program's execution. You must trust that the library will call your function exactly once, not multiple times, and with the correct context.</p>
+
+            <h3>Zero-to-Hero Interview Questions</h3>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span><span class="badge badge-beginner">Beginner</span> What is a callback function?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            A callback is a function passed as an argument to another function, which is then executed inside the outer function to complete some kind of routine or action. They can be synchronous (like in <code>Array.map()</code>) or asynchronous (like in <code>setTimeout()</code>).
+                        </div>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span><span class="badge badge-advanced">Advanced</span> Explain "Inversion of Control" in the context of callbacks.</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Inversion of Control happens when you write a callback and hand it to another part of the system (like a 3rd-party library) to execute. You lose control over <em>when</em> and <em>how many times</em> that callback is executed. The library could have a bug and call your payment-processing callback twice. Promises solve this by returning the control back to the caller (a Promise can only be resolved once).
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. new Promise -->
+        <section id="promise" class="glass-panel delay-2">
+            <h2>2. <code>new Promise</code></h2>
+            <p>A Promise is an object representing the eventual completion (or failure) of an asynchronous operation and its resulting value. It acts as a proxy for a value not necessarily known when the promise is created.</p>
+            <p>Promises solved the Inversion of Control problem. Instead of handing a callback to a function, the function returns a Promise object to you. You maintain control and attach your callbacks (<code>.then()</code>, <code>.catch()</code>) to that object. Promises utilize the <strong>Microtask Queue</strong>, which has higher priority than the standard Task Queue used by <code>setTimeout</code>.</p>
+
+            <pre><code class="language-javascript">// Creating and consuming a Promise
+const paymentProcessor = new Promise((resolve, reject) => {
+    let success = true;
+    setTimeout(() => {
+        if (success) {
+            resolve({ transactionId: "TRX-999", status: "Paid" }); // Transitions to FULFILLED
+        } else {
+            reject(new Error("Payment Gateway Timeout")); // Transitions to REJECTED
+        }
+    }, 1500);
+});
+
+paymentProcessor
+    .then(data => console.log("Success:", data))
+    .catch(err => console.error("Failed:", err.message))
+    .finally(() => console.log("Transaction pipeline closed."));</code></pre>
+
+            <h3>State Machine</h3>
+            <p>A Promise is a state machine with three states: <strong>Pending</strong>, <strong>Fulfilled</strong>, and <strong>Rejected</strong>. It is <em>immutable</em> once settled. Calling <code>resolve()</code> multiple times has no effect after the first call.</p>
+
+            <h3>Zero-to-Hero Interview Questions</h3>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span><span class="badge badge-intermediate">Intermediate</span> What happens if you call resolve() twice inside a Promise?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Nothing happens on the second call. A Promise can only settle once. Once it transitions from "Pending" to "Fulfilled" (or Rejected), its state and value are locked permanently. Subsequent calls to <code>resolve()</code> or <code>reject()</code> are silently ignored.
+                        </div>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span><span class="badge badge-expert">Expert</span> Why do Promise callbacks (.then) run before setTimeout callbacks?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            This is due to the Event Loop architecture. Promise callbacks are pushed to the <strong>Microtask Queue</strong>, whereas <code>setTimeout</code> callbacks go to the <strong>Macro-task (Task) Queue</strong>. The Event Loop completely drains the Microtask queue immediately after the current synchronous code finishes, before it even looks at the Macro-task queue.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Promise.all -->
+        <section id="promise-all" class="glass-panel delay-3">
+            <h2>3. <code>Promise.all()</code></h2>
+            <p><code>Promise.all()</code> is the cornerstone of parallel asynchronous execution in JavaScript. It takes an iterable (usually an array) of Promises and returns a single new Promise. This new Promise resolves when <strong>all</strong> of the input's promises have resolved, or it rejects immediately if <strong>any</strong> of the input promises reject.</p>
+            
+            <pre><code class="language-javascript">const fetchUser = fetch('/api/user');
+const fetchPosts = fetch('/api/posts');
+const fetchConfig = fetch('/api/config');
+
+// Executes concurrently, vastly improving performance over sequential awaiting
+Promise.all([fetchUser, fetchPosts, fetchConfig])
+    .then(([userRes, postsRes, configRes]) => {
+        // Output array matches the EXACT order of the input array,
+        // regardless of which promise finished first.
+        console.log("All data loaded concurrently!");
+    })
+    .catch(err => {
+        // "Fail-fast" behavior: If fetchPosts fails, the whole block fails instantly.
+        console.error("One of the APIs failed:", err);
+    });</code></pre>
+
+            <h3>Zero-to-Hero Interview Questions</h3>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span><span class="badge badge-intermediate">Intermediate</span> In what order does Promise.all return the results?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            The resulting array of values maintains the <strong>exact same order</strong> as the original input array of Promises, regardless of the order in which the Promises actually resolved under the hood.
+                        </div>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span><span class="badge badge-expert">Expert</span> How do you prevent Promise.all from failing completely if only one API fails?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Historically, developers mapped over the array and attached a <code>.catch()</code> to each individual promise before passing them to <code>Promise.all</code> (so they resolve with an error object instead of rejecting). Modern JavaScript introduced <code>Promise.allSettled()</code> specifically for this use case, which waits for all promises to finish regardless of success or failure.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Promise.race -->
+        <section id="promise-race" class="glass-panel delay-4">
+            <h2>4. <code>Promise.race()</code></h2>
+            <p>While <code>Promise.all</code> waits for everyone, <code>Promise.race()</code> waits for no one. It returns a Promise that settles (resolves or rejects) as soon as the <strong>very first</strong> Promise in the iterable settles.</p>
+            <p>The most practical real-world application for <code>Promise.race</code> is implementing <strong>Timeouts</strong> for network requests, as the native <code>fetch</code> API historically did not support timeouts easily.</p>
+
+            <pre><code class="language-javascript">const fetchData = fetch('https://slow-api.com/data');
+
+const timeout = new Promise((_, reject) => {
+    setTimeout(() => reject(new Error("Request Timed Out!")), 3000);
+});
+
+// The race is on! Whichever settles first wins.
+Promise.race([fetchData, timeout])
+    .then(response => console.log("Data fetched in time!", response))
+    .catch(err => console.error("Race over:", err.message)); 
+    // If fetchData takes > 3s, the timeout rejects first.</code></pre>
+
+            <h3>Zero-to-Hero Interview Questions</h3>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span><span class="badge badge-advanced">Advanced</span> If the timeout wins the race and rejects, what happens to the lingering fetch request?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            The <code>fetch</code> request <strong>continues running in the background</strong>. <code>Promise.race</code> does not cancel or abort the losing Promises; it simply ignores their results. To actually cancel the network request, you must use an <code>AbortController</code> and pass its signal to the fetch call.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Async -->
+        <section id="async" class="glass-panel delay-5">
+            <h2>5. <code>Async</code></h2>
+            <p>The <code>async</code> keyword, introduced in ES2017, is syntactic sugar over Promises and Generator functions. Adding <code>async</code> before a function declaration does two critical things under the hood:</p>
+            <ol style="margin-left: 2rem; color: #94a3b8; margin-bottom: 1.5rem;">
+                <li>It allows the use of the <code>await</code> keyword inside the function body.</li>
+                <li>It forces the function to <strong>always return a Promise</strong>. If you return a primitive value, JavaScript automatically wraps it in <code>Promise.resolve()</code>.</li>
+            </ol>
+
+            <pre><code class="language-javascript">async function getUsername() {
+    // Looks like returning a string, but actually returns Promise.resolve("admin")
+    return "admin"; 
+}
+
+// You cannot do: const name = getUsername();
+// You MUST consume it as a Promise:
+getUsername().then(name => console.log(name));</code></pre>
+
+            <h3>Zero-to-Hero Interview Questions</h3>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span><span class="badge badge-beginner">Beginner</span> Can an async function return a standard string?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Technically, no. Even if you write <code>return "Hello";</code>, the JS engine intercepts this and transforms it into <code>return Promise.resolve("Hello");</code>. The caller always receives a Promise object.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. Await -->
+        <section id="await" class="glass-panel delay-5">
+            <h2>6. <code>Await</code></h2>
+            <p>The <code>await</code> keyword is what makes <code>async</code> powerful. It pauses the execution of its surrounding <code>async</code> function until the Promise it is waiting on settles. It completely eliminates the need for <code>.then()</code> callbacks, allowing asynchronous code to read like top-to-bottom synchronous code.</p>
+            <p>Critically, <code>await</code> <strong>does not block the main thread</strong>. It only suspends the local execution context of that specific <code>async</code> function. The rest of the JavaScript application continues to run.</p>
+
+            <pre><code class="language-javascript">async function performComplexFlow() {
+    try {
+        // Execution pauses here. Event loop goes to do other things.
+        const auth = await authenticateUser(); 
+        
+        // Only runs AFTER authenticateUser resolves
+        const data = await fetchDashboard(auth.token);
+        
+        console.log("Dashboard loaded", data);
+    } catch (error) {
+        // Await beautifully integrates with standard try/catch!
+        // This catches BOTH sync errors and async Promise rejections.
+        console.error("Flow failed:", error);
+    }
+}</code></pre>
+
+            <h3>Zero-to-Hero Interview Questions</h3>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span><span class="badge badge-advanced">Advanced</span> What happens if you use `await` inside a standard Array.forEach() loop?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            It will not work as expected. <code>forEach</code> is synchronous and not Promise-aware. It will fire off the callback for every item in the array almost instantly, running all the async operations concurrently rather than sequentially waiting for each one. To get sequential execution, you must use a standard <code>for...of</code> loop.
+                        </div>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span><span class="badge badge-expert">Expert</span> Explain the exact execution order: Sync vs Await (Microtask).</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            When an engine hits an <code>await</code>, it evaluates the expression on the right. If it's a Promise, it suspends the function and yields control back to the caller (sync code continues). The rest of the async function (the code <em>after</em> the await) is packaged as a Microtask and placed on the Microtask Queue to be executed only after the call stack is completely empty.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        // Interactive Accordion Logic
+        document.querySelectorAll('.faq-question').forEach(button => {
+            button.addEventListener('click', () => {
+                const faqItem = button.parentElement;
+                const answer = button.nextElementSibling;
+                const icon = button.querySelector('.faq-icon');
+                
+                // Close others
+                document.querySelectorAll('.faq-answer').forEach(ans => {
+                    if (ans !== answer) {
+                        ans.style.maxHeight = null;
+                        ans.parentElement.querySelector('.faq-icon').style.transform = 'rotate(0deg)';
+                    }
+                });
+
+                if (answer.style.maxHeight) {
+                    answer.style.maxHeight = null;
+                    icon.style.transform = 'rotate(0deg)';
+                } else {
+                    answer.style.maxHeight = answer.scrollHeight + "px";
+                    icon.style.transform = 'rotate(45deg)';
+                }
+            });
+        });
+
+        // Smooth Scroll for ToC
+        document.querySelectorAll('.toc a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                window.scrollTo({
+                    top: targetEl.offsetTop - 40,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

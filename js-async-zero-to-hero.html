@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JS Async Internals — Zero to Hero</title>
+<style>
+:root{
+  --bg:#0a0e14;
+  --surface:#111722;
+  --surface2:#161e2c;
+  --border:#232d3f;
+  --text:#dbe4f0;
+  --muted:#7c8aa3;
+  --mono: 'JetBrains Mono', 'Fira Code', Menlo, Consolas, monospace;
+  --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --pending:#e3a008;
+  --fulfilled:#34d399;
+  --rejected:#f2545b;
+  --micro:#a78bfa;
+  --macro:#38bdf8;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  line-height:1.6;
+  font-size:15px;
+}
+code, pre, .mono{font-family:var(--mono);}
+::selection{background:var(--micro); color:#0a0e14;}
+
+/* ---------- layout shell ---------- */
+.wrap{max-width:1180px; margin:0 auto; padding:0 28px;}
+
+/* ---------- hero ---------- */
+.hero{
+  border-bottom:1px solid var(--border);
+  background:
+    radial-gradient(600px 300px at 15% -10%, rgba(167,139,250,0.14), transparent 60%),
+    radial-gradient(500px 280px at 85% -20%, rgba(56,189,248,0.12), transparent 60%);
+  padding:56px 0 40px;
+}
+.hero .kicker{
+  font-family:var(--mono);
+  font-size:12px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--micro);
+  display:flex; align-items:center; gap:10px;
+  margin-bottom:18px;
+}
+.hero .kicker::before{
+  content:"";
+  width:7px; height:7px; border-radius:50%;
+  background:var(--fulfilled);
+  box-shadow:0 0 0 3px rgba(52,211,153,0.18);
+}
+.hero h1{
+  font-family:var(--mono);
+  font-size:clamp(28px, 4vw, 44px);
+  font-weight:700;
+  letter-spacing:-0.02em;
+  line-height:1.15;
+  max-width:820px;
+}
+.hero h1 .accent{color:var(--pending);}
+.hero p.sub{
+  margin-top:16px;
+  max-width:640px;
+  color:var(--muted);
+  font-size:15.5px;
+}
+.hero .stackline{
+  margin-top:28px;
+  display:flex; flex-wrap:wrap; gap:10px;
+}
+.pill{
+  font-family:var(--mono);
+  font-size:12px;
+  padding:6px 12px;
+  border:1px solid var(--border);
+  border-radius:100px;
+  color:var(--muted);
+  background:var(--surface);
+}
+
+/* ---------- section headers ---------- */
+.section{padding:52px 0;}
+.section-head{margin-bottom:28px; display:flex; align-items:baseline; gap:14px; flex-wrap:wrap;}
+.section-head .num{font-family:var(--mono); color:var(--micro); font-size:13px;}
+.section-head h2{font-family:var(--mono); font-size:22px; font-weight:600; letter-spacing:-0.01em;}
+.section-head p{color:var(--muted); font-size:14px; margin-top:4px; flex-basis:100%;}
+
+/* ---------- topic tabs ---------- */
+.tabs{
+  display:flex; gap:6px; flex-wrap:wrap;
+  border-bottom:1px solid var(--border);
+  padding-bottom:0;
+  margin-bottom:32px;
+}
+.tab-btn{
+  font-family:var(--mono);
+  font-size:13px;
+  background:transparent;
+  border:1px solid transparent;
+  border-bottom:none;
+  color:var(--muted);
+  padding:10px 16px;
+  cursor:pointer;
+  border-radius:8px 8px 0 0;
+  transition:.15s;
+  position:relative; top:1px;
+}
+.tab-btn:hover{color:var(--text);}
+.tab-btn.active{
+  color:var(--text);
+  background:var(--surface);
+  border-color:var(--border);
+  border-bottom:1px solid var(--surface);
+}
+.tab-btn .dot{display:inline-block; width:6px; height:6px; border-radius:50%; margin-right:8px;}
+
+.panel{display:none;}
+.panel.active{display:block; animation:fade .25s ease;}
+@keyframes fade{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);}}
+
+.panel-grid{display:grid; grid-template-columns:1.1fr 1fr; gap:28px;}
+@media(max-width:860px){.panel-grid{grid-template-columns:1fr;}}
+
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:22px 24px;
+}
+.card + .card{margin-top:18px;}
+.card h3{font-size:14px; font-family:var(--mono); color:var(--micro); margin-bottom:10px; text-transform:uppercase; letter-spacing:.04em;}
+.card p{color:var(--text); font-size:14.5px; margin-bottom:10px;}
+.card p:last-child{margin-bottom:0;}
+.card ul{padding-left:18px; color:var(--text); font-size:14.5px;}
+.card li{margin-bottom:6px;}
+.card li::marker{color:var(--micro);}
+
+pre.code{
+  background:#0c1119;
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:16px 18px;
+  overflow-x:auto;
+  font-size:13px;
+  line-height:1.65;
+  margin:10px 0;
+}
+pre.code code{white-space:pre;}
+.tok-kw{color:#ff7b9c;}
+.tok-str{color:#9ece6a;}
+.tok-com{color:#5c6773; font-style:italic;}
+.tok-fn{color:#7dcfff;}
+.tok-num{color:#ff9e64;}
+.tok-prop{color:#e0af68;}
+
+.callout{
+  border-left:3px solid var(--pending);
+  background:rgba(227,160,8,0.07);
+  padding:12px 16px;
+  border-radius:0 8px 8px 0;
+  font-size:13.5px;
+  color:var(--text);
+  margin-top:14px;
+}
+.callout.danger{border-color:var(--rejected); background:rgba(242,84,91,0.07);}
+.callout.good{border-color:var(--fulfilled); background:rgba(52,211,153,0.07);}
+.callout b{color:var(--micro);}
+.callout.danger b{color:var(--rejected);}
+.callout.good b{color:var(--fulfilled);}
+
+/* ---------- comparison table ---------- */
+.cmp-table{width:100%; border-collapse:collapse; font-size:13.5px; margin-top:10px;}
+.cmp-table th, .cmp-table td{
+  border:1px solid var(--border);
+  padding:10px 12px;
+  text-align:left;
+  vertical-align:top;
+}
+.cmp-table th{background:var(--surface2); font-family:var(--mono); font-size:12px; color:var(--micro); text-transform:uppercase; letter-spacing:.03em;}
+.cmp-table td{color:var(--text);}
+.cmp-table tr:nth-child(even) td{background:rgba(255,255,255,0.015);}
+
+/* ---------- event loop diagram ---------- */
+.loop-diagram{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  grid-template-rows:auto auto;
+  gap:14px;
+  margin:20px 0;
+}
+.loop-box{
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:16px;
+  background:var(--surface2);
+  position:relative;
+}
+.loop-box .lbl{
+  font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:.08em;
+  color:var(--muted); margin-bottom:8px; display:flex; align-items:center; gap:8px;
+}
+.loop-box .lbl .sw{width:8px; height:8px; border-radius:2px;}
+.loop-box.stack{grid-column:1/2; grid-row:1/3;}
+.loop-box.webapi{grid-column:2/3; grid-row:1/2;}
+.loop-box.micro{grid-column:2/3; grid-row:2/3; border-color:var(--micro);}
+.loop-box .items{font-family:var(--mono); font-size:12.5px; color:var(--text); display:flex; flex-direction:column; gap:6px;}
+.loop-box .items div{padding:6px 10px; background:var(--bg); border-radius:6px; border:1px solid var(--border);}
+.loop-note{
+  grid-column:1/3;
+  font-size:13px; color:var(--muted);
+  border:1px dashed var(--border);
+  border-radius:8px; padding:12px 16px;
+}
+.priority-order{
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  font-family:var(--mono); font-size:12.5px; margin-top:14px;
+}
+.priority-order .step{
+  background:var(--surface2); border:1px solid var(--border); border-radius:8px;
+  padding:6px 12px; color:var(--text);
+}
+.priority-order .arrow{color:var(--muted);}
+
+.trace-table{width:100%; border-collapse:collapse; font-size:13px; margin-top:14px;}
+.trace-table th, .trace-table td{border:1px solid var(--border); padding:8px 10px;}
+.trace-table th{background:var(--surface2); font-family:var(--mono); font-size:11px; color:var(--micro);}
+.trace-table td.step-n{font-family:var(--mono); color:var(--micro); width:36px; text-align:center;}
+.trace-table td.queue{font-family:var(--mono); font-size:12px; color:var(--muted);}
+
+/* ---------- Q&A section ---------- */
+.qa-controls{
+  display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+  margin-bottom:22px;
+  position:sticky; top:0; z-index:5;
+  background:linear-gradient(var(--bg) 78%, transparent);
+  padding:14px 0;
+}
+.level-btn{
+  font-family:var(--mono); font-size:12.5px;
+  border:1px solid var(--border);
+  background:var(--surface);
+  color:var(--muted);
+  padding:8px 14px;
+  border-radius:100px;
+  cursor:pointer;
+  transition:.15s;
+  display:flex; align-items:center; gap:7px;
+}
+.level-btn .sw{width:7px; height:7px; border-radius:50%;}
+.level-btn:hover{color:var(--text); border-color:var(--muted);}
+.level-btn.active{color:#0a0e14; font-weight:600;}
+.level-btn[data-level="beginner"].active{background:var(--fulfilled); border-color:var(--fulfilled);}
+.level-btn[data-level="intermediate"].active{background:var(--macro); border-color:var(--macro);}
+.level-btn[data-level="advanced"].active{background:var(--pending); border-color:var(--pending);}
+.level-btn[data-level="expert"].active{background:var(--rejected); border-color:var(--rejected);}
+.level-btn[data-level="all"].active{background:var(--micro); border-color:var(--micro);}
+
+.search-box{
+  margin-left:auto;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:100px;
+  padding:8px 16px;
+  font-family:var(--mono); font-size:12.5px;
+  color:var(--text);
+  width:220px;
+  outline:none;
+}
+.search-box::placeholder{color:var(--muted);}
+.qa-count{font-family:var(--mono); font-size:12px; color:var(--muted); width:100%; margin-top:-6px; margin-bottom:8px;}
+
+.qa-item{
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:var(--surface);
+  margin-bottom:10px;
+  overflow:hidden;
+}
+.qa-q{
+  padding:16px 20px;
+  cursor:pointer;
+  display:flex; align-items:flex-start; gap:14px;
+  user-select:none;
+}
+.qa-idx{font-family:var(--mono); font-size:12px; color:var(--muted); padding-top:2px; min-width:26px;}
+.qa-q-text{flex:1; font-size:14.5px; font-weight:500;}
+.qa-tags{display:flex; gap:6px; margin-top:8px; flex-wrap:wrap;}
+.tag{font-family:var(--mono); font-size:10.5px; text-transform:uppercase; letter-spacing:.04em; padding:3px 8px; border-radius:5px; border:1px solid var(--border); color:var(--muted);}
+.tag.lvl-beginner{color:var(--fulfilled); border-color:rgba(52,211,153,0.35);}
+.tag.lvl-intermediate{color:var(--macro); border-color:rgba(56,189,248,0.35);}
+.tag.lvl-advanced{color:var(--pending); border-color:rgba(227,160,8,0.35);}
+.tag.lvl-expert{color:var(--rejected); border-color:rgba(242,84,91,0.35);}
+.qa-chevron{font-family:var(--mono); color:var(--muted); transition:transform .2s; padding-top:2px;}
+.qa-item.open .qa-chevron{transform:rotate(90deg); color:var(--micro);}
+.qa-a{
+  max-height:0; overflow:hidden;
+  transition:max-height .25s ease;
+  border-top:1px solid transparent;
+}
+.qa-item.open .qa-a{border-top:1px solid var(--border);}
+.qa-a-inner{padding:18px 20px 20px 60px; font-size:14px; color:var(--text);}
+.qa-a-inner p{margin-bottom:10px;}
+.qa-a-inner p:last-child{margin-bottom:0;}
+.qa-a-inner pre.code{margin:10px 0;}
+.qa-a-inner strong{color:var(--micro);}
+
+footer{
+  border-top:1px solid var(--border);
+  padding:30px 0 50px;
+  color:var(--muted);
+  font-size:12.5px;
+  font-family:var(--mono);
+  text-align:center;
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation:none !important; transition:none !important;}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="wrap">
+    <div class="kicker">Reference &amp; Interview Prep — Async JavaScript</div>
+    <h1>JavaScript Async Internals<br>Zero to <span class="accent">Hero</span></h1>
+    <p class="sub">Callbacks → Promises → async/await → concurrent combinators, tied back to the one mental model that explains all of it: the call stack, the microtask queue, and the macrotask queue. Built for Lead SDET / QA Architect–level interviews — execution order, failure modes, and from-scratch implementations, not syntax recap.</p>
+    <div class="stackline">
+      <span class="pill">Callback</span>
+      <span class="pill">new Promise</span>
+      <span class="pill">Async / Await</span>
+      <span class="pill">Promise.all</span>
+      <span class="pill">Promise.race</span>
+      <span class="pill">Event Loop</span>
+      <span class="pill">36 interview questions</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ REFERENCE SECTION ============ -->
+<div class="wrap">
+<div class="section" id="reference">
+  <div class="section-head">
+    <span class="num">01</span>
+    <h2>Reference</h2>
+    <p>Six topics, one execution model underneath all of them. Switch tabs — each panel covers mechanics, code, and the pitfall interviewers actually probe for.</p>
+  </div>
+
+  <div class="tabs" id="topicTabs">
+    <button class="tab-btn active" data-panel="callback"><span class="dot" style="background:var(--macro)"></span>Callback</button>
+    <button class="tab-btn" data-panel="newpromise"><span class="dot" style="background:var(--pending)"></span>new Promise</button>
+    <button class="tab-btn" data-panel="asyncawait"><span class="dot" style="background:var(--fulfilled)"></span>Async / Await</button>
+    <button class="tab-btn" data-panel="promiseall"><span class="dot" style="background:var(--micro)"></span>Promise.all</button>
+    <button class="tab-btn" data-panel="promiserace"><span class="dot" style="background:var(--rejected)"></span>Promise.race</button>
+    <button class="tab-btn" data-panel="eventloop"><span class="dot" style="background:#fff"></span>Event Loop</button>
+  </div>
+
+  <!-- CALLBACK -->
+  <div class="panel active" id="panel-callback">
+    <div class="panel-grid">
+      <div>
+        <div class="card">
+          <h3>What it is</h3>
+          <p>A callback is a function passed as an argument to another function, invoked once that function completes its work — synchronously (e.g. <code>Array.map</code>) or asynchronously (e.g. <code>fs.readFile</code>, <code>setTimeout</code>). It's the original async primitive JS shipped with; Promises and async/await are built to solve callbacks' composability problems, not to replace the mechanism underneath.</p>
+        </div>
+        <div class="card">
+          <h3>Error-first convention (Node.js)</h3>
+          <pre class="code"><code><span class="tok-fn">fs</span>.<span class="tok-fn">readFile</span>(<span class="tok-str">'./config.json'</span>, <span class="tok-str">'utf8'</span>, (err, data) => {
+  <span class="tok-kw">if</span> (err) {
+    <span class="tok-com">// err is always the first argument — check it first</span>
+    <span class="tok-kw">return</span> <span class="tok-fn">console</span>.<span class="tok-fn">error</span>(<span class="tok-str">'Read failed:'</span>, err);
+  }
+  <span class="tok-fn">console</span>.<span class="tok-fn">log</span>(<span class="tok-fn">JSON</span>.<span class="tok-fn">parse</span>(data));
+});</code></pre>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <h3>Callback hell</h3>
+          <pre class="code"><code><span class="tok-fn">getUser</span>(id, (err, user) => {
+  <span class="tok-fn">getOrders</span>(user.<span class="tok-prop">id</span>, (err, orders) => {
+    <span class="tok-fn">getInvoice</span>(orders[<span class="tok-num">0</span>].<span class="tok-prop">id</span>, (err, invoice) => {
+      <span class="tok-fn">emailInvoice</span>(invoice, (err, res) => {
+        <span class="tok-com">// pyramid of doom: 4 levels deep,
+        // error handling duplicated at every level,
+        // impossible to Promise.all these in parallel</span>
+      });
+    });
+  });
+});</code></pre>
+          <div class="callout danger"><b>Why it breaks down:</b> nesting couples control flow to indentation, error handling is copy-pasted at every level, and there's no way to run steps concurrently without restructuring everything.</div>
+        </div>
+        <div class="card">
+          <h3>Fix: named functions or Promisify</h3>
+          <pre class="code"><code><span class="tok-kw">const</span> readFileAsync = <span class="tok-fn">util</span>.<span class="tok-fn">promisify</span>(<span class="tok-fn">fs</span>.<span class="tok-fn">readFile</span>);
+<span class="tok-com">// now composable with .then chains or await</span></code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEW PROMISE -->
+  <div class="panel" id="panel-newpromise">
+    <div class="panel-grid">
+      <div>
+        <div class="card">
+          <h3>The three states</h3>
+          <ul>
+            <li><b style="color:var(--pending)">pending</b> — initial state, neither fulfilled nor rejected.</li>
+            <li><b style="color:var(--fulfilled)">fulfilled</b> — <code>resolve(value)</code> was called; state is locked forever.</li>
+            <li><b style="color:var(--rejected)">rejected</b> — <code>reject(reason)</code> was called; state is locked forever.</li>
+          </ul>
+          <p style="margin-top:10px">Once <b>settled</b> (fulfilled or rejected), a promise can never change state again — that immutability is what makes it safe to hand a promise to multiple consumers.</p>
+        </div>
+        <div class="card">
+          <h3>Constructing one</h3>
+          <pre class="code"><code><span class="tok-kw">const</span> p = <span class="tok-kw">new</span> <span class="tok-fn">Promise</span>((resolve, reject) => {
+  <span class="tok-com">// executor runs SYNCHRONOUSLY, immediately</span>
+  <span class="tok-fn">doAsyncWork</span>((err, result) => {
+    <span class="tok-kw">if</span> (err) <span class="tok-kw">return</span> <span class="tok-fn">reject</span>(err);
+    <span class="tok-fn">resolve</span>(result);
+  });
+});</code></pre>
+          <div class="callout"><b>Interview trap:</b> the executor function itself runs synchronously the instant <code>new Promise()</code> is called — only the <em>settlement</em> (and anything chained with <code>.then</code>) is deferred to the microtask queue.</div>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <h3>Promise constructor anti-pattern</h3>
+          <pre class="code"><code><span class="tok-com">// ❌ wrapping something that's already a promise</span>
+<span class="tok-kw">function</span> <span class="tok-fn">getData</span>() {
+  <span class="tok-kw">return</span> <span class="tok-kw">new</span> <span class="tok-fn">Promise</span>((resolve, reject) => {
+    <span class="tok-fn">fetch</span>(<span class="tok-str">'/api/data'</span>)
+      .<span class="tok-fn">then</span>(res => <span class="tok-fn">resolve</span>(res))
+      .<span class="tok-fn">catch</span>(err => <span class="tok-fn">reject</span>(err));
+  });
+}
+<span class="tok-com">// ✅ fetch already returns a promise — just return it</span>
+<span class="tok-kw">function</span> <span class="tok-fn">getData</span>() {
+  <span class="tok-kw">return</span> <span class="tok-fn">fetch</span>(<span class="tok-str">'/api/data'</span>);
+}</code></pre>
+        </div>
+        <div class="card">
+          <h3>Chaining &amp; the "forgot to return" bug</h3>
+          <pre class="code"><code><span class="tok-fn">getUser</span>(id)
+  .<span class="tok-fn">then</span>(user => {
+    <span class="tok-fn">getOrders</span>(user.<span class="tok-prop">id</span>); <span class="tok-com">// ❌ not returned</span>
+  })
+  .<span class="tok-fn">then</span>(orders => {
+    <span class="tok-com">// orders is undefined — the chain didn't wait
+    // for getOrders(), it moved on immediately</span>
+  });</code></pre>
+          <div class="callout danger"><b>Rule:</b> every <code>.then()</code> must <code>return</code> a value or a promise, or the next link in the chain gets <code>undefined</code> instead of waiting.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ASYNC AWAIT -->
+  <div class="panel" id="panel-asyncawait">
+    <div class="panel-grid">
+      <div>
+        <div class="card">
+          <h3>What it really is</h3>
+          <p>Syntactic sugar over promises. An <code>async function</code> <b>always</b> returns a promise — if you <code>return 5</code>, callers see <code>Promise&lt;fulfilled: 5&gt;</code>. <code>await</code> pauses the async function's execution (not the thread) until the awaited promise settles, then resumes as a continuation on the microtask queue.</p>
+        </div>
+        <div class="card">
+          <h3>try/catch replaces .catch()</h3>
+          <pre class="code"><code><span class="tok-kw">async</span> <span class="tok-kw">function</span> <span class="tok-fn">loadUser</span>(id) {
+  <span class="tok-kw">try</span> {
+    <span class="tok-kw">const</span> res = <span class="tok-kw">await</span> <span class="tok-fn">fetch</span>(<span class="tok-str">`/users/${id}`</span>);
+    <span class="tok-kw">if</span> (!res.<span class="tok-prop">ok</span>) <span class="tok-kw">throw</span> <span class="tok-kw">new</span> <span class="tok-fn">Error</span>(<span class="tok-str">'Bad response'</span>);
+    <span class="tok-kw">return</span> <span class="tok-kw">await</span> res.<span class="tok-fn">json</span>();
+  } <span class="tok-kw">catch</span> (err) {
+    <span class="tok-fn">logger</span>.<span class="tok-fn">error</span>(err);
+    <span class="tok-kw">throw</span> err; <span class="tok-com">// re-throw so caller's promise still rejects</span>
+  }
+}</code></pre>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <h3>The sequential-await trap</h3>
+          <pre class="code"><code><span class="tok-com">// ❌ 3 round-trips, run one after another (slow)</span>
+<span class="tok-kw">const</span> a = <span class="tok-kw">await</span> <span class="tok-fn">fetchA</span>();
+<span class="tok-kw">const</span> b = <span class="tok-kw">await</span> <span class="tok-fn">fetchB</span>();
+<span class="tok-kw">const</span> c = <span class="tok-kw">await</span> <span class="tok-fn">fetchC</span>();
+
+<span class="tok-com">// ✅ fire all three, then wait — parallel</span>
+<span class="tok-kw">const</span> [a2, b2, c2] = <span class="tok-kw">await</span> <span class="tok-fn">Promise</span>.<span class="tok-fn">all</span>([
+  <span class="tok-fn">fetchA</span>(), <span class="tok-fn">fetchB</span>(), <span class="tok-fn">fetchC</span>()
+]);</code></pre>
+          <div class="callout danger"><b>Why this shows up in interviews:</b> it's the single most common real-world async/await performance bug — independent requests get serialized by accident because <code>await</code> is used inline instead of started concurrently.</div>
+        </div>
+        <div class="card">
+          <h3>Sync-until-first-await</h3>
+          <pre class="code"><code><span class="tok-kw">async</span> <span class="tok-kw">function</span> <span class="tok-fn">f</span>() {
+  <span class="tok-fn">console</span>.<span class="tok-fn">log</span>(<span class="tok-str">'A'</span>);       <span class="tok-com">// runs synchronously</span>
+  <span class="tok-kw">await</span> <span class="tok-kw">null</span>;             <span class="tok-com">// suspends here, yields to microtask queue</span>
+  <span class="tok-fn">console</span>.<span class="tok-fn">log</span>(<span class="tok-str">'B'</span>);       <span class="tok-com">// resumes later, as a microtask</span>
+}
+<span class="tok-fn">console</span>.<span class="tok-fn">log</span>(<span class="tok-str">'start'</span>);
+<span class="tok-fn">f</span>();
+<span class="tok-fn">console</span>.<span class="tok-fn">log</span>(<span class="tok-str">'end'</span>);
+<span class="tok-com">// output: start, A, end, B</span></code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROMISE.ALL -->
+  <div class="panel" id="panel-promiseall">
+    <div class="panel-grid">
+      <div>
+        <div class="card">
+          <h3>Behavior</h3>
+          <ul>
+            <li>Runs all input promises <b>concurrently</b>.</li>
+            <li>Resolves when <b>every</b> promise fulfills, with results in the <b>same order as input</b> — not completion order.</li>
+            <li><b style="color:var(--rejected)">Fail-fast:</b> rejects immediately on the <em>first</em> rejection, even if other promises are still pending. Their eventual results are discarded (though the promises still run to completion — you just stop hearing about them).</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Typical use</h3>
+          <pre class="code"><code><span class="tok-kw">const</span> [profile, orders, prefs] = <span class="tok-kw">await</span> <span class="tok-fn">Promise</span>.<span class="tok-fn">all</span>([
+  <span class="tok-fn">fetchProfile</span>(userId),
+  <span class="tok-fn">fetchOrders</span>(userId),
+  <span class="tok-fn">fetchPreferences</span>(userId),
+]);
+<span class="tok-com">// dashboard needs all three — one failing means
+// there's nothing useful to render anyway</span></code></pre>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <h3>Promise.all vs Promise.allSettled</h3>
+          <table class="cmp-table">
+            <tr><th></th><th>Promise.all</th><th>Promise.allSettled</th></tr>
+            <tr><td>On one rejection</td><td>rejects immediately (fail-fast)</td><td>never rejects — waits for all</td></tr>
+            <tr><td>Result shape</td><td>array of values</td><td>array of <code>{status, value|reason}</code></td></tr>
+            <tr><td>Use when</td><td>all results are required</td><td>partial success is acceptable</td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <h3>allSettled example</h3>
+          <pre class="code"><code><span class="tok-kw">const</span> results = <span class="tok-kw">await</span> <span class="tok-fn">Promise</span>.<span class="tok-fn">allSettled</span>([
+  <span class="tok-fn">pingService</span>(<span class="tok-str">'auth'</span>), <span class="tok-fn">pingService</span>(<span class="tok-str">'billing'</span>)
+]);
+results.<span class="tok-fn">forEach</span>(r => {
+  <span class="tok-kw">if</span> (r.<span class="tok-prop">status</span> === <span class="tok-str">'fulfilled'</span>) <span class="tok-fn">console</span>.<span class="tok-fn">log</span>(r.<span class="tok-prop">value</span>);
+  <span class="tok-kw">else</span> <span class="tok-fn">console</span>.<span class="tok-fn">warn</span>(r.<span class="tok-prop">reason</span>);
+});</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROMISE.RACE -->
+  <div class="panel" id="panel-promiserace">
+    <div class="panel-grid">
+      <div>
+        <div class="card">
+          <h3>Behavior</h3>
+          <p>Settles as soon as the <b>first</b> input promise settles — whether that's a fulfillment or a rejection. "Race" means first-past-the-post, win or lose; it doesn't care which.</p>
+        </div>
+        <div class="card">
+          <h3>Timeout pattern</h3>
+          <pre class="code"><code><span class="tok-kw">function</span> <span class="tok-fn">withTimeout</span>(promise, ms) {
+  <span class="tok-kw">const</span> timeout = <span class="tok-kw">new</span> <span class="tok-fn">Promise</span>((_, reject) =>
+    <span class="tok-fn">setTimeout</span>(() => <span class="tok-fn">reject</span>(<span class="tok-kw">new</span> <span class="tok-fn">Error</span>(<span class="tok-str">'Timed out'</span>)), ms)
+  );
+  <span class="tok-kw">return</span> <span class="tok-fn">Promise</span>.<span class="tok-fn">race</span>([promise, timeout]);
+}
+
+<span class="tok-kw">await</span> <span class="tok-fn">withTimeout</span>(<span class="tok-fn">fetch</span>(<span class="tok-str">'/slow-endpoint'</span>), <span class="tok-num">3000</span>);
+<span class="tok-com">// rejects with 'Timed out' if fetch takes longer than 3s —
+// note: the slow fetch keeps running in the background,
+// race() doesn't cancel it. Pair with AbortController to truly cancel.</span></code></pre>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <h3>Promise.race vs Promise.any</h3>
+          <table class="cmp-table">
+            <tr><th></th><th>Promise.race</th><th>Promise.any</th></tr>
+            <tr><td>Settles on</td><td>first settle — fulfill <em>or</em> reject</td><td>first <b>fulfill</b> only</td></tr>
+            <tr><td>All reject</td><td>rejects with first rejection reason</td><td>rejects with <code>AggregateError</code></td></tr>
+            <tr><td>Use when</td><td>timeouts, "whichever finishes first"</td><td>redundant sources — first success wins</td></tr>
+          </table>
+          <div class="callout"><b>Common confusion:</b> <code>race</code> can reject on the first settle even if a later promise would have fulfilled. <code>any</code> is what you actually want for "try multiple mirrors, use whichever succeeds first."</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EVENT LOOP -->
+  <div class="panel" id="panel-eventloop">
+    <div class="card">
+      <h3>The model that explains all five topics above</h3>
+      <p>Callbacks, Promises, and async/await are all just different ways of scheduling work onto the same underlying machinery. There is exactly one JS call stack (single-threaded), and two queues the event loop drains once the stack is empty.</p>
+
+      <div class="loop-diagram">
+        <div class="loop-box stack">
+          <div class="lbl"><span class="sw" style="background:#fff"></span>Call Stack</div>
+          <div class="items">
+            <div>console.log('4')</div>
+            <div>main()</div>
+          </div>
+        </div>
+        <div class="loop-box webapi">
+          <div class="lbl"><span class="sw" style="background:var(--macro)"></span>Web API / Node API</div>
+          <div class="items"><div>setTimeout(fn, 0) timer</div></div>
+        </div>
+        <div class="loop-box micro">
+          <div class="lbl"><span class="sw" style="background:var(--micro)"></span>Microtask Queue</div>
+          <div class="items"><div>Promise.then callback</div><div>async fn continuation</div></div>
+        </div>
+        <div class="loop-note">Event loop rule: after each call-stack frame finishes, drain the <b style="color:var(--micro)">entire microtask queue</b> (Promises, async/await continuations, queueMicrotask) before pulling even one task from the <b style="color:var(--macro)">macrotask / callback queue</b> (setTimeout, setInterval, I/O, UI events).</div>
+      </div>
+
+      <div class="priority-order">
+        <span class="step">1. Sync code (call stack)</span><span class="arrow">→</span>
+        <span class="step" style="border-color:var(--micro); color:var(--micro)">2. Drain microtasks fully</span><span class="arrow">→</span>
+        <span class="step" style="border-color:var(--macro); color:var(--macro)">3. One macrotask</span><span class="arrow">→</span>
+        <span class="step" style="border-color:var(--micro); color:var(--micro)">4. Drain microtasks again</span><span class="arrow">→</span>
+        <span class="step">…repeat</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Worked trace</h3>
+      <pre class="code"><code><span class="tok-fn">console</span>.<span class="tok-fn">log</span>(<span class="tok-str">'1'</span>);
+<span class="tok-fn">setTimeout</span>(() => <span class="tok-fn">console</span>.<span class="tok-fn">log</span>(<span class="tok-str">'2'</span>), <span class="tok-num">0</span>);
+<span class="tok-fn">Promise</span>.<span class="tok-fn">resolve</span>().<span class="tok-fn">then</span>(() => <span class="tok-fn">console</span>.<span class="tok-fn">log</span>(<span class="tok-str">'3'</span>));
+<span class="tok-fn">console</span>.<span class="tok-fn">log</span>(<span class="tok-str">'4'</span>);
+<span class="tok-com">// output: 1, 4, 3, 2</span></code></pre>
+      <table class="trace-table">
+        <tr><th>Step</th><th>Action</th><th>Call stack</th><th>Microtask Q</th><th>Macrotask Q</th></tr>
+        <tr><td class="step-n">1</td><td>run <code>console.log('1')</code></td><td>—</td><td class="queue">empty</td><td class="queue">empty</td></tr>
+        <tr><td class="step-n">2</td><td><code>setTimeout</code> registers timer, returns immediately</td><td>—</td><td class="queue">empty</td><td class="queue">[log '2']</td></tr>
+        <tr><td class="step-n">3</td><td><code>.then()</code> schedules callback, returns immediately</td><td>—</td><td class="queue">[log '3']</td><td class="queue">[log '2']</td></tr>
+        <tr><td class="step-n">4</td><td>run <code>console.log('4')</code></td><td>—</td><td class="queue">[log '3']</td><td class="queue">[log '2']</td></tr>
+        <tr><td class="step-n">5</td><td>stack empty → drain microtasks → logs <b>'3'</b></td><td>—</td><td class="queue">empty</td><td class="queue">[log '2']</td></tr>
+        <tr><td class="step-n">6</td><td>microtask queue empty → take one macrotask → logs <b>'2'</b></td><td>—</td><td class="queue">empty</td><td class="queue">empty</td></tr>
+      </table>
+      <div class="callout good"><b>Why this matters for testing:</b> flaky-test root cause #1 in async UI code is exactly this — an assertion running before a microtask (state update from a resolved fetch) or macrotask (a debounce/setTimeout) has drained. Fixing it usually means awaiting a resolved promise or flushing timers, not adding arbitrary sleeps.</div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ============ Q&A SECTION ============ -->
+<div class="wrap">
+<div class="section" id="qa">
+  <div class="section-head">
+    <span class="num">02</span>
+    <h2>Zero to Hero — Interview Questions</h2>
+    <p>36 questions, four tiers. Advanced and Expert tiers lean on output-prediction and from-scratch implementation — the format that actually separates "knows the syntax" from "understands the runtime."</p>
+  </div>
+
+  <div class="qa-controls">
+    <button class="level-btn active" data-level="all"><span class="sw" style="background:var(--micro)"></span>All</button>
+    <button class="level-btn" data-level="beginner"><span class="sw" style="background:var(--fulfilled)"></span>Beginner</button>
+    <button class="level-btn" data-level="intermediate"><span class="sw" style="background:var(--macro)"></span>Intermediate</button>
+    <button class="level-btn" data-level="advanced"><span class="sw" style="background:var(--pending)"></span>Advanced</button>
+    <button class="level-btn" data-level="expert"><span class="sw" style="background:var(--rejected)"></span>Expert</button>
+    <input type="text" class="search-box" id="searchBox" placeholder="filter by keyword…">
+  </div>
+  <div class="qa-count" id="qaCount"></div>
+  <div id="qaList"></div>
+</div>
+</div>
+
+<footer>
+  Built for interview prep — verify runtime behavior in DevTools before relying on any single trace in a live round.
+</footer>
+
+<script>
+/* ---------------- topic tabs ---------------- */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-'+btn.dataset.panel).classList.add('active');
+  });
+});
+
+/* ---------------- Q&A data ---------------- */
+const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+const QA = [
+// ---------------- BEGINNER ----------------
+{level:'beginner', tags:['callback'], q:"What is a callback function?",
+ a:`<p>A function passed as an argument to another function, to be invoked later — either synchronously during the same call (e.g. the callback in <code>Array.map</code>) or asynchronously after some operation completes (e.g. a timer or I/O callback). It's how JavaScript expressed "do this when that's done" before Promises existed.</p>`},
+
+{level:'beginner', tags:['promise'], q:"What is a Promise, and what are its three states?",
+ a:`<p>A Promise is an object representing the eventual result of an asynchronous operation. It has three states:</p>
+ <ul style="padding-left:18px"><li><strong>pending</strong> — not yet settled</li><li><strong>fulfilled</strong> — completed successfully, holds a value</li><li><strong>rejected</strong> — failed, holds a reason</li></ul>
+ <p>Once it moves out of <em>pending</em> it is <strong>settled</strong> and can never change state again.</p>`},
+
+{level:'beginner', tags:['async-await'], q:"What does the async keyword do to a function?",
+ a:`<p>It marks the function as always returning a Promise, and enables the use of <code>await</code> inside it. If the function body returns a plain value, JS automatically wraps it: <code>async function f(){ return 5; }</code> is equivalent to returning <code>Promise.resolve(5)</code>. If it throws, the returned promise rejects with that error instead of throwing synchronously to the caller.</p>`},
+
+{level:'beginner', tags:['async-await'], q:"What does await do, and where can you use it?",
+ a:`<p><code>await</code> pauses execution of the enclosing <code>async</code> function until the awaited promise settles, then resumes with the fulfilled value (or throws the rejection reason). It can only be used inside an <code>async</code> function — or at the top level of an ES module (top-level await).</p>`},
+
+{level:'beginner', tags:['promise'], q:"How do you create a new Promise, and what do resolve and reject do?",
+ a:`<pre class="code"><code><span class="tok-kw">const</span> p = <span class="tok-kw">new</span> <span class="tok-fn">Promise</span>((resolve, reject) => {
+  <span class="tok-kw">if</span> (ok) resolve(value);   <span class="tok-com">// moves to fulfilled</span>
+  <span class="tok-kw">else</span> reject(error);      <span class="tok-com">// moves to rejected</span>
+});</code></pre>
+ <p><code>resolve</code> and <code>reject</code> are functions supplied by the JS engine to the executor. Calling either transitions the promise out of <em>pending</em> — and only the first call has any effect; every call after that is ignored.</p>`},
+
+{level:'beginner', tags:['promise'], q:"What's the difference between .then(), .catch(), and .finally()?",
+ a:`<p><code>.then(onFulfilled, onRejected)</code> handles both outcomes; <code>.catch(fn)</code> is shorthand for <code>.then(undefined, fn)</code> and handles rejections from anywhere earlier in the chain; <code>.finally(fn)</code> runs regardless of outcome, receives no argument, and is typically used for cleanup (hiding a spinner, closing a connection).</p>`},
+
+{level:'beginner', tags:['promise-all'], q:"What is Promise.all used for?",
+ a:`<p>Running multiple promises concurrently and waiting for all of them to fulfill, getting back an array of results in the same order the promises were passed in. If any one of them rejects, <code>Promise.all</code> immediately rejects with that reason.</p>`},
+
+{level:'beginner', tags:['promise-race'], q:"What is Promise.race used for?",
+ a:`<p>Settling as soon as the first of several promises settles — whether it fulfills or rejects. Commonly used to implement timeouts: race a real operation against a promise that rejects after N milliseconds.</p>`},
+
+// ---------------- INTERMEDIATE ----------------
+{level:'intermediate', tags:['callback'], q:'What is "callback hell" and how do you avoid it?',
+ a:`<p>Deeply nested callbacks-within-callbacks, one per async step, producing a rightward-drifting "pyramid of doom" where error handling is duplicated at every level and steps can't easily run in parallel. Fixes: extract named functions instead of anonymous inline ones, promisify the callback-based APIs (<code>util.promisify</code>) and chain with <code>.then</code>, or rewrite the whole flow with <code>async/await</code>.</p>`},
+
+{level:'intermediate', tags:['callback'], q:"What is the error-first callback convention?",
+ a:`<p>A Node.js convention where every callback's first parameter is reserved for an error object (<code>null</code> if none occurred), and the actual result follows: <code>callback(err, data)</code>. It gives every async API a consistent, checkable error-handling shape without needing try/catch (which can't catch errors from a truly async callback anyway).</p>`},
+
+{level:'intermediate', tags:['async-await'], q:"Why does an async function always return a Promise, even if the body returns a plain value?",
+ a:`<p>Because the whole point of <code>async</code> is to guarantee a uniform, composable return type so callers can always chain <code>.then()</code> or <code>await</code> it, regardless of whether the implementation happens to be synchronous internally. The engine wraps a returned plain value in <code>Promise.resolve(value)</code>, and a thrown error becomes a rejected promise instead of a synchronous throw.</p>`},
+
+{level:'intermediate', tags:['async-await','promise'], q:"How does error handling differ between async/await and .then/.catch chains?",
+ a:`<p>Functionally equivalent — both ultimately route through the same rejected-promise mechanism — but async/await lets you use ordinary <code>try/catch</code>, which reads like synchronous error handling and can wrap multiple awaited calls in one block. A <code>.then</code> chain needs a trailing <code>.catch()</code>, which catches rejections from <em>any</em> earlier link in that chain, not just the immediately preceding one.</p>`},
+
+{level:'intermediate', tags:['promise'], q:"What happens if you forget to return a value or promise inside a .then() callback?",
+ a:`<p>The next <code>.then()</code> in the chain receives <code>undefined</code> immediately, instead of waiting for whatever async work you kicked off inside the previous callback. This is the classic "the chain didn't actually wait" bug — every <code>.then()</code> must return something for the chain to stay sequenced correctly.</p>`},
+
+{level:'intermediate', tags:['promise'], q:"What is an unhandled promise rejection, and when does it happen?",
+ a:`<p>It happens when a promise rejects and no <code>.catch()</code> (or <code>try/catch</code> around an <code>await</code>) handles it before the microtask queue is drained. In Node it fires an <code>unhandledRejection</code> event and, in modern Node, crashes the process by default; in browsers it logs a console warning. Common cause: an <code>async</code> function is called without <code>await</code> or a trailing <code>.catch()</code>, so its rejection has nowhere to go.</p>`},
+
+{level:'intermediate', tags:['event-loop'], q:"Predict the output.",
+ a:`<pre class="code"><code><span class="tok-fn">console</span>.<span class="tok-fn">log</span>(<span class="tok-str">'A'</span>);
+<span class="tok-fn">setTimeout</span>(() => <span class="tok-fn">console</span>.<span class="tok-fn">log</span>(<span class="tok-str">'B'</span>), <span class="tok-num">0</span>);
+<span class="tok-kw">Promise</span>.<span class="tok-fn">resolve</span>(<span class="tok-str">'C'</span>).<span class="tok-fn">then</span>(<span class="tok-fn">console</span>.<span class="tok-fn">log</span>);
+<span class="tok-fn">console</span>.<span class="tok-fn">log</span>(<span class="tok-str">'D'</span>);</code></pre>
+ <p><strong>Answer: A, D, C, B.</strong> Synchronous logs (A, D) run first. The resolved promise's <code>.then</code> is a microtask and drains before the event loop pulls the <code>setTimeout</code> macrotask, regardless of the 0ms delay.</p>`},
+
+{level:'intermediate', tags:['promise-all'], q:"What's the difference between Promise.all and Promise.allSettled?",
+ a:`<p><code>Promise.all</code> is fail-fast — it rejects the instant any input promise rejects, discarding the rest. <code>Promise.allSettled</code> never short-circuits; it waits for every promise to settle and resolves with an array of <code>{status: 'fulfilled', value}</code> or <code>{status: 'rejected', reason}</code> objects, letting you handle partial success explicitly.</p>`},
+
+{level:'intermediate', tags:['async-await'], q:"Rewrite this promise chain using async/await.",
+ a:`<pre class="code"><code><span class="tok-com">// before</span>
+<span class="tok-kw">function</span> <span class="tok-fn">loadDashboard</span>(id) {
+  <span class="tok-kw">return</span> <span class="tok-fn">getUser</span>(id)
+    .<span class="tok-fn">then</span>(user => <span class="tok-fn">getOrders</span>(user.<span class="tok-prop">id</span>))
+    .<span class="tok-fn">then</span>(orders => orders.<span class="tok-fn">filter</span>(o => o.<span class="tok-prop">active</span>))
+    .<span class="tok-fn">catch</span>(err => { <span class="tok-fn">logger</span>.<span class="tok-fn">error</span>(err); <span class="tok-kw">throw</span> err; });
+}
+
+<span class="tok-com">// after</span>
+<span class="tok-kw">async</span> <span class="tok-kw">function</span> <span class="tok-fn">loadDashboard</span>(id) {
+  <span class="tok-kw">try</span> {
+    <span class="tok-kw">const</span> user = <span class="tok-kw">await</span> <span class="tok-fn">getUser</span>(id);
+    <span class="tok-kw">const</span> orders = <span class="tok-kw">await</span> <span class="tok-fn">getOrders</span>(user.<span class="tok-prop">id</span>);
+    <span class="tok-kw">return</span> orders.<span class="tok-fn">filter</span>(o => o.<span class="tok-prop">active</span>);
+  } <span class="tok-kw">catch</span> (err) {
+    <span class="tok-fn">logger</span>.<span class="tok-fn">error</span>(err);
+    <span class="tok-kw">throw</span> err;
+  }
+}</code></pre>`},
+
+{level:'intermediate', tags:['async-await'], q:"What's a common performance bug with await inside a loop, and how do you fix it?",
+ a:`<pre class="code"><code><span class="tok-com">// ❌ serializes N independent requests</span>
+<span class="tok-kw">for</span> (<span class="tok-kw">const</span> id <span class="tok-kw">of</span> ids) {
+  results.<span class="tok-fn">push</span>(<span class="tok-kw">await</span> <span class="tok-fn">fetchUser</span>(id));
+}
+
+<span class="tok-com">// ✅ fire concurrently, wait together</span>
+<span class="tok-kw">const</span> results = <span class="tok-kw">await</span> <span class="tok-fn">Promise</span>.<span class="tok-fn">all</span>(ids.<span class="tok-fn">map</span>(<span class="tok-fn">fetchUser</span>));</code></pre>
+ <p>Each <code>await</code> in the loop blocks the next iteration from even <em>starting</em> until the current request resolves, turning N parallelizable requests into N sequential round-trips. Fix by starting all the promises first (e.g. via <code>.map</code>) and awaiting them together with <code>Promise.all</code> — unless later iterations genuinely depend on earlier results.</p>`},
+
+// ---------------- ADVANCED ----------------
+{level:'advanced', tags:['event-loop'], q:"Explain the event loop: call stack, microtask queue, macrotask queue, and their priority order.",
+ a:`<p>JS runs on a single call stack. When a synchronous frame is on the stack, nothing else runs. Async work is scheduled onto one of two queues:</p>
+ <ul style="padding-left:18px">
+ <li><strong>Microtask queue</strong> — Promise <code>.then/.catch/.finally</code> callbacks, async/await continuations, <code>queueMicrotask</code>, MutationObserver.</li>
+ <li><strong>Macrotask (task) queue</strong> — <code>setTimeout</code>/<code>setInterval</code>, I/O callbacks, UI events, <code>setImmediate</code> (Node).</li>
+ </ul>
+ <p>The event loop rule: after the call stack empties, it drains the <strong>entire</strong> microtask queue — including any new microtasks scheduled by ones that just ran — before pulling even a single macrotask. Then it runs exactly one macrotask, and repeats. This is why a <code>Promise.resolve().then()</code> always fires before a <code>setTimeout(fn, 0)</code>, no matter the declared delay.</p>`},
+
+{level:'advanced', tags:['event-loop','async-await'], q:"Predict the output.",
+ a:`<pre class="code"><code><span class="tok-kw">async</span> <span class="tok-kw">function</span> <span class="tok-fn">a</span>() {
+  <span class="tok-fn">console</span>.<span class="tok-fn">log</span>(<span class="tok-str">'a-start'</span>);
+  <span class="tok-kw">await</span> <span class="tok-fn">b</span>();
+  <span class="tok-fn">console</span>.<span class="tok-fn">log</span>(<span class="tok-str">'a-end'</span>);
+}
+<span class="tok-kw">async</span> <span class="tok-kw">function</span> <span class="tok-fn">b</span>() {
+  <span class="tok-fn">console</span>.<span class="tok-fn">log</span>(<span class="tok-str">'b'</span>);
+}
+<span class="tok-fn">console</span>.<span class="tok-fn">log</span>(<span class="tok-str">'script-start'</span>);
+<span class="tok-fn">a</span>();
+<span class="tok-fn">setTimeout</span>(() => <span class="tok-fn">console</span>.<span class="tok-fn">log</span>(<span class="tok-str">'timeout'</span>), <span class="tok-num">0</span>);
+<span class="tok-kw">Promise</span>.<span class="tok-fn">resolve</span>().<span class="tok-fn">then</span>(() => <span class="tok-fn">console</span>.<span class="tok-fn">log</span>(<span class="tok-str">'promise'</span>));
+<span class="tok-fn">console</span>.<span class="tok-fn">log</span>(<span class="tok-str">'script-end'</span>);</code></pre>
+ <p><strong>Answer:</strong> <code>script-start, a-start, b, script-end, a-end, promise, timeout</code>.</p>
+ <p><code>a()</code> runs synchronously until its first <code>await</code>; <code>b()</code> is called and runs fully (it has no await, so it returns a resolved promise), logging <code>b</code> synchronously. <code>await b()</code> then suspends <code>a</code>, queuing its continuation (<code>a-end</code>) as a microtask, and control returns to the main script, which logs <code>script-end</code>. Stack empties → microtasks drain in the order they were scheduled: <code>a-end</code> first (scheduled during <code>a()</code>'s call), then <code>promise</code>. Only then does the <code>setTimeout</code> macrotask fire.</p>`},
+
+{level:'advanced', tags:['async-await'], q:"Why does await pause execution but not block the thread?",
+ a:`<p><code>await</code> suspends the <em>async function's</em> execution context and returns control to the caller immediately — the JS thread is free to run other code (event handlers, other microtasks, rendering). When the awaited promise settles, the suspended continuation is scheduled as a microtask and resumes later. Nothing about this involves the OS thread sleeping or spinning; it's cooperative suspension of one function's continuation, not thread blocking.</p>`},
+
+{level:'advanced', tags:['promise'], q:'What is a "thenable" and how does the Promise resolution procedure treat it?',
+ a:`<p>Any object with a callable <code>.then(onFulfilled, onRejected)</code> method — it doesn't need to be a real <code>Promise</code> instance. When you <code>resolve()</code> a promise with a thenable, or <code>return</code> one from a <code>.then()</code> callback, the engine doesn't treat it as the final value — it calls the thenable's <code>.then()</code> and adopts <em>its</em> eventual state. This is what lets libraries (jQuery deferreds, older custom promise implementations) interop transparently with native Promises and async/await.</p>`},
+
+{level:'advanced', tags:['promise-race'], q:"What's the difference between Promise.race and Promise.any?",
+ a:`<p><code>Promise.race</code> settles on whichever input settles first — fulfillment or rejection, doesn't matter. <code>Promise.any</code> settles on the first <strong>fulfillment</strong> only; rejections are ignored unless <em>every</em> input rejects, in which case it rejects with an <code>AggregateError</code> aggregating all the individual reasons. Use <code>any</code> when you have redundant sources and want the first success; use <code>race</code> when you specifically want "whichever finishes first, success or failure" — like a timeout guard.</p>`},
+
+{level:'advanced', tags:['promise-race'], q:"Implement a timeout wrapper for a fetch call using Promise.race.",
+ a:`<pre class="code"><code><span class="tok-kw">function</span> <span class="tok-fn">fetchWithTimeout</span>(url, ms = <span class="tok-num">5000</span>) {
+  <span class="tok-kw">const</span> controller = <span class="tok-kw">new</span> <span class="tok-fn">AbortController</span>();
+  <span class="tok-kw">const</span> timeout = <span class="tok-fn">setTimeout</span>(() => controller.<span class="tok-fn">abort</span>(), ms);
+
+  <span class="tok-kw">return</span> <span class="tok-fn">fetch</span>(url, { signal: controller.<span class="tok-prop">signal</span> })
+    .<span class="tok-fn">finally</span>(() => <span class="tok-fn">clearTimeout</span>(timeout));
+}</code></pre>
+ <p>Preferring <code>AbortController</code> over a plain <code>Promise.race</code> timeout is the senior answer: a bare <code>race</code> leaves the losing fetch running in the background consuming network and resources — <code>AbortController</code> actually cancels it.</p>`},
+
+{level:'advanced', tags:['async-await','promise'], q:"Is it safe to mix async/await with raw .then() chains? What should you watch for?",
+ a:`<p>Yes — they interoperate freely since <code>await</code> just consumes whatever promise it's given, chain or not. The pitfalls are stylistic/structural: forgetting to <code>await</code> (or <code>return</code>) a <code>.then()</code>-based call inside an async function silently detaches it from your try/catch, so its rejection becomes unhandled instead of being caught locally. Keep one style per function/module rather than interleaving both for the same logical flow.</p>`},
+
+{level:'advanced', tags:['event-loop'], q:"What is microtask starvation, and can microtasks block rendering or macrotasks indefinitely?",
+ a:`<p>Yes. The spec drains the microtask queue <em>completely</em> before yielding to rendering or the next macrotask — including any new microtasks scheduled while draining. A promise chain that keeps re-queuing itself (e.g. a <code>.then()</code> that schedules another <code>.then()</code> in an unbounded loop) never lets the queue empty, so the browser never gets a chance to paint and <code>setTimeout</code> callbacks never fire. This is a real production bug class, not just a trivia answer — it shows up as a frozen UI with no error thrown.</p>`},
+
+// ---------------- EXPERT ----------------
+{level:'expert', tags:['promise-all'], q:"Implement Promise.all from scratch.",
+ a:`<pre class="code"><code><span class="tok-kw">function</span> <span class="tok-fn">promiseAll</span>(promises) {
+  <span class="tok-kw">return</span> <span class="tok-kw">new</span> <span class="tok-fn">Promise</span>((resolve, reject) => {
+    <span class="tok-kw">const</span> results = <span class="tok-kw">new</span> <span class="tok-fn">Array</span>(promises.<span class="tok-prop">length</span>);
+    <span class="tok-kw">let</span> remaining = promises.<span class="tok-prop">length</span>;
+
+    <span class="tok-kw">if</span> (remaining === <span class="tok-num">0</span>) <span class="tok-kw">return</span> <span class="tok-fn">resolve</span>(results);
+
+    promises.<span class="tok-fn">forEach</span>((p, i) => {
+      <span class="tok-fn">Promise</span>.<span class="tok-fn">resolve</span>(p) <span class="tok-com">// handles non-promise values too</span>
+        .<span class="tok-fn">then</span>(value => {
+          results[i] = value;      <span class="tok-com">// preserve input order</span>
+          <span class="tok-kw">if</span> (--remaining === <span class="tok-num">0</span>) <span class="tok-fn">resolve</span>(results);
+        })
+        .<span class="tok-fn">catch</span>(reject);          <span class="tok-com">// fail-fast: first rejection wins</span>
+    });
+  });
+}</code></pre>
+ <p>Key details an interviewer probes: results must preserve <em>input</em> order despite resolving in arbitrary completion order (hence indexed writes, not <code>.push</code>), the empty-array edge case must resolve immediately, and any single rejection must reject the whole thing without waiting for the rest.</p>`},
+
+{level:'expert', tags:['promise-race'], q:"Implement Promise.race from scratch.",
+ a:`<pre class="code"><code><span class="tok-kw">function</span> <span class="tok-fn">promiseRace</span>(promises) {
+  <span class="tok-kw">return</span> <span class="tok-kw">new</span> <span class="tok-fn">Promise</span>((resolve, reject) => {
+    promises.<span class="tok-fn">forEach</span>(p => {
+      <span class="tok-fn">Promise</span>.<span class="tok-fn">resolve</span>(p).<span class="tok-fn">then</span>(resolve, reject);
+    });
+  });
+}</code></pre>
+ <p>The whole implementation leans on the fact that a promise can only settle once — every input's <code>.then(resolve, reject)</code> races to call the outer executor's <code>resolve</code>/<code>reject</code> first, and every call after the first is a silent no-op by spec.</p>`},
+
+{level:'expert', tags:['promise'], q:"Implement a simplified Promise class (states + then chaining) from scratch.",
+ a:`<pre class="code"><code><span class="tok-kw">class</span> <span class="tok-fn">MyPromise</span> {
+  <span class="tok-fn">constructor</span>(executor) {
+    <span class="tok-kw">this</span>.<span class="tok-prop">state</span> = <span class="tok-str">'pending'</span>;
+    <span class="tok-kw">this</span>.<span class="tok-prop">value</span> = <span class="tok-kw">undefined</span>;
+    <span class="tok-kw">this</span>.<span class="tok-prop">callbacks</span> = [];  <span class="tok-com">// queued .then handlers if still pending</span>
+
+    <span class="tok-kw">const</span> settle = (state, value) => {
+      <span class="tok-kw">if</span> (<span class="tok-kw">this</span>.<span class="tok-prop">state</span> !== <span class="tok-str">'pending'</span>) <span class="tok-kw">return</span>; <span class="tok-com">// lock in first settle only</span>
+      <span class="tok-kw">this</span>.<span class="tok-prop">state</span> = state;
+      <span class="tok-kw">this</span>.<span class="tok-prop">value</span> = value;
+      <span class="tok-fn">queueMicrotask</span>(() =>
+        <span class="tok-kw">this</span>.<span class="tok-prop">callbacks</span>.<span class="tok-fn">forEach</span>(cb => <span class="tok-fn">cb</span>())
+      );
+    };
+
+    <span class="tok-kw">try</span> {
+      executor(v => <span class="tok-fn">settle</span>(<span class="tok-str">'fulfilled'</span>, v), e => <span class="tok-fn">settle</span>(<span class="tok-str">'rejected'</span>, e));
+    } <span class="tok-kw">catch</span> (e) {
+      <span class="tok-fn">settle</span>(<span class="tok-str">'rejected'</span>, e);
+    }
+  }
+
+  <span class="tok-fn">then</span>(onFulfilled, onRejected) {
+    <span class="tok-kw">return</span> <span class="tok-kw">new</span> <span class="tok-fn">MyPromise</span>((resolve, reject) => {
+      <span class="tok-kw">const</span> run = () => {
+        <span class="tok-kw">try</span> {
+          <span class="tok-kw">if</span> (<span class="tok-kw">this</span>.<span class="tok-prop">state</span> === <span class="tok-str">'fulfilled'</span>) {
+            resolve(onFulfilled ? <span class="tok-fn">onFulfilled</span>(<span class="tok-kw">this</span>.<span class="tok-prop">value</span>) : <span class="tok-kw">this</span>.<span class="tok-prop">value</span>);
+          } <span class="tok-kw">else</span> {
+            <span class="tok-kw">if</span> (!onRejected) <span class="tok-kw">throw</span> <span class="tok-kw">this</span>.<span class="tok-prop">value</span>;
+            resolve(<span class="tok-fn">onRejected</span>(<span class="tok-kw">this</span>.<span class="tok-prop">value</span>));
+          }
+        } <span class="tok-kw">catch</span> (e) { reject(e); }
+      };
+      <span class="tok-kw">this</span>.<span class="tok-prop">state</span> === <span class="tok-str">'pending'</span>
+        ? <span class="tok-kw">this</span>.<span class="tok-prop">callbacks</span>.<span class="tok-fn">push</span>(run)
+        : <span class="tok-fn">queueMicrotask</span>(run);
+    });
+  }
+}</code></pre>
+ <p>This is the "does he actually understand it or just use it" question. Highlights to call out live: settlement is locked after the first call, callbacks are dispatched via <code>queueMicrotask</code> to match native async ordering, and <code>.then()</code> always returns a <em>new</em> promise so chains compose.</p>`},
+
+{level:'expert', tags:['promise'], q:"How would you implement retry-with-exponential-backoff for a promise-returning function?",
+ a:`<pre class="code"><code><span class="tok-kw">async</span> <span class="tok-kw">function</span> <span class="tok-fn">retry</span>(fn, { retries = <span class="tok-num">3</span>, baseMs = <span class="tok-num">200</span> } = {}) {
+  <span class="tok-kw">for</span> (<span class="tok-kw">let</span> attempt = <span class="tok-num">0</span>; ; attempt++) {
+    <span class="tok-kw">try</span> {
+      <span class="tok-kw">return</span> <span class="tok-kw">await</span> <span class="tok-fn">fn</span>();
+    } <span class="tok-kw">catch</span> (err) {
+      <span class="tok-kw">if</span> (attempt >= retries) <span class="tok-kw">throw</span> err;
+      <span class="tok-kw">const</span> delay = baseMs * <span class="tok-num">2</span> ** attempt + <span class="tok-fn">Math</span>.<span class="tok-fn">random</span>() * <span class="tok-num">100</span>; <span class="tok-com">// jitter</span>
+      <span class="tok-kw">await</span> <span class="tok-kw">new</span> <span class="tok-fn">Promise</span>(r => <span class="tok-fn">setTimeout</span>(r, delay));
+    }
+  }
+}</code></pre>
+ <p>The two details worth mentioning proactively: jitter (randomized delay component) to avoid a thundering-herd of retries all firing in lockstep, and a hard <code>retries</code> ceiling so failures don't retry forever.</p>`},
+
+{level:'expert', tags:['async-await'], q:"How do you cancel an in-flight async operation in JavaScript?",
+ a:`<p>Promises themselves are not cancellable by design — once created, they will settle. Cancellation is layered on top via <code>AbortController</code>: pass its <code>signal</code> into cancellable APIs (<code>fetch</code>, many Node APIs), and call <code>controller.abort()</code> to reject the in-flight operation with an <code>AbortError</code>.</p>
+ <pre class="code"><code><span class="tok-kw">const</span> controller = <span class="tok-kw">new</span> <span class="tok-fn">AbortController</span>();
+<span class="tok-fn">fetch</span>(url, { signal: controller.<span class="tok-prop">signal</span> })
+  .<span class="tok-fn">catch</span>(err => {
+    <span class="tok-kw">if</span> (err.<span class="tok-prop">name</span> === <span class="tok-str">'AbortError'</span>) <span class="tok-fn">console</span>.<span class="tok-fn">log</span>(<span class="tok-str">'cancelled'</span>);
+  });
+<span class="tok-com">// later, e.g. on component unmount:</span>
+controller.<span class="tok-fn">abort</span>();</code></pre>`},
+
+{level:'expert', tags:['promise-all'], q:"Implement a concurrency-limited parallel executor (a mini p-limit).",
+ a:`<pre class="code"><code><span class="tok-kw">async</span> <span class="tok-kw">function</span> <span class="tok-fn">runWithLimit</span>(tasks, limit) {
+  <span class="tok-kw">const</span> results = <span class="tok-kw">new</span> <span class="tok-fn">Array</span>(tasks.<span class="tok-prop">length</span>);
+  <span class="tok-kw">let</span> next = <span class="tok-num">0</span>;
+
+  <span class="tok-kw">async</span> <span class="tok-kw">function</span> <span class="tok-fn">worker</span>() {
+    <span class="tok-kw">while</span> (next < tasks.<span class="tok-prop">length</span>) {
+      <span class="tok-kw">const</span> i = next++;
+      results[i] = <span class="tok-kw">await</span> tasks[i]();
+    }
+  }
+
+  <span class="tok-kw">const</span> workers = <span class="tok-fn">Array</span>.<span class="tok-fn">from</span>({ length: <span class="tok-fn">Math</span>.<span class="tok-fn">min</span>(limit, tasks.<span class="tok-prop">length</span>) }, worker);
+  <span class="tok-kw">await</span> <span class="tok-fn">Promise</span>.<span class="tok-fn">all</span>(workers);
+  <span class="tok-kw">return</span> results;
+}
+<span class="tok-com">// runWithLimit(urls.map(u => () => fetch(u)), 5) — max 5 in flight</span></code></pre>
+ <p>Why not just <code>Promise.all</code> directly: unbounded concurrency against a rate-limited API or a large array of tasks can exhaust sockets/hit 429s. The worker-pool pattern here keeps exactly <code>limit</code> promises in flight at any time by having each worker pull the next index off a shared cursor.</p>`},
+
+{level:'expert', tags:['async-await'], q:"How do async generators and for-await-of interact with the event loop?",
+ a:`<p>An async generator (<code>async function*</code>) yields values wrapped in promises; <code>for await (const x of iterable)</code> awaits each one before running the loop body, so each iteration is its own suspension point scheduled through the microtask queue exactly like a normal <code>await</code>. It's the standard way to consume async data sources — paginated APIs, streams — item by item without buffering everything in memory first.</p>
+ <pre class="code"><code><span class="tok-kw">async</span> <span class="tok-kw">function</span>* <span class="tok-fn">paginate</span>(url) {
+  <span class="tok-kw">while</span> (url) {
+    <span class="tok-kw">const</span> res = <span class="tok-kw">await</span> <span class="tok-fn">fetch</span>(url).<span class="tok-fn">then</span>(r => r.<span class="tok-fn">json</span>());
+    <span class="tok-kw">yield</span>* res.<span class="tok-prop">items</span>;
+    url = res.<span class="tok-prop">nextPage</span>;
+  }
+}
+<span class="tok-kw">for</span> <span class="tok-kw">await</span> (<span class="tok-kw">const</span> item <span class="tok-kw">of</span> <span class="tok-fn">paginate</span>(<span class="tok-str">'/api/items?page=1'</span>)) {
+  <span class="tok-fn">process</span>(item);
+}</code></pre>`},
+
+{level:'expert', tags:['promise'], q:"Debug: why doesn't await inside Array.forEach wait for the async callbacks to finish?",
+ a:`<pre class="code"><code><span class="tok-com">// ❌ logs 'done' before any file is processed</span>
+<span class="tok-kw">async</span> <span class="tok-kw">function</span> <span class="tok-fn">processAll</span>(files) {
+  files.<span class="tok-fn">forEach</span>(<span class="tok-kw">async</span> file => {
+    <span class="tok-kw">await</span> <span class="tok-fn">processFile</span>(file);
+  });
+  <span class="tok-fn">console</span>.<span class="tok-fn">log</span>(<span class="tok-str">'done'</span>);
+}
+
+<span class="tok-com">// ✅ actually waits</span>
+<span class="tok-kw">async</span> <span class="tok-kw">function</span> <span class="tok-fn">processAll</span>(files) {
+  <span class="tok-kw">await</span> <span class="tok-fn">Promise</span>.<span class="tok-fn">all</span>(files.<span class="tok-fn">map</span>(file => <span class="tok-fn">processFile</span>(file)));
+  <span class="tok-fn">console</span>.<span class="tok-fn">log</span>(<span class="tok-str">'done'</span>);
+}</code></pre>
+ <p><code>Array.prototype.forEach</code> ignores the return value of its callback entirely and has no concept of promises — it fires all callbacks and returns <code>undefined</code> immediately, regardless of whether each callback is <code>async</code>. The fix is always to switch to <code>.map()</code> to collect the promises, then <code>await Promise.all(...)</code> on the resulting array — <code>forEach</code> is structurally the wrong tool the moment the callback is async.</p>`},
+];
+
+/* ---------------- render ---------------- */
+const qaList = document.getElementById('qaList');
+const qaCount = document.getElementById('qaCount');
+let activeLevel = 'all';
+let searchTerm = '';
+
+function render(){
+  const filtered = QA.filter(item=>{
+    const levelOk = activeLevel==='all' || item.level===activeLevel;
+    const term = searchTerm.trim().toLowerCase();
+    const searchOk = !term || item.q.toLowerCase().includes(term) || item.tags.some(t=>t.includes(term)) || item.a.toLowerCase().includes(term);
+    return levelOk && searchOk;
+  });
+
+  qaCount.textContent = filtered.length + ' / ' + QA.length + ' questions';
+
+  qaList.innerHTML = filtered.map((item, i)=>{
+    const tagsHtml = item.tags.map(t=>`<span class="tag lvl-${item.level}">${t}</span>`).join('') + `<span class="tag lvl-${item.level}">${item.level}</span>`;
+    return `
+    <div class="qa-item" data-idx="${i}">
+      <div class="qa-q">
+        <span class="qa-idx">${String(i+1).padStart(2,'0')}</span>
+        <div style="flex:1">
+          <div class="qa-q-text">${esc(item.q)}</div>
+          <div class="qa-tags">${tagsHtml}</div>
+        </div>
+        <span class="qa-chevron">▸</span>
+      </div>
+      <div class="qa-a"><div class="qa-a-inner">${item.a}</div></div>
+    </div>`;
+  }).join('');
+
+  qaList.querySelectorAll('.qa-item').forEach(el=>{
+    const header = el.querySelector('.qa-q');
+    const body = el.querySelector('.qa-a');
+    header.addEventListener('click', ()=>{
+      const isOpen = el.classList.contains('open');
+      if(isOpen){
+        el.classList.remove('open');
+        body.style.maxHeight = null;
+      } else {
+        el.classList.add('open');
+        body.style.maxHeight = body.scrollHeight + 'px';
+      }
+    });
+  });
+}
+
+document.querySelectorAll('.level-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.level-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    activeLevel = btn.dataset.level;
+    render();
+  });
+});
+
+document.getElementById('searchBox').addEventListener('input', (e)=>{
+  searchTerm = e.target.value;
+  render();
+});
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript Async — Deep Visual Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #060810;
+  --surface: #0d1117;
+  --surface2: #161b22;
+  --border: rgba(255,255,255,0.08);
+  --blue: #58a6ff;
+  --purple: #bc8cff;
+  --green: #3fb950;
+  --yellow: #d29922;
+  --red: #f85149;
+  --orange: #ffa657;
+  --text: #e6edf3;
+  --muted: #7d8590;
+  --grad: linear-gradient(135deg,#58a6ff,#bc8cff);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;line-height:1.7}
+::-webkit-scrollbar{width:8px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:#21262d;border-radius:4px}
+
+/* ─── HERO ─────────────────────────────────────── */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(88,166,255,.18) 0%,transparent 70%),radial-gradient(ellipse at 80% 80%,rgba(188,140,255,.12) 0%,transparent 60%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;padding:.4rem 1.2rem;border-radius:9999px;border:1px solid rgba(88,166,255,.3);background:rgba(88,166,255,.08);font-size:.8rem;font-weight:600;color:var(--blue);margin-bottom:2rem;animation:fadeDown .8s ease both}
+.hero h1{font-size:clamp(2.5rem,6vw,5rem);font-weight:900;line-height:1.1;margin-bottom:1.5rem;animation:fadeDown .8s ease .1s both}
+.hero h1 span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{font-size:1.2rem;color:var(--muted);max-width:600px;margin-bottom:3rem;animation:fadeDown .8s ease .2s both}
+.hero-pills{display:flex;flex-wrap:wrap;gap:.75rem;justify-content:center;animation:fadeDown .8s ease .3s both}
+.pill{padding:.5rem 1.25rem;border-radius:9999px;font-size:.85rem;font-weight:600;border:1px solid;cursor:pointer;transition:all .2s;text-decoration:none}
+.pill-blue{border-color:rgba(88,166,255,.4);color:var(--blue);background:rgba(88,166,255,.06)}
+.pill-blue:hover{background:rgba(88,166,255,.2);box-shadow:0 0 20px rgba(88,166,255,.2)}
+.pill-purple{border-color:rgba(188,140,255,.4);color:var(--purple);background:rgba(188,140,255,.06)}
+.pill-purple:hover{background:rgba(188,140,255,.2)}
+.pill-green{border-color:rgba(63,185,80,.4);color:var(--green);background:rgba(63,185,80,.06)}
+.pill-green:hover{background:rgba(63,185,80,.2)}
+.scroll-cue{margin-top:4rem;animation:float 2s ease-in-out infinite,fadeDown .8s ease .5s both;color:var(--muted);font-size:.9rem}
+
+/* ─── SECTIONS ──────────────────────────────────── */
+.section{max-width:1100px;margin:0 auto;padding:6rem 2rem}
+.section-label{font-size:.75rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--blue);margin-bottom:.75rem}
+.section-title{font-size:clamp(1.8rem,4vw,3rem);font-weight:800;margin-bottom:1rem;line-height:1.2}
+.section-desc{color:var(--muted);max-width:700px;margin-bottom:3rem;font-size:1.05rem}
+
+/* ─── CARDS ─────────────────────────────────────── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2rem;transition:all .3s}
+.card:hover{border-color:rgba(255,255,255,.15);transform:translateY(-2px);box-shadow:0 20px 40px rgba(0,0,0,.4)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+@media(max-width:768px){.grid2{grid-template-columns:1fr}}
+
+/* ─── CODE BLOCKS ───────────────────────────────── */
+.code-wrap{background:#0d1117;border:1px solid #30363d;border-radius:12px;overflow:hidden;margin:1.5rem 0}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;background:#161b22;border-bottom:1px solid #30363d}
+.code-dots{display:flex;gap:.4rem}
+.code-dots span{width:12px;height:12px;border-radius:50%;display:block}
+.code-dots .red{background:#ff5f57}.code-dots .yellow{background:#febc2e}.code-dots .green{background:#28c840}
+.code-lang{font-size:.75rem;color:var(--muted);font-family:'Fira Code',monospace}
+.code-body{padding:1.5rem;overflow-x:auto}
+pre{margin:0;font-family:'Fira Code',monospace;font-size:.88rem;line-height:1.8;white-space:pre}
+.kw{color:#ff7b72}.fn{color:#d2a8ff}.str{color:#a5d6ff}.cmt{color:#8b949e;font-style:italic}.num{color:#ffa657}.op{color:#79c0ff}.pun{color:#e6edf3}
+
+/* ─── EVENT LOOP DIAGRAM ────────────────────────── */
+.eventloop{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2.5rem;position:relative;overflow:hidden}
+.el-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;align-items:start}
+@media(max-width:700px){.el-grid{grid-template-columns:1fr}}
+.el-box{border-radius:12px;padding:1.25rem;border:2px solid;text-align:center;min-height:140px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:.5rem;position:relative}
+.el-box h4{font-size:.9rem;font-weight:700;margin-bottom:.5rem}
+.el-box.stack{border-color:rgba(88,166,255,.5);background:rgba(88,166,255,.05)}
+.el-box.webapi{border-color:rgba(63,185,80,.5);background:rgba(63,185,80,.05)}
+.el-box.queues{border-color:rgba(188,140,255,.5);background:rgba(188,140,255,.05)}
+.el-item{font-size:.78rem;padding:.3rem .8rem;border-radius:6px;font-family:'Fira Code',monospace;width:100%;text-align:center;transition:all .4s}
+.el-item.blue-i{background:rgba(88,166,255,.15);color:var(--blue);border:1px solid rgba(88,166,255,.3)}
+.el-item.green-i{background:rgba(63,185,80,.15);color:var(--green);border:1px solid rgba(63,185,80,.3)}
+.el-item.purple-i{background:rgba(188,140,255,.15);color:var(--purple);border:1px solid rgba(188,140,255,.3)}
+.el-item.yellow-i{background:rgba(210,153,34,.15);color:var(--yellow);border:1px solid rgba(210,153,34,.3)}
+.el-item.pulse{animation:pulse-border 1.5s ease-in-out infinite}
+.el-arrow{display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:var(--muted);padding:1rem 0}
+.el-controls{display:flex;gap:1rem;margin-top:1.5rem;flex-wrap:wrap}
+.btn{padding:.6rem 1.4rem;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;border:1px solid;font-family:'Inter',sans-serif;transition:all .2s}
+.btn-blue{background:rgba(88,166,255,.1);border-color:rgba(88,166,255,.4);color:var(--blue)}
+.btn-blue:hover{background:rgba(88,166,255,.25);box-shadow:0 0 20px rgba(88,166,255,.2)}
+.btn-purple{background:rgba(188,140,255,.1);border-color:rgba(188,140,255,.4);color:var(--purple)}
+.btn-purple:hover{background:rgba(188,140,255,.25)}
+.btn-green{background:rgba(63,185,80,.1);border-color:rgba(63,185,80,.4);color:var(--green)}
+.btn-green:hover{background:rgba(63,185,80,.25)}
+.output-area{margin-top:1rem;background:#0d1117;border:1px solid #30363d;border-radius:10px;padding:1rem;min-height:60px;font-family:'Fira Code',monospace;font-size:.85rem}
+.out-line{padding:.1rem 0;opacity:0;animation:revealLine .3s ease forwards}
+.out-line.green{color:var(--green)}.out-line.blue{color:var(--blue)}.out-line.yellow{color:var(--yellow)}.out-line.red{color:var(--red)}.out-line.purple{color:var(--purple)}.out-line.muted{color:var(--muted)}
+
+/* ─── PROMISE STATE MACHINE ─────────────────────── */
+.state-machine{display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;padding:2rem 0}
+.state-node{width:130px;height:130px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;border:3px solid;transition:all .5s;cursor:pointer;text-align:center;line-height:1.3}
+.state-node.pending{border-color:var(--yellow);background:rgba(210,153,34,.08);color:var(--yellow)}
+.state-node.fulfilled{border-color:var(--green);background:rgba(63,185,80,.08);color:var(--green)}
+.state-node.rejected{border-color:var(--red);background:rgba(248,81,73,.08);color:var(--red)}
+.state-node.active-state{transform:scale(1.15);box-shadow:0 0 30px currentColor}
+.state-arrow{font-size:2rem;color:var(--muted);position:relative}
+.state-arrow .arrow-label{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:.65rem;white-space:nowrap;color:var(--blue);font-family:'Fira Code',monospace}
+
+/* ─── PARALLEL VISUALIZER ───────────────────────── */
+.parallel-vis{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2rem;overflow:hidden}
+.pv-track{margin:1rem 0;display:flex;align-items:center;gap:1rem}
+.pv-label{width:120px;font-size:.85rem;font-weight:600;font-family:'Fira Code',monospace;flex-shrink:0}
+.pv-bar-wrap{flex:1;height:36px;background:#161b22;border-radius:8px;overflow:hidden;border:1px solid #30363d;position:relative}
+.pv-bar{height:100%;border-radius:8px;width:0%;transition:width 0.05s linear;display:flex;align-items:center;justify-content:flex-end;padding-right:.75rem;font-size:.75rem;font-weight:700;color:rgba(255,255,255,.9)}
+.pv-blue{background:linear-gradient(90deg,rgba(88,166,255,.3),rgba(88,166,255,.8))}
+.pv-purple{background:linear-gradient(90deg,rgba(188,140,255,.3),rgba(188,140,255,.8))}
+.pv-green{background:linear-gradient(90deg,rgba(63,185,80,.3),rgba(63,185,80,.8))}
+.pv-orange{background:linear-gradient(90deg,rgba(255,166,87,.3),rgba(255,166,87,.8))}
+.pv-red{background:linear-gradient(90deg,rgba(248,81,73,.3),rgba(248,81,73,.8))}
+.pv-status{width:80px;font-size:.75rem;text-align:right;font-family:'Fira Code',monospace}
+.mode-tabs{display:flex;gap:.5rem;margin-bottom:1.5rem}
+.mode-tab{padding:.5rem 1.2rem;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;border:1px solid var(--border);color:var(--muted);background:transparent;font-family:'Inter',sans-serif;transition:all .2s}
+.mode-tab.active{background:rgba(88,166,255,.15);border-color:rgba(88,166,255,.4);color:var(--blue)}
+
+/* ─── CALLBACK HELL ─────────────────────────────── */
+.hell-vis{font-family:'Fira Code',monospace;font-size:.82rem;line-height:1.9;background:#0d1117;border-radius:12px;padding:1.5rem;border:1px solid #30363d;overflow-x:auto}
+.hell-line{display:block;transition:all .3s;padding:0 .25rem;border-radius:4px}
+.hell-line:hover{background:rgba(255,255,255,.04)}
+.hl-kw{color:#ff7b72}.hl-fn{color:#d2a8ff}.hl-str{color:#a5d6ff}.hl-cmt{color:#8b949e}.hl-brace{color:#ffa657}.hl-indent{color:#e6edf3}
+.toggle-btn{padding:.5rem 1.2rem;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;border:1px solid;font-family:'Inter',sans-serif;transition:all .2s;margin-bottom:1rem}
+
+/* ─── RACE VISUALIZER ───────────────────────────── */
+.race-track{padding:1.5rem;background:var(--surface);border-radius:16px;border:1px solid var(--border)}
+.runner{display:flex;align-items:center;gap:1rem;margin:.75rem 0}
+.runner-emoji{font-size:1.5rem;transition:transform .1s}
+.runner-trail{flex:1;height:12px;background:#161b22;border-radius:6px;overflow:hidden;border:1px solid #30363d;position:relative}
+.runner-fill{height:100%;border-radius:6px;width:0%;transition:width .08s linear}
+.winner-badge{font-size:.7rem;font-weight:700;padding:.2rem .6rem;border-radius:9999px;border:1px solid;opacity:0;transition:all .5s}
+.winner-badge.show{opacity:1}
+
+/* ─── LINKEDIN SECTION ──────────────────────────── */
+.linkedin-wrap{background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden}
+.linkedin-header{background:#0a66c2;padding:1.5rem 2rem;display:flex;align-items:center;gap:1rem}
+.li-logo{font-size:2rem;font-weight:900;background:white;color:#0a66c2;width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:8px}
+.li-title{font-size:1.1rem;font-weight:700;color:white}
+.li-subtitle{font-size:.85rem;color:rgba(255,255,255,.7)}
+.linkedin-tabs{display:flex;gap:.5rem;padding:1.5rem 2rem 0;border-bottom:1px solid var(--border)}
+.li-tab{padding:.6rem 1.2rem;font-size:.85rem;font-weight:600;cursor:pointer;border:none;background:none;color:var(--muted);font-family:'Inter',sans-serif;border-bottom:2px solid transparent;transition:all .2s}
+.li-tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+.li-post-body{padding:2rem;display:none}
+.li-post-body.active{display:block}
+.post-preview{background:#f3f2f0;color:#191919;border-radius:12px;padding:1.5rem;font-size:.9rem;line-height:1.8;white-space:pre-wrap;font-family:'Inter',sans-serif;max-height:400px;overflow-y:auto;border:1px solid #ddd}
+.copy-btn{margin-top:1rem;padding:.6rem 1.4rem;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;border:1px solid rgba(88,166,255,.4);color:var(--blue);background:rgba(88,166,255,.1);font-family:'Inter',sans-serif;transition:all .2s}
+.copy-btn:hover{background:rgba(88,166,255,.25)}
+.copy-btn.copied{color:var(--green);border-color:rgba(63,185,80,.4);background:rgba(63,185,80,.1)}
+
+/* ─── INSIGHT CARDS ─────────────────────────────── */
+.insight-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.25rem}
+.insight-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.5rem;transition:all .3s;cursor:default}
+.insight-card:hover{border-color:rgba(255,255,255,.2);transform:translateY(-3px);box-shadow:0 15px 40px rgba(0,0,0,.4)}
+.insight-icon{font-size:2rem;margin-bottom:.75rem}
+.insight-title{font-size:1rem;font-weight:700;margin-bottom:.5rem}
+.insight-text{font-size:.88rem;color:var(--muted);line-height:1.7}
+.insight-card.border-blue{border-left:3px solid var(--blue)}
+.insight-card.border-purple{border-left:3px solid var(--purple)}
+.insight-card.border-green{border-left:3px solid var(--green)}
+.insight-card.border-yellow{border-left:3px solid var(--yellow)}
+.insight-card.border-red{border-left:3px solid var(--red)}
+.insight-card.border-orange{border-left:3px solid var(--orange)}
+
+/* ─── SECTION DIVIDER ───────────────────────────── */
+.divider{max-width:1100px;margin:0 auto;padding:0 2rem;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent)}
+
+/* ─── ANIMATIONS ────────────────────────────────── */
+@keyframes fadeDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes pulse-border{0%,100%{box-shadow:0 0 0 0 rgba(88,166,255,.4)}50%{box-shadow:0 0 0 6px rgba(88,166,255,0)}}
+@keyframes revealLine{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes appear{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+.fade-in-up{opacity:0;transform:translateY(30px);transition:opacity .6s ease,transform .6s ease}
+.fade-in-up.visible{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- ╔══════════════════════════════════════════════╗ -->
+<!--   HERO                                          -->
+<!-- ╚══════════════════════════════════════════════╝ -->
+<section class="hero">
+  <div class="hero-badge">⚡ JavaScript Advanced Topics · Deep Visual Guide</div>
+  <h1>Master<br><span>Async JavaScript</span></h1>
+  <p>An interactive deep-dive into Callbacks, Promises, Promise.all, Promise.race, Async &amp; Await — with live visualizations, animated diagrams, and a LinkedIn post generator.</p>
+  <div class="hero-pills">
+    <a class="pill pill-blue" href="#callbacks">Callbacks</a>
+    <a class="pill pill-purple" href="#promises">new Promise</a>
+    <a class="pill pill-green" href="#promiseAll">Promise.all</a>
+    <a class="pill pill-blue" href="#promiseRace">Promise.race</a>
+    <a class="pill pill-purple" href="#asyncAwait">Async/Await</a>
+    <a class="pill pill-green" href="#linkedin">LinkedIn Post</a>
+  </div>
+  <div class="scroll-cue">↓ scroll to explore</div>
+</section>
+
+<!-- ╔══════════════════════════════════════════════╗ -->
+<!--   EVENT LOOP VISUALIZER                         -->
+<!-- ╚══════════════════════════════════════════════╝ -->
+<section class="section fade-in-up">
+  <div class="section-label">Core Architecture</div>
+  <div class="section-title">The JavaScript Event Loop</div>
+  <div class="section-desc">Everything in async JS is driven by the Event Loop. Click "Run Simulation" to see how different operations flow through the Call Stack, Web APIs, Microtask Queue, and Macro-task Queue.</div>
+
+  <div class="eventloop">
+    <div class="el-grid">
+      <div class="el-box stack">
+        <h4 style="color:var(--blue)">📦 Call Stack</h4>
+        <div id="el-stack" style="width:100%;display:flex;flex-direction:column-reverse;gap:.4rem"></div>
+      </div>
+      <div class="el-box webapi">
+        <h4 style="color:var(--green)">🌐 Web APIs / Node</h4>
+        <div id="el-webapi" style="width:100%;display:flex;flex-direction:column;gap:.4rem"></div>
+      </div>
+      <div class="el-box queues" style="min-height:200px">
+        <h4 style="color:var(--purple)">📋 Queues</h4>
+        <div style="width:100%">
+          <div style="font-size:.7rem;color:var(--purple);margin-bottom:.3rem">MICROTASK (Priority)</div>
+          <div id="el-micro" style="display:flex;flex-direction:column;gap:.3rem;min-height:40px;margin-bottom:1rem"></div>
+          <div style="font-size:.7rem;color:var(--yellow);margin-bottom:.3rem">MACRO-TASK</div>
+          <div id="el-macro" style="display:flex;flex-direction:column;gap:.3rem;min-height:40px"></div>
+        </div>
+      </div>
+    </div>
+    <div class="el-controls">
+      <button class="btn btn-blue" onclick="runELSim('async')">▶ Run async/await Sim</button>
+      <button class="btn btn-purple" onclick="runELSim('promise')">▶ Run Promise Sim</button>
+      <button class="btn btn-green" onclick="runELSim('timeout')">▶ Run setTimeout Sim</button>
+      <button class="btn" style="border-color:var(--border);color:var(--muted)" onclick="clearEL()">✕ Clear</button>
+    </div>
+    <div class="output-area" id="el-output"><span style="color:var(--muted);font-size:.8rem">// Output will appear here...</span></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ╔══════════════════════════════════════════════╗ -->
+<!--   CALLBACKS                                     -->
+<!-- ╚══════════════════════════════════════════════╝ -->
+<section class="section fade-in-up" id="callbacks">
+  <div class="section-label">Topic 01</div>
+  <div class="section-title">Callbacks</div>
+  <div class="section-desc">The original JavaScript async pattern. A function you hand over to another function to call when it's done. Simple but riddled with deep problems.</div>
+
+  <div class="grid2">
+    <div>
+      <h3 style="font-size:1.1rem;margin-bottom:1rem">😈 The Problem: Callback Hell</h3>
+      <div style="display:flex;gap:.75rem;margin-bottom:1rem">
+        <button class="toggle-btn btn btn-blue" onclick="toggleHell()" id="hell-toggle">Show Async Version</button>
+      </div>
+      <div class="hell-vis" id="hell-code">
+<span class="hell-line"><span class="hl-fn">loginUser</span><span class="hl-brace">(</span><span class="hl-str">'raja'</span>, <span class="hl-str">'pass123'</span>, <span class="hl-brace">(</span>err, user<span class="hl-brace">) => {</span></span>
+<span class="hell-line">  <span class="hl-kw">if</span> <span class="hl-brace">(</span>err<span class="hl-brace">)</span> <span class="hl-kw">throw</span> err<span class="hl-brace">;</span></span>
+<span class="hell-line">  <span class="hl-fn">fetchProfile</span><span class="hl-brace">(</span>user.id, <span class="hl-brace">(</span>err, profile<span class="hl-brace">) => {</span></span>
+<span class="hell-line">    <span class="hl-kw">if</span> <span class="hl-brace">(</span>err<span class="hl-brace">)</span> <span class="hl-kw">throw</span> err<span class="hl-brace">;</span></span>
+<span class="hell-line">      <span class="hl-fn">fetchPermissions</span><span class="hl-brace">(</span>profile.role, <span class="hl-brace">(</span>err, perms<span class="hl-brace">) => {</span></span>
+<span class="hell-line">        <span class="hl-kw">if</span> <span class="hl-brace">(</span>err<span class="hl-brace">)</span> <span class="hl-kw">throw</span> err<span class="hl-brace">;</span></span>
+<span class="hell-line">          <span class="hl-fn">loadDashboard</span><span class="hl-brace">(</span>perms, <span class="hl-brace">(</span>err, dash<span class="hl-brace">) => {</span></span>
+<span class="hell-line">            <span class="hl-kw">if</span> <span class="hl-brace">(</span>err<span class="hl-brace">)</span> <span class="hl-kw">throw</span> err<span class="hl-brace">;</span></span>
+<span class="hell-line">            console.<span class="hl-fn">log</span><span class="hl-brace">(</span>dash<span class="hl-brace">)</span><span class="hl-brace">;</span> <span class="hl-cmt">// 😭 Finally!</span></span>
+<span class="hell-line">          <span class="hl-brace">});</span></span>
+<span class="hell-line">        <span class="hl-brace">});</span></span>
+<span class="hell-line">      <span class="hl-brace">});</span></span>
+<span class="hell-line">  <span class="hl-brace">});</span></span>
+<span class="hell-line"><span class="hl-brace">});</span></span>
+      </div>
+    </div>
+    <div>
+      <h3 style="font-size:1.1rem;margin-bottom:1rem">🔬 Deep Insights</h3>
+      <div class="insight-grid" style="grid-template-columns:1fr">
+        <div class="insight-card border-red">
+          <div class="insight-icon">🔄</div>
+          <div class="insight-title">Inversion of Control</div>
+          <div class="insight-text">When you pass a callback to a 3rd-party library, you trust it to call your function exactly once, at the right time, with the right arguments. If the library has a bug, your payment callback could fire twice. You lose all control.</div>
+        </div>
+        <div class="insight-card border-yellow">
+          <div class="insight-icon">🧩</div>
+          <div class="insight-title">Trust Issues</div>
+          <div class="insight-text">Callbacks have 5 trust problems: too early, too late, too many times, too few times, or swallowing errors. Every single one of these requires defensive code that bloats every callback you write.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:2rem">
+    <button class="btn btn-blue" onclick="runCallbackSim()" style="margin-right:1rem">▶ Simulate Callback Flow</button>
+    <div class="output-area" id="cb-output" style="margin-top:1rem"><span style="color:var(--muted);font-size:.8rem">// Click to simulate...</span></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ╔══════════════════════════════════════════════╗ -->
+<!--   NEW PROMISE                                   -->
+<!-- ╚══════════════════════════════════════════════╝ -->
+<section class="section fade-in-up" id="promises">
+  <div class="section-label">Topic 02</div>
+  <div class="section-title">new Promise</div>
+  <div class="section-desc">A Promise is a state machine — a guaranteed single-transition object that flows from Pending → Fulfilled or Pending → Rejected. Its state is immutable once settled.</div>
+
+  <div class="state-machine">
+    <div class="state-node pending active-state" id="sn-pending">
+      <span style="font-size:1.5rem">⏳</span>
+      PENDING
+    </div>
+    <div style="text-align:center">
+      <div style="display:flex;flex-direction:column;gap:.5rem">
+        <div style="display:flex;align-items:center;gap:.5rem">
+          <div style="height:2px;width:60px;background:var(--green)"></div>
+          <div style="font-size:.75rem;color:var(--green);font-family:'Fira Code',monospace">resolve()</div>
+          <div style="height:2px;width:60px;background:var(--green)"></div>
+        </div>
+        <div style="height:20px"></div>
+        <div style="display:flex;align-items:center;gap:.5rem">
+          <div style="height:2px;width:60px;background:var(--red)"></div>
+          <div style="font-size:.75rem;color:var(--red);font-family:'Fira Code',monospace">reject()</div>
+          <div style="height:2px;width:60px;background:var(--red)"></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:1rem">
+      <div class="state-node fulfilled" id="sn-fulfilled">
+        <span style="font-size:1.5rem">✅</span>
+        FULFILLED
+        <span style="font-size:.7rem">.then()</span>
+      </div>
+      <div class="state-node rejected" id="sn-rejected">
+        <span style="font-size:1.5rem">❌</span>
+        REJECTED
+        <span style="font-size:.7rem">.catch()</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:1rem;justify-content:center;margin-bottom:2rem;flex-wrap:wrap">
+    <button class="btn btn-green" onclick="animateState('resolve')">✅ Simulate resolve()</button>
+    <button class="btn" style="border-color:rgba(248,81,73,.4);color:var(--red);background:rgba(248,81,73,.1)" onclick="animateState('reject')">❌ Simulate reject()</button>
+    <button class="btn" style="border-color:var(--border);color:var(--muted)" onclick="animateState('reset')">↩ Reset</button>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div><span class="code-lang">javascript</span></div>
+    <div class="code-body"><pre><span class="kw">const</span> myPromise <span class="op">=</span> <span class="kw">new</span> <span class="fn">Promise</span>(<span class="pun">(</span>resolve, reject<span class="pun">) => {</span>
+  <span class="cmt">// ⚠️ This executor runs SYNCHRONOUSLY, immediately!</span>
+  <span class="kw">const</span> success <span class="op">=</span> Math.<span class="fn">random</span>() <span class="op">&gt;</span> <span class="num">0.5</span><span class="pun">;</span>
+
+  <span class="fn">setTimeout</span><span class="pun">(() => {</span>
+    <span class="kw">if</span> <span class="pun">(</span>success<span class="pun">)</span>
+      <span class="fn">resolve</span><span class="pun">({</span> id<span class="pun">:</span> <span class="num">42</span><span class="pun">,</span> name<span class="pun">:</span> <span class="str">"Raja"</span> <span class="pun">});</span>  <span class="cmt">// Pending → Fulfilled</span>
+    <span class="kw">else</span>
+      <span class="fn">reject</span><span class="pun">(</span><span class="kw">new</span> <span class="fn">Error</span><span class="pun">(</span><span class="str">"Network Failure"</span><span class="pun">));</span> <span class="cmt">// Pending → Rejected</span>
+  <span class="pun">},</span> <span class="num">2000</span><span class="pun">);</span>
+<span class="pun">});</span>
+
+myPromise
+  <span class="pun">.</span><span class="fn">then</span><span class="pun">(</span>data <span class="op">=&gt;</span> console.<span class="fn">log</span><span class="pun">(</span><span class="str">"✅ Got:"</span><span class="pun">,</span> data<span class="pun">))</span>
+  <span class="pun">.</span><span class="fn">catch</span><span class="pun">(</span>err <span class="op">=&gt;</span> console.<span class="fn">error</span><span class="pun">(</span><span class="str">"❌ Err:"</span><span class="pun">,</span> err<span class="pun">.</span>message<span class="pun">))</span>
+  <span class="pun">.</span><span class="fn">finally</span><span class="pun">(() =&gt;</span> console.<span class="fn">log</span><span class="pun">(</span><span class="str">"🏁 Done"</span><span class="pun">));</span></pre></div>
+  </div>
+
+  <div class="output-area" id="promise-output" style="margin-top:1rem"><span style="color:var(--muted);font-size:.8rem">// Click Simulate buttons above...</span></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ╔══════════════════════════════════════════════╗ -->
+<!--   PROMISE.ALL                                   -->
+<!-- ╚══════════════════════════════════════════════╝ -->
+<section class="section fade-in-up" id="promiseAll">
+  <div class="section-label">Topic 03</div>
+  <div class="section-title">Promise.all()</div>
+  <div class="section-desc">Run multiple independent async operations concurrently. Total time = slowest single task, not the sum of all tasks. Watch the difference live.</div>
+
+  <div class="parallel-vis">
+    <div class="mode-tabs">
+      <button class="mode-tab active" id="tab-parallel" onclick="setMode('parallel')">⚡ Promise.all (Parallel)</button>
+      <button class="mode-tab" id="tab-seq" onclick="setMode('sequential')">🐢 Sequential await (Slow)</button>
+      <button class="mode-tab" id="tab-allsettled" onclick="setMode('allsettled')">🛡️ Promise.allSettled</button>
+    </div>
+
+    <div id="pv-desc" style="font-size:.85rem;color:var(--muted);margin-bottom:1.5rem;background:#161b22;padding:1rem;border-radius:8px;border:1px solid #30363d;font-family:'Fira Code',monospace"></div>
+
+    <div id="pv-tracks"></div>
+
+    <div style="margin-top:1.5rem;display:flex;gap:1rem;flex-wrap:wrap">
+      <button class="btn btn-blue" onclick="runParallelSim()">▶ Run Visualization</button>
+      <div id="pv-timer" style="display:flex;align-items:center;font-size:1.1rem;font-weight:700;font-family:'Fira Code',monospace;color:var(--green)"></div>
+    </div>
+    <div class="output-area" id="pv-output" style="margin-top:1rem"><span style="color:var(--muted);font-size:.8rem">// Click Run...</span></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ╔══════════════════════════════════════════════╗ -->
+<!--   PROMISE.RACE                                  -->
+<!-- ╚══════════════════════════════════════════════╝ -->
+<section class="section fade-in-up" id="promiseRace">
+  <div class="section-label">Topic 04</div>
+  <div class="section-title">Promise.race()</div>
+  <div class="section-desc">The first Promise to settle wins. Losers are silently ignored — but not cancelled! This is the key pattern for implementing network timeouts.</div>
+
+  <div class="race-track">
+    <div style="display:flex;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap">
+      <button class="btn btn-blue" onclick="runRace()">🏁 Start Race</button>
+      <button class="btn btn-purple" onclick="runRace(true)">⏱️ Timeout Race</button>
+    </div>
+
+    <div id="race-runners"></div>
+    <div class="output-area" id="race-output" style="margin-top:1rem"><span style="color:var(--muted);font-size:.8rem">// Click to race...</span></div>
+  </div>
+
+  <div class="code-wrap" style="margin-top:2rem">
+    <div class="code-header"><div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div><span class="code-lang">javascript — Real-World Timeout Pattern</span></div>
+    <div class="code-body"><pre><span class="kw">function</span> <span class="fn">withTimeout</span><span class="pun">(</span>promise, ms<span class="pun">) {</span>
+  <span class="kw">const</span> timeout <span class="op">=</span> <span class="kw">new</span> <span class="fn">Promise</span><span class="pun">((</span>_, reject<span class="pun">) =&gt;</span>
+    <span class="fn">setTimeout</span><span class="pun">(() =&gt;</span> <span class="fn">reject</span><span class="pun">(</span><span class="kw">new</span> <span class="fn">Error</span><span class="pun">(</span><span class="str">`Timed out after ${ms}ms`</span><span class="pun">)),</span> ms<span class="pun">)</span>
+  <span class="pun">);</span>
+  <span class="kw">return</span> Promise.<span class="fn">race</span><span class="pun">([</span>promise, timeout<span class="pun">]);</span>
+<span class="pun">}</span>
+
+<span class="cmt">// Usage — fails fast if API takes more than 3 seconds</span>
+<span class="kw">const</span> result <span class="op">=</span> <span class="kw">await</span> <span class="fn">withTimeout</span><span class="pun">(</span><span class="fn">fetch</span><span class="pun">(</span><span class="str">'/api/data'</span><span class="pun">),</span> <span class="num">3000</span><span class="pun">);</span></pre></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ╔══════════════════════════════════════════════╗ -->
+<!--   ASYNC / AWAIT                                 -->
+<!-- ╚══════════════════════════════════════════════╝ -->
+<section class="section fade-in-up" id="asyncAwait">
+  <div class="section-label">Topic 05 + 06</div>
+  <div class="section-title">Async &amp; Await</div>
+  <div class="section-desc">The A → B → D → C puzzle. This single interactive quiz reveals everything you need to know about how the Event Loop handles async functions under the hood.</div>
+
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2rem;margin-bottom:2rem">
+    <h3 style="margin-top:0;margin-bottom:1.5rem;font-size:1.2rem">🧠 The Classic Interview Puzzle</h3>
+    <div class="code-wrap" style="margin:0 0 1.5rem">
+      <div class="code-header"><div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div><span class="code-lang">javascript — What is the output?</span></div>
+      <div class="code-body"><pre>console.<span class="fn">log</span><span class="pun">(</span><span class="str">"A"</span><span class="pun">);</span>
+
+<span class="kw">async function</span> <span class="fn">test</span><span class="pun">() {</span>
+  console.<span class="fn">log</span><span class="pun">(</span><span class="str">"B"</span><span class="pun">);</span>
+  <span class="kw">await</span> Promise.<span class="fn">resolve</span><span class="pun">();</span>
+  console.<span class="fn">log</span><span class="pun">(</span><span class="str">"C"</span><span class="pun">);</span>
+<span class="pun">}</span>
+
+<span class="fn">test</span><span class="pun">();</span>
+console.<span class="fn">log</span><span class="pun">(</span><span class="str">"D"</span><span class="pun">);</span></pre></div>
+    </div>
+    <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1rem">
+      <button class="btn" style="border-color:var(--border);color:var(--muted)" onclick="checkOrder('ABCD')">A B C D</button>
+      <button class="btn" style="border-color:var(--border);color:var(--muted)" onclick="checkOrder('ABDC')">A B D C ✓?</button>
+      <button class="btn" style="border-color:var(--border);color:var(--muted)" onclick="checkOrder('ADBC')">A D B C</button>
+      <button class="btn" style="border-color:var(--border);color:var(--muted)" onclick="checkOrder('ABCD2')">A B C D</button>
+    </div>
+    <div id="order-feedback" style="display:none;padding:1rem;border-radius:10px;font-size:.9rem;margin-bottom:1rem"></div>
+    <button class="btn btn-blue" onclick="runOrderSim()">▶ Run & Explain Step-by-Step</button>
+    <div class="output-area" id="order-output" style="margin-top:1rem"><span style="color:var(--muted);font-size:.8rem">// Click Run to see step-by-step...</span></div>
+  </div>
+
+  <div class="insight-grid">
+    <div class="insight-card border-blue">
+      <div class="insight-icon">⚡</div>
+      <div class="insight-title">async function = Promise Factory</div>
+      <div class="insight-text">Every <code style="color:var(--blue)">async</code> function always returns a Promise. <code>return "hello"</code> becomes <code>return Promise.resolve("hello")</code>. You can never get a raw value out of one from synchronous code.</div>
+    </div>
+    <div class="insight-card border-purple">
+      <div class="insight-icon">⏸️</div>
+      <div class="insight-title">await suspends the function, NOT the thread</div>
+      <div class="insight-text"><code style="color:var(--purple)">await</code> pauses the local async function's execution and yields control back to the caller. The rest of the JavaScript program keeps running. This is why D prints before C.</div>
+    </div>
+    <div class="insight-card border-green">
+      <div class="insight-icon">⚠️</div>
+      <div class="insight-title">The forEach Trap</div>
+      <div class="insight-text"><code style="color:var(--green)">await</code> inside <code>.forEach()</code> does not work sequentially. <code>forEach</code> is not Promise-aware. Use <code>for...of</code> for sequential, <code>Promise.all</code> for parallel.</div>
+    </div>
+    <div class="insight-card border-yellow">
+      <div class="insight-icon">🛡️</div>
+      <div class="insight-title">try/catch catches both sync & async errors</div>
+      <div class="insight-text">A single <code style="color:var(--yellow)">try/catch</code> wrapping <code>await</code> calls handles both runtime synchronous errors AND asynchronous Promise rejections. This is impossible with raw <code>.catch()</code>.</div>
+    </div>
+    <div class="insight-card border-orange">
+      <div class="insight-icon">🏎️</div>
+      <div class="insight-title">Sequential vs Parallel Await</div>
+      <div class="insight-text">Two sequential awaits = time of A + time of B. <code style="color:var(--orange)">Promise.all([A, B])</code> = time of the slowest one. For independent operations, always prefer parallel.</div>
+    </div>
+    <div class="insight-card border-red">
+      <div class="insight-icon">🎭</div>
+      <div class="insight-title">Top-Level Await (Modern JS)</div>
+      <div class="insight-text">In ES Modules, you can now use <code style="color:var(--red)">await</code> directly at the root of a script without wrapping it in an async IIFE. This simplifies module initialization but can block the entire module loading chain.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ╔══════════════════════════════════════════════╗ -->
+<!--   LINKEDIN POSTS                                -->
+<!-- ╚══════════════════════════════════════════════╝ -->
+<section class="section fade-in-up" id="linkedin">
+  <div class="section-label">Share Your Knowledge</div>
+  <div class="section-title">LinkedIn Post Generator</div>
+  <div class="section-desc">Ready-to-publish LinkedIn posts on each topic. Click to copy and paste directly into LinkedIn.</div>
+
+  <div class="linkedin-wrap">
+    <div class="linkedin-header">
+      <div class="li-logo">in</div>
+      <div>
+        <div class="li-title">JavaScript Async Series</div>
+        <div class="li-subtitle">6 ready-to-publish posts · Deep insights for Senior Devs</div>
+      </div>
+    </div>
+    <div class="linkedin-tabs">
+      <button class="li-tab active" onclick="showPost(0)">Callbacks</button>
+      <button class="li-tab" onclick="showPost(1)">Promises</button>
+      <button class="li-tab" onclick="showPost(2)">Promise.all</button>
+      <button class="li-tab" onclick="showPost(3)">Promise.race</button>
+      <button class="li-tab" onclick="showPost(4)">async</button>
+      <button class="li-tab" onclick="showPost(5)">await</button>
+    </div>
+
+    <div id="li-post-0" class="li-post-body active">
+      <div class="post-preview">😈 I used callbacks for 3 years before realising they were silently destroying my code's reliability.
+
+Here's the deep problem nobody talks about — Inversion of Control.
+
+Every time you write:
+
+  thirdPartyLib.processPayment(amount, myCallback)
+
+You just handed a stranger the keys to your callback.
+You trusted them to call it:
+  ✅ Exactly once
+  ✅ At the right time
+  ✅ With correct arguments
+  ✅ Without swallowing errors
+
+If they have a bug? Your payment callback fires twice. Money deducted twice. User furious.
+
+The "Callback Hell" pyramid 🔺 everyone talks about is just a VISUAL problem. The REAL problem is trust.
+
+Promises were invented to solve this trust problem — not just the visual nesting.
+
+Are you still writing raw callback-based APIs in 2025?
+
+#JavaScript #WebDev #QA #SoftwareEngineering #AsyncJS</div>
+      <button class="copy-btn" onclick="copyPost(0)">📋 Copy Post</button>
+    </div>
+
+    <div id="li-post-1" class="li-post-body">
+      <div class="post-preview">⚡ A Promise is NOT just a callback with better syntax. It's a state machine.
+
+And once you understand the state machine, async JavaScript clicks forever.
+
+A Promise has exactly 3 states:
+  ⏳ PENDING   → Still waiting
+  ✅ FULFILLED → resolve() was called
+  ❌ REJECTED  → reject() was called
+
+The key insight that most tutorials miss:
+
+A Promise is IMMUTABLE once settled.
+
+Call resolve() twice? Second call is silently ignored.
+This is the fix for the "Inversion of Control" problem in callbacks.
+
+The real power? Microtask Queue priority.
+
+Promise .then() callbacks run BEFORE setTimeout callbacks — even if setTimeout has a 0ms delay. Why? Because Promise callbacks go into the Microtask Queue, which is drained completely before the Macro-task (setTimeout) queue is even looked at.
+
+This is not a quirk. This is by spec design.
+
+#JavaScript #Promises #EventLoop #SeniorDev #WebDevelopment</div>
+      <button class="copy-btn" onclick="copyPost(1)">📋 Copy Post</button>
+    </div>
+
+    <div id="li-post-2" class="li-post-body">
+      <div class="post-preview">🏎️ I see developers writing this every day and it's costing them 3x performance:
+
+// ❌ Slow — 3 seconds total
+const user = await fetchUser();
+const posts = await fetchPosts();
+const config = await fetchConfig();
+
+// ✅ Fast — ~1 second total
+const [user, posts, config] = await Promise.all([
+  fetchUser(),
+  fetchPosts(),
+  fetchConfig()
+]);
+
+The math is simple:
+  Sequential:  1s + 1s + 1s = 3 seconds
+  Parallel:    max(1s, 1s, 1s) = 1 second
+
+Promise.all = time of the SLOWEST task, not the SUM.
+
+But here's the gotcha nobody mentions:
+
+Promise.all is FAIL-FAST.
+If fetchPosts() fails, the whole block fails instantly.
+The results of fetchUser() and fetchConfig() are silently discarded.
+
+If you need resilience, use Promise.allSettled() instead.
+It waits for ALL promises to settle — success or failure — and gives you a status report for each one.
+
+Are you running independent API calls in parallel yet?
+
+#JavaScript #Performance #AsyncJS #QA #Playwright</div>
+      <button class="copy-btn" onclick="copyPost(2)">📋 Copy Post</button>
+    </div>
+
+    <div id="li-post-3" class="li-post-body">
+      <div class="post-preview">⏱️ Your fetch() calls have no timeout by default. Here's the 5-line fix.
+
+Most developers don't realise that the native fetch() API has NO built-in timeout. If the server hangs, your user waits forever.
+
+Here's how Promise.race() fixes this elegantly:
+
+function withTimeout(promise, ms) {
+  const timeout = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error(`Timed out after ${ms}ms`)), ms)
+  );
+  return Promise.race([promise, timeout]);
+}
+
+// Now your API call fails fast after 3 seconds
+const data = await withTimeout(fetch('/api/data'), 3000);
+
+Promise.race() settles the moment the FIRST Promise in the array settles — win or lose.
+
+⚠️ Critical gotcha: Promise.race() does NOT cancel the losing promises.
+That slow fetch() is still running in the background, consuming network resources.
+
+To actually cancel it, use AbortController:
+
+const controller = new AbortController();
+const fetchWithSignal = fetch('/api/data', { signal: controller.signal });
+// ... later ...
+controller.abort(); // Actually cancels the network request!
+
+#JavaScript #WebDev #Performance #QA #SoftwareEngineering</div>
+      <button class="copy-btn" onclick="copyPost(3)">📋 Copy Post</button>
+    </div>
+
+    <div id="li-post-4" class="li-post-body">
+      <div class="post-preview">🤯 I asked 50 developers what `async` does. Most got it partially wrong.
+
+Here's the precise answer:
+
+The `async` keyword does exactly TWO things:
+
+1️⃣ It allows the `await` keyword to be used inside the function body.
+
+2️⃣ It forces the function to ALWAYS return a Promise.
+
+That second point trips everyone up.
+
+async function getName() {
+  return "Raja"; // You think this returns a string
+}
+
+// It doesn't. It returns Promise.resolve("Raja")
+
+You can NEVER get a raw value out of an async function from synchronous code. Period.
+
+The practical implication?
+
+If you're calling an async function from a regular function, you must handle the returned Promise with .then() — you cannot use await there.
+
+Think of every async function as a Promise factory. It produces Promises. That's its entire job.
+
+This is also why Playwright tests require the `async` keyword — every browser action returns a Promise, so the test function itself must be async to use await.
+
+#JavaScript #AsyncAwait #Playwright #QA #SeniorDev</div>
+      <button class="copy-btn" onclick="copyPost(4)">📋 Copy Post</button>
+    </div>
+
+    <div id="li-post-5" class="li-post-body">
+      <div class="post-preview">🧠 Output puzzle that separates junior devs from senior devs:
+
+console.log("A");
+
+async function test() {
+  console.log("B");
+  await Promise.resolve();
+  console.log("C");
+}
+
+test();
+console.log("D");
+
+Most people say: A → B → C → D ❌
+The correct answer is: A → B → D → C ✅
+
+Here's the exact reasoning:
+
+1. "A" logs (synchronous)
+2. test() is called — "B" logs (synchronous, before the await)
+3. await pauses the test() function and yields control BACK to the caller
+4. "D" logs (synchronous — the main script keeps running!)
+5. The main call stack is now empty
+6. The Event Loop drains the Microtask Queue
+7. The continuation of test() runs — "C" logs
+
+The golden rule: await does NOT freeze the JavaScript program.
+It only suspends the local async function and returns control to whoever called it.
+
+This is the most important concept in JavaScript async. Everything else follows from it.
+
+#JavaScript #EventLoop #Interviews #AsyncAwait #SeniorDev #SoftwareEngineering</div>
+      <button class="copy-btn" onclick="copyPost(5)">📋 Copy Post</button>
+    </div>
+  </div>
+</section>
+
+<div style="text-align:center;padding:4rem 2rem;color:var(--muted);font-size:.85rem">
+  <div style="font-size:2rem;margin-bottom:1rem">⚡</div>
+  Built with deep research · JavaScript Async Visual Guide
+</div>
+
+<script>
+// ─── INTERSECTION OBSERVER ─────────────────────────────────
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el));
+
+// ─── HELPERS ───────────────────────────────────────────────
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function addOutput(containerId, text, colorClass = '', delay = 0) {
+  return new Promise(r => setTimeout(() => {
+    const out = document.getElementById(containerId);
+    if (out.querySelector('span')) out.innerHTML = '';
+    const line = document.createElement('div');
+    line.className = `out-line ${colorClass}`;
+    line.textContent = text;
+    out.appendChild(line);
+    r();
+  }, delay));
+}
+
+function clearOutput(id) {
+  document.getElementById(id).innerHTML = '';
+}
+
+// ─── EVENT LOOP SIMULATOR ───────────────────────────────────
+function elEl(text, cls) {
+  const d = document.createElement('div');
+  d.className = `el-item ${cls}`;
+  d.textContent = text;
+  return d;
+}
+
+function clearEL() {
+  ['el-stack','el-webapi','el-micro','el-macro'].forEach(id => document.getElementById(id).innerHTML='');
+  clearOutput('el-output');
+}
+
+async function runELSim(type) {
+  clearEL();
+  const stack = document.getElementById('el-stack');
+  const webapi = document.getElementById('el-webapi');
+  const micro = document.getElementById('el-micro');
+  const macro = document.getElementById('el-macro');
+  const out = document.getElementById('el-output');
+  out.innerHTML = '';
+  if (type === 'async') {
+    const steps = [
+      async () => { stack.appendChild(elEl('console.log("A")', 'blue-i pulse')); },
+      async () => { await sleep(600); addOutput('el-output','» A','green'); stack.innerHTML=''; },
+      async () => { await sleep(300); stack.appendChild(elEl('test()', 'blue-i pulse')); },
+      async () => { await sleep(600); stack.appendChild(elEl('console.log("B")', 'blue-i pulse')); },
+      async () => { await sleep(600); addOutput('el-output','» B','blue'); },
+      async () => { await sleep(300); stack.innerHTML=''; stack.appendChild(elEl('await Promise.resolve()', 'yellow-i pulse')); },
+      async () => { await sleep(700); const m = elEl('.then continuation → C','purple-i'); micro.appendChild(m); stack.innerHTML=''; stack.appendChild(elEl('console.log("D")', 'blue-i pulse')); addOutput('el-output','  [test() suspended → microtask queued]','muted'); },
+      async () => { await sleep(700); addOutput('el-output','» D','yellow'); stack.innerHTML=''; },
+      async () => { await sleep(500); addOutput('el-output','  [Call stack empty → drain Microtask Queue]','muted'); },
+      async () => { await sleep(500); micro.innerHTML=''; stack.appendChild(elEl('console.log("C")', 'purple-i pulse')); },
+      async () => { await sleep(600); addOutput('el-output','» C','purple'); stack.innerHTML=''; addOutput('el-output','✅ Final order: A → B → D → C','green'); },
+    ];
+    for (const step of steps) await step();
+  } else if (type === 'promise') {
+    const steps = [
+      async () => { stack.appendChild(elEl('new Promise(executor)', 'blue-i pulse')); await sleep(600); addOutput('el-output','  executor runs synchronously...','muted'); },
+      async () => { await sleep(500); webapi.appendChild(elEl('⏱ setTimeout 1000ms', 'green-i')); stack.innerHTML=''; },
+      async () => { await sleep(1000); webapi.innerHTML=''; macro.appendChild(elEl('resolve callback', 'yellow-i')); addOutput('el-output','  resolve() called → .then() queued in Microtask','muted'); },
+      async () => { await sleep(300); micro.appendChild(elEl('.then(data => ...)', 'purple-i pulse')); macro.innerHTML=''; },
+      async () => { await sleep(700); micro.innerHTML=''; addOutput('el-output','✅ Promise resolved!','green'); stack.innerHTML=''; },
+    ];
+    for (const step of steps) await step();
+  } else {
+    const steps = [
+      async () => { stack.appendChild(elEl('setTimeout(fn, 0)', 'blue-i pulse')); await sleep(600); addOutput('el-output','  setTimeout registered...','muted'); },
+      async () => { await sleep(400); webapi.appendChild(elEl('⏱ 0ms timer', 'green-i pulse')); stack.innerHTML=''; },
+      async () => { await sleep(500); webapi.innerHTML=''; macro.appendChild(elEl('setTimeout callback', 'yellow-i')); addOutput('el-output','  timer done → pushed to Macro-task Queue','muted'); },
+      async () => { await sleep(500); addOutput('el-output','  [Microtask Queue checked first — empty ✓]','muted'); },
+      async () => { await sleep(500); macro.innerHTML=''; stack.appendChild(elEl('fn()', 'yellow-i pulse')); addOutput('el-output','✅ setTimeout callback executed','yellow'); stack.innerHTML=''; },
+    ];
+    for (const step of steps) await step();
+  }
+}
+
+// ─── CALLBACK HELL TOGGLE ──────────────────────────────────
+let hellMode = false;
+const awaitCode = `<span class="hell-line"><span class="hl-kw">async function</span> <span class="hl-fn">runFlow</span><span class="hl-brace">() {</span></span>
+<span class="hell-line">  <span class="hl-kw">try</span> <span class="hl-brace">{</span></span>
+<span class="hell-line">    <span class="hl-kw">const</span> user <span class="hl-brace">=</span> <span class="hl-kw">await</span> <span class="hl-fn">loginUser</span><span class="hl-brace">(</span><span class="hl-str">'raja'</span>, <span class="hl-str">'pass123'</span><span class="hl-brace">);</span></span>
+<span class="hell-line">    <span class="hl-kw">const</span> profile <span class="hl-brace">=</span> <span class="hl-kw">await</span> <span class="hl-fn">fetchProfile</span><span class="hl-brace">(</span>user.id<span class="hl-brace">);</span></span>
+<span class="hell-line">    <span class="hl-kw">const</span> perms <span class="hl-brace">=</span> <span class="hl-kw">await</span> <span class="hl-fn">fetchPermissions</span><span class="hl-brace">(</span>profile.role<span class="hl-brace">);</span></span>
+<span class="hell-line">    <span class="hl-kw">const</span> dash <span class="hl-brace">=</span> <span class="hl-kw">await</span> <span class="hl-fn">loadDashboard</span><span class="hl-brace">(</span>perms<span class="hl-brace">);</span></span>
+<span class="hell-line">    console.<span class="hl-fn">log</span><span class="hl-brace">(</span>dash<span class="hl-brace">)</span><span class="hl-brace">;</span> <span class="hl-cmt">// 😍 Clean!</span></span>
+<span class="hell-line">  <span class="hl-brace">}</span> <span class="hl-kw">catch</span> <span class="hl-brace">(</span>err<span class="hl-brace">) {</span></span>
+<span class="hell-line">    console.<span class="hl-fn">error</span><span class="hl-brace">(</span>err<span class="hl-brace">)</span><span class="hl-brace">;</span></span>
+<span class="hell-line">  <span class="hl-brace">}</span></span>
+<span class="hell-line"><span class="hl-brace">}</span></span>`;
+
+const hellOrig = `<span class="hell-line"><span class="hl-fn">loginUser</span><span class="hl-brace">(</span><span class="hl-str">'raja'</span>, <span class="hl-str">'pass123'</span>, <span class="hl-brace">(</span>err, user<span class="hl-brace">) => {</span></span>
+<span class="hell-line">  <span class="hl-kw">if</span> <span class="hl-brace">(</span>err<span class="hl-brace">)</span> <span class="hl-kw">throw</span> err<span class="hl-brace">;</span></span>
+<span class="hell-line">  <span class="hl-fn">fetchProfile</span><span class="hl-brace">(</span>user.id, <span class="hl-brace">(</span>err, profile<span class="hl-brace">) => {</span></span>
+<span class="hell-line">    <span class="hl-kw">if</span> <span class="hl-brace">(</span>err<span class="hl-brace">)</span> <span class="hl-kw">throw</span> err<span class="hl-brace">;</span></span>
+<span class="hell-line">      <span class="hl-fn">fetchPermissions</span><span class="hl-brace">(</span>profile.role, <span class="hl-brace">(</span>err, perms<span class="hl-brace">) => {</span></span>
+<span class="hell-line">        <span class="hl-kw">if</span> <span class="hl-brace">(</span>err<span class="hl-brace">)</span> <span class="hl-kw">throw</span> err<span class="hl-brace">;</span></span>
+<span class="hell-line">          <span class="hl-fn">loadDashboard</span><span class="hl-brace">(</span>perms, <span class="hl-brace">(</span>err, dash<span class="hl-brace">) => {</span></span>
+<span class="hell-line">            <span class="hl-kw">if</span> <span class="hl-brace">(</span>err<span class="hl-brace">)</span> <span class="hl-kw">throw</span> err<span class="hl-brace">;</span></span>
+<span class="hell-line">            console.<span class="hl-fn">log</span><span class="hl-brace">(</span>dash<span class="hl-brace">)</span><span class="hl-brace">;</span> <span class="hl-cmt">// 😭 Finally!</span></span>
+<span class="hell-line">          <span class="hl-brace">});</span></span>
+<span class="hell-line">        <span class="hl-brace">});</span></span>
+<span class="hell-line">      <span class="hl-brace">});</span></span>
+<span class="hell-line">  <span class="hl-brace">});</span></span>
+<span class="hell-line"><span class="hl-brace">});</span></span>`;
+
+function toggleHell() {
+  hellMode = !hellMode;
+  document.getElementById('hell-code').innerHTML = hellMode ? awaitCode : hellOrig;
+  document.getElementById('hell-toggle').textContent = hellMode ? 'Show Callback Hell' : 'Show Async Version';
+  document.getElementById('hell-toggle').className = hellMode ? 'toggle-btn btn btn-green' : 'toggle-btn btn btn-blue';
+}
+
+async function runCallbackSim() {
+  const out = document.getElementById('cb-output');
+  out.innerHTML = '';
+  const steps = [
+    [0, '📞 loginUser("raja","pass123", callback) — calling...', 'blue'],
+    [800, '🌐 [Web API] HTTP request in flight...', 'muted'],
+    [1600, '✅ loginUser resolved → callback fired', 'green'],
+    [2000, '📞 fetchProfile(user.id, callback) — calling...', 'blue'],
+    [2800, '✅ fetchProfile resolved → callback fired', 'green'],
+    [3200, '📞 fetchPermissions(role, callback) — calling...', 'blue'],
+    [4000, '✅ fetchPermissions resolved → callback fired', 'green'],
+    [4400, '📞 loadDashboard(perms, callback) — calling...', 'blue'],
+    [5200, '✅ loadDashboard resolved → { tabs: 5, widgets: 12 }', 'green'],
+    [5600, '⏱ Total time: ~5200ms (all sequential)', 'yellow'],
+  ];
+  steps.forEach(([delay, text, cls]) => {
+    setTimeout(() => {
+      const line = document.createElement('div');
+      line.className = `out-line ${cls}`;
+      line.textContent = text;
+      out.appendChild(line);
+    }, delay);
+  });
+}
+
+// ─── PROMISE STATE MACHINE ─────────────────────────────────
+function animateState(action) {
+  const pending = document.getElementById('sn-pending');
+  const fulfilled = document.getElementById('sn-fulfilled');
+  const rejected = document.getElementById('sn-rejected');
+  const out = document.getElementById('promise-output');
+  out.innerHTML = '';
+  pending.classList.remove('active-state');
+  fulfilled.classList.remove('active-state');
+  rejected.classList.remove('active-state');
+
+  if (action === 'reset') {
+    pending.classList.add('active-state');
+    const l = document.createElement('div'); l.className='out-line muted'; l.textContent='↩ Reset to PENDING state'; out.appendChild(l);
+    return;
+  }
+  if (action === 'resolve') {
+    fulfilled.classList.add('active-state');
+    const steps = [
+      [0, '⏳ State: PENDING...', 'yellow'],
+      [600, '✅ resolve({ id: 42, name: "Raja" }) called', 'green'],
+      [900, '🔒 Promise is now immutable — state locked to FULFILLED', 'green'],
+      [1200, '.then(data => ...) fires with resolved value', 'blue'],
+      [1500, '🏁 .finally() always runs', 'muted'],
+    ];
+    steps.forEach(([d, t, c]) => setTimeout(() => { const l=document.createElement('div'); l.className=`out-line ${c}`; l.textContent=t; out.appendChild(l); }, d));
+  } else if (action === 'reject') {
+    rejected.classList.add('active-state');
+    const steps = [
+      [0, '⏳ State: PENDING...', 'yellow'],
+      [600, '❌ reject(new Error("Network Failure")) called', 'red'],
+      [900, '🔒 Promise is now immutable — state locked to REJECTED', 'red'],
+      [1200, '.catch(err => ...) fires with rejection reason', 'orange'],
+      [1500, '🏁 .finally() always runs', 'muted'],
+    ];
+    steps.forEach(([d, t, c]) => setTimeout(() => { const l=document.createElement('div'); l.className=`out-line ${c}`; l.textContent=t; out.appendChild(l); }, d));
+  }
+}
+
+// ─── PARALLEL VISUALIZER ──────────────────────────────────
+let currentMode = 'parallel';
+const pvTasks = [
+  { name: 'fetchUser()', time: 1200, cls: 'pv-blue', color: 'blue' },
+  { name: 'fetchPosts()', time: 2500, cls: 'pv-purple', color: 'purple' },
+  { name: 'fetchConfig()', time: 800, cls: 'pv-green', color: 'green' },
+];
+const pvDescriptions = {
+  parallel: '// Promise.all — all 3 start simultaneously\nawait Promise.all([fetchUser(), fetchPosts(), fetchConfig()])\n// Total time: max(1.2s, 2.5s, 0.8s) = ~2.5s',
+  sequential: '// Sequential awaits — each waits for the previous\nconst user = await fetchUser();\nconst posts = await fetchPosts();\nconst config = await fetchConfig();\n// Total time: 1.2s + 2.5s + 0.8s = ~4.5s',
+  allsettled: '// Promise.allSettled — waits for ALL, never fails-fast\nawait Promise.allSettled([fetchUser(), fetchPosts(), fetchConfig()])\n// Returns [{status:"fulfilled",...}, {status:"rejected",...}, ...]',
+};
+
+function setMode(m) {
+  currentMode = m;
+  document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-'+m)?.classList.add('active');
+  document.getElementById('pv-desc').textContent = pvDescriptions[m];
+  buildTracks();
+  document.getElementById('pv-output').innerHTML = '<span style="color:var(--muted);font-size:.8rem">// Click Run...</span>';
+  document.getElementById('pv-timer').textContent = '';
+}
+
+function buildTracks() {
+  const wrap = document.getElementById('pv-tracks');
+  wrap.innerHTML = '';
+  const tasks = currentMode === 'allsettled'
+    ? [...pvTasks, { name: 'fetchReport()', time: 1800, cls: 'pv-orange', color: 'yellow', fails: true }]
+    : pvTasks;
+  tasks.forEach((t, i) => {
+    wrap.innerHTML += `<div class="pv-track">
+      <div class="pv-label" style="color:var(--${t.color})">${t.name}</div>
+      <div class="pv-bar-wrap"><div class="pv-bar ${t.cls}" id="pvbar${i}"></div></div>
+      <div class="pv-status" id="pvst${i}" style="color:var(--muted)">idle</div>
+    </div>`;
+  });
+}
+
+function runParallelSim() {
+  const out = document.getElementById('pv-output');
+  const timer = document.getElementById('pv-timer');
+  out.innerHTML = '';
+  timer.textContent = '';
+  const tasks = currentMode === 'allsettled'
+    ? [...pvTasks, { name: 'fetchReport()', time: 1800, cls: 'pv-orange', color: 'yellow', fails: true }]
+    : pvTasks;
+  buildTracks();
+
+  const startTime = Date.now();
+  const timerInt = setInterval(() => {
+    timer.textContent = ((Date.now() - startTime) / 1000).toFixed(1) + 's';
+  }, 50);
+
+  let delays = [];
+  if (currentMode === 'sequential') {
+    let cum = 0;
+    delays = tasks.map(t => { const d = cum; cum += t.time; return d; });
+  } else {
+    delays = tasks.map(() => 0);
+  }
+
+  let done = 0;
+  tasks.forEach((t, i) => {
+    const bar = document.getElementById(`pvbar${i}`);
+    const st = document.getElementById(`pvst${i}`);
+    st.textContent = 'waiting...';
+    st.style.color = 'var(--muted)';
+    setTimeout(() => {
+      st.textContent = 'running';
+      const duration = t.time;
+      const interval = 50;
+      let elapsed = 0;
+      const barInt = setInterval(() => {
+        elapsed += interval;
+        bar.style.width = Math.min((elapsed / duration) * 100, 100) + '%';
+        if (elapsed >= duration) {
+          clearInterval(barInt);
+          const success = !(t.fails && currentMode === 'allsettled');
+          st.textContent = success ? '✅ done' : '❌ failed';
+          st.style.color = success ? 'var(--green)' : 'var(--red)';
+          const l = document.createElement('div');
+          l.className = `out-line ${success ? (t.color || 'green') : 'red'}`;
+          l.textContent = success
+            ? `✅ ${t.name} resolved → took ${(duration/1000).toFixed(1)}s`
+            : `❌ ${t.name} rejected → Network Error`;
+          out.appendChild(l);
+          done++;
+          if (done === tasks.length) {
+            clearInterval(timerInt);
+            const total = currentMode === 'sequential'
+              ? tasks.reduce((a, t) => a + t.time, 0)
+              : Math.max(...tasks.map(t => t.time));
+            setTimeout(() => {
+              const l2 = document.createElement('div');
+              l2.className = 'out-line yellow';
+              l2.textContent = `⏱ Total: ${(total/1000).toFixed(1)}s — ${currentMode === 'sequential' ? 'Sequential (sum)' : currentMode === 'allsettled' ? 'allSettled (all results)' : 'Promise.all (fastest!)'}`;
+              out.appendChild(l2);
+            }, 200);
+          }
+        }
+      }, interval);
+    }, delays[i]);
+  });
+}
+
+setMode('parallel');
+
+// ─── RACE VISUALIZER ───────────────────────────────────────
+const raceRunners = [
+  { name: 'Auth API', emoji: '🔐', color: 'pv-blue', time: 2200 },
+  { name: 'User API', emoji: '👤', color: 'pv-purple', time: 1500 },
+  { name: 'Config API', emoji: '⚙️', color: 'pv-green', time: 3000 },
+];
+
+function buildRaceTrack(withTimeout) {
+  const wrap = document.getElementById('race-runners');
+  wrap.innerHTML = '';
+  const runners = withTimeout
+    ? [...raceRunners, { name: 'Timeout(1s)', emoji: '⏱️', color: 'pv-red', time: 1000, isTimeout: true }]
+    : raceRunners;
+  runners.forEach((r, i) => {
+    wrap.innerHTML += `<div class="runner">
+      <div class="runner-emoji">${r.emoji}</div>
+      <div style="width:100px;font-size:.8rem;font-weight:600;font-family:'Fira Code',monospace;color:var(--muted)">${r.name}</div>
+      <div class="runner-trail"><div class="runner-fill ${r.color}" id="rf${i}"></div></div>
+      <div class="winner-badge" id="rb${i}" style="border-color:var(--muted);color:var(--muted)"></div>
+    </div>`;
+  });
+  return runners;
+}
+
+function runRace(withTimeout = false) {
+  const out = document.getElementById('race-output');
+  out.innerHTML = '';
+  const runners = buildRaceTrack(withTimeout);
+  let raceWon = false;
+
+  runners.forEach((r, i) => {
+    const fill = document.getElementById(`rf${i}`);
+    const badge = document.getElementById(`rb${i}`);
+    const duration = r.time;
+    const interval = 30;
+    let elapsed = 0;
+    const barInt = setInterval(() => {
+      elapsed += interval;
+      fill.style.width = Math.min((elapsed / duration) * 100, 100) + '%';
+      if (elapsed >= duration) {
+        clearInterval(barInt);
+        if (!raceWon) {
+          raceWon = true;
+          badge.textContent = '🏆 WINS';
+          badge.style.color = r.isTimeout ? 'var(--red)' : 'var(--green)';
+          badge.style.borderColor = r.isTimeout ? 'rgba(248,81,73,.4)' : 'rgba(63,185,80,.4)';
+          badge.style.background = r.isTimeout ? 'rgba(248,81,73,.1)' : 'rgba(63,185,80,.1)';
+          badge.classList.add('show');
+          const l = document.createElement('div');
+          l.className = `out-line ${r.isTimeout ? 'red' : 'green'}`;
+          l.textContent = r.isTimeout
+            ? `❌ ${r.name} won the race — Promise.race() rejected! Other promises still running in background.`
+            : `🏆 ${r.name} (${(duration/1000).toFixed(1)}s) won! Other promises ignored.`;
+          out.appendChild(l);
+          if (r.isTimeout) {
+            setTimeout(() => {
+              const l2 = document.createElement('div'); l2.className='out-line muted';
+              l2.textContent = '⚠️ Tip: Use AbortController to truly cancel the losing fetch requests.';
+              out.appendChild(l2);
+            }, 400);
+          }
+        } else if (elapsed >= duration) {
+          badge.textContent = 'ignored';
+          badge.classList.add('show');
+        }
+      }
+    }, interval);
+  });
+}
+
+// ─── ASYNC/AWAIT ORDER PUZZLE ──────────────────────────────
+function checkOrder(choice) {
+  const fb = document.getElementById('order-feedback');
+  fb.style.display = 'block';
+  if (choice === 'ABDC') {
+    fb.style.background = 'rgba(63,185,80,.1)';
+    fb.style.border = '1px solid rgba(63,185,80,.3)';
+    fb.style.color = 'var(--green)';
+    fb.innerHTML = '✅ <strong>Correct!</strong> A → B → D → C is the right answer. B runs synchronously before the await. D runs because await suspends only the async function. C runs last as a microtask after the call stack is empty.';
+  } else {
+    fb.style.background = 'rgba(248,81,73,.1)';
+    fb.style.border = '1px solid rgba(248,81,73,.3)';
+    fb.style.color = 'var(--red)';
+    fb.innerHTML = '❌ <strong>Not quite.</strong> The correct answer is <strong>A → B → D → C</strong>. Remember: <code>await</code> suspends the async function and yields control back — so D (synchronous code after test()) runs before C (which is scheduled as a microtask).';
+  }
+}
+
+async function runOrderSim() {
+  const out = document.getElementById('order-output');
+  out.innerHTML = '';
+  const steps = [
+    [0, '📌 Call Stack: console.log("A") — SYNCHRONOUS', 'muted'],
+    [500, '» A', 'green'],
+    [1000, '📌 Call Stack: test() called → enters function body', 'muted'],
+    [1500, '📌 Call Stack: console.log("B") — SYNCHRONOUS (inside test)', 'muted'],
+    [2000, '» B', 'blue'],
+    [2500, '⏸️  Hit `await Promise.resolve()` — test() SUSPENDS', 'yellow'],
+    [3000, '📋 Microtask Queue: [ continuation of test() (→ C) ] queued', 'purple'],
+    [3500, '↩️  Control returns to main script caller', 'muted'],
+    [4000, '📌 Call Stack: console.log("D") — SYNCHRONOUS (main script)', 'muted'],
+    [4500, '» D', 'yellow'],
+    [5000, '✅ Call stack now EMPTY — Event Loop checks Microtask Queue', 'muted'],
+    [5500, '📋 Microtask Queue: draining... [ continuation of test() ]', 'purple'],
+    [6000, '📌 Call Stack: console.log("C") — from microtask', 'muted'],
+    [6500, '» C', 'purple'],
+    [7000, '─────────────────────────────────────────', 'muted'],
+    [7100, '🏁 Final Output: A → B → D → C', 'green'],
+  ];
+  steps.forEach(([delay, text, cls]) => {
+    setTimeout(() => {
+      if (out.querySelector('span')) out.innerHTML='';
+      const l = document.createElement('div'); l.className=`out-line ${cls}`; l.textContent=text; out.appendChild(l);
+    }, delay);
+  });
+}
+
+// ─── LINKEDIN POSTS ─────────────────────────────────────────
+function showPost(idx) {
+  document.querySelectorAll('.li-post-body').forEach((el,i) => {
+    el.classList.toggle('active', i === idx);
+  });
+  document.querySelectorAll('.li-tab').forEach((el,i) => {
+    el.classList.toggle('active', i === idx);
+  });
+}
+
+function copyPost(idx) {
+  const text = document.getElementById(`li-post-${idx}`).querySelector('.post-preview').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelectorAll('.copy-btn')[idx];
+    btn.textContent = '✅ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '📋 Copy Post'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+</script>
+</body>
+</html>
