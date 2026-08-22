@@ -3,39 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chapter 04: Literals - Zero to Hero</title>
+    <title>Chapter 04: Literals & Data Types - Zero to Hero</title>
     <link rel="stylesheet" href="../interactive_styles.css">
     <style>
-        :root { --grad: linear-gradient(135deg, #ffa657, #bc8cff); --blue: #ffa657; }
+        :root { --grad: linear-gradient(135deg, #f59e0b, #fbbf24); --blue: #f59e0b; }
+        .hero::before { background: radial-gradient(ellipse at 50% 0%, rgba(245,158,11,0.15) 0%, transparent 60%), radial-gradient(ellipse at 80% 80%, rgba(251,191,36,0.1) 0%, transparent 50%); }
+        .hero-badge { border-color: rgba(245, 158, 11, 0.3); background: rgba(245, 158, 11, 0.08); color: var(--blue); }
     </style>
 </head>
 <body>
     <section class="hero">
         <div class="hero-badge">✨ Chapter 04</div>
-        <h1>Mastering <span>Literals</span></h1>
-        <p>Directly representing values in source code: Null, Undefined, Numbers, and BigInt.</p>
+        <h1>Mastering <span>Literals & Data Types</span></h1>
+        <p>Explore the 7 primitive types, the single unified Number type, and the 27-year-old typeof bug that still haunts JavaScript today.</p>
     </section>
+
+    <!-- DEEP INSIGHTS SECTION -->
     <section class="section">
-        <div class="section-header"><span class="section-label">Deep Insights</span><h2 class="section-title">Core Concepts Extracted</h2></div>
+        <div class="section-header">
+            <span class="section-label">Deep Insights</span>
+            <h2 class="section-title">Core Concepts Extracted</h2>
+        </div>
         <div class="grid-2">
             <div class="card">
-                <h3>🌌 Null vs Undefined</h3>
-                <p class="qa-a">`undefined` means a variable exists but hasn't been assigned a value. `null` is an intentional assignment of "no value".</p>
-            </div>
-            <div class="card">
-                <h3>🔢 Number Literals</h3>
-                <p class="qa-a">JS numbers are always double-precision floats. You can also write numbers in Binary (0b), Hex (0x), and use Numeric Separators (_).</p>
+                <h3>⚖️ The `typeof null` Bug</h3>
+                <p style="color: var(--muted);">`typeof null` returns `"object"`. This is a 27-year-old bug! In the original JS implementation, the type tag for an object was `000`, and `null` was all zeros, so they matched. It was never fixed for backward compatibility.</p>
                 <div class="code-container">
-                    <pre class="code-content"><span class="keyword">let</span> million = 1_000_000;
-<span class="keyword">let</span> hex = 0xFF; <span class="comment">// 255</span></pre>
+                    <div class="code-header"><span>Historical Bug</span></div>
+                    <pre class="code-content"><span class="function">console.log</span>(<span class="keyword">typeof null</span>); <span class="comment">// "object" ⚠️</span>
+
+<span class="comment">// How to correctly check for null:</span>
+<span class="keyword">if</span> (value === <span class="keyword">null</span>) {
+    <span class="function">console.log</span>(<span class="string">"This is actually null"</span>);
+}</pre>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>🔢 The Universal Number Type</h3>
+                <p style="color: var(--muted);">JavaScript has no `int`, `float`, or `double`. All numbers are stored as **IEEE 754 double-precision 64-bit** floating-point numbers. This single type handles everything from `42` to `NaN`.</p>
+                <div class="code-container">
+                    <div class="code-header"><span>IEEE 754 Quirks</span></div>
+                    <pre class="code-content"><span class="function">console.log</span>(<span class="keyword">typeof</span> 42);      <span class="comment">// "number"</span>
+<span class="function">console.log</span>(<span class="keyword">typeof</span> 3.14);    <span class="comment">// "number"</span>
+<span class="function">console.log</span>(<span class="keyword">typeof NaN</span>);     <span class="comment">// "number"</span>
+
+<span class="comment">// The famous floating point rounding error:</span>
+<span class="function">console.log</span>(0.1 + 0.2);      <span class="comment">// 0.30000000000000004</span></pre>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>🫙 `null` vs `undefined`</h3>
+                <p style="color: var(--muted);">`undefined` is assigned by JavaScript to mean "not yet assigned". `null` is assigned by Developers to mean "intentional absence of value". They loosely equal each other, but strictly do not.</p>
+                <div class="code-container">
+                    <div class="code-header"><span>Empty Values</span></div>
+                    <pre class="code-content"><span class="keyword">let</span> a;
+<span class="function">console.log</span>(a);              <span class="comment">// undefined (JS set it)</span>
+
+<span class="keyword">let</span> b = <span class="keyword">null</span>;
+<span class="function">console.log</span>(b);              <span class="comment">// null (You set it)</span>
+
+<span class="function">console.log</span>(a == b);         <span class="comment">// true (Loose equality)</span>
+<span class="function">console.log</span>(a === b);        <span class="comment">// false (Strict equality)</span></pre>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>😵 Not-a-Number (NaN) Is Lonely</h3>
+                <p style="color: var(--muted);">`NaN` represents a failed mathematical operation. Uniquely, `NaN` is the ONLY value in JavaScript that is not equal to itself.</p>
+                <div class="code-container">
+                    <div class="code-header"><span>NaN Behaviors</span></div>
+                    <pre class="code-content"><span class="function">console.log</span>(NaN === NaN);    <span class="comment">// false!</span>
+
+<span class="comment">// Because of this, we MUST use Number.isNaN()</span>
+<span class="function">console.log</span>(<span class="function">Number.isNaN</span>(NaN)); <span class="comment">// true ✅</span>
+
+<span class="comment">// Avoid global isNaN(), as it coerces strings:</span>
+<span class="function">console.log</span>(<span class="function">isNaN</span>(<span class="string">"hello"</span>));    <span class="comment">// true ⚠️</span></pre>
                 </div>
             </div>
         </div>
     </section>
+
+    <!-- REAL WORLD & COMMON MISTAKES SECTION -->
     <section class="section">
-        <div class="section-header"><span class="section-label">Zero to Hero</span><h2 class="section-title">Interview Q&A</h2></div>
+        <div class="section-header">
+            <span class="section-label">Practical Application</span>
+            <h2 class="section-title">Real World & Common Mistakes</h2>
+        </div>
+        <div class="grid-2">
+            <div class="card">
+                <h3>🛠️ Real-World Use Case</h3>
+                <p style="color: var(--muted);"><strong>Using BigInt:</strong> Standard JavaScript numbers lose precision for integers larger than `Number.MAX_SAFE_INTEGER` (2^53 - 1). For massive IDs (like database UUIDs or Twitter Snowflake IDs), we append `n` to create a `BigInt`.</p>
+                <div class="code-container">
+                    <div class="code-header"><span>Practical Example</span></div>
+                    <pre class="code-content"><span class="comment">// Precision is lost here:</span>
+<span class="function">console.log</span>(9007199254740992 === 9007199254740993); <span class="comment">// true 💥</span>
+
+<span class="comment">// BigInt maintains perfect precision:</span>
+<span class="keyword">let</span> bigId = 9007199254740992n;
+<span class="keyword">let</span> bigId2 = 9007199254740993n;
+<span class="function">console.log</span>(bigId === bigId2); <span class="comment">// false ✅</span></pre>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>❌ Common Developer Mistake</h3>
+                <p style="color: var(--muted);"><strong>Trusting `typeof` for Arrays:</strong> Developers frequently try to check if a value is an array by using `typeof`. But in JavaScript, an Array is just an object under the hood!</p>
+                <div class="code-container">
+                    <div class="code-header"><span>Common Mistake</span></div>
+                    <pre class="code-content"><span class="keyword">let</span> list = [1, 2, 3];
+
+<span class="comment">// MISTAKE</span>
+<span class="keyword">if</span> (<span class="keyword">typeof</span> list === <span class="string">"array"</span>) {
+    <span class="comment">// NEVER RUNS! typeof list is "object"</span>
+}
+
+<span class="comment">// CORRECT</span>
+<span class="keyword">if</span> (<span class="function">Array.isArray</span>(list)) {
+    <span class="function">console.log</span>(<span class="string">"It's an array!"</span>); <span class="comment">// ✅</span>
+}</pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- INTERVIEW PREPARATION -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-label">Zero to Hero</span>
+            <h2 class="section-title">Interview Preparation</h2>
+        </div>
         <div class="card">
-            <div class="qa-box"><div class="qa-q">Q1: What is the type of `null`?</div><div class="qa-a"><code>typeof null</code> returns "object". This is a famous historical bug in JavaScript that was never fixed to avoid breaking legacy code.</div></div>
+            <div class="qa-box">
+                <div class="qa-q">Q1: Name all the primitive types in JavaScript.</div>
+                <div class="qa-a">There are 7 primitive types: `string`, `number`, `bigint`, `boolean`, `undefined`, `null`, and `symbol`. Everything else (Arrays, Functions) is considered an `object`.</div>
+            </div>
+            <div class="qa-box">
+                <div class="qa-q">Q2: What is the difference between global `isNaN()` and `Number.isNaN()`?</div>
+                <div class="qa-a">Global `isNaN("text")` forces type coercion, converting "text" to NaN, then returning true (which is misleading). `Number.isNaN("text")` does NOT coerce; it only returns true if the value is *literally* NaN. Always prefer `Number.isNaN()`.</div>
+            </div>
+            <div class="qa-box">
+                <div class="qa-q">Q3: Why doesn't `0.1 + 0.2 === 0.3`?</div>
+                <div class="qa-a">Because JavaScript numbers are IEEE 754 double-precision floating points. Some decimals cannot be perfectly represented in binary form, leading to microscopic rounding errors (it equals `0.30000000000000004`).</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LINKEDIN POST SNIPPET -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-label">Social Ready</span>
+            <h2 class="section-title">LinkedIn Post Snippet</h2>
+        </div>
+        <div class="linkedin-box">
+            <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('li-post').innerText); this.innerText='Copied!'; setTimeout(()=>this.innerText='Copy Post', 2000);">Copy Post</button>
+            <div id="li-post" style="white-space: pre-wrap; font-size: 1.05rem; color: #c9d1d9; font-family: 'Inter', sans-serif;">🚀 `typeof null === "object"`
+This is not a feature. It's a 30-year-old bug in JavaScript! 🤯
+
+In 1995, JavaScript values stored a "type tag" with each value in memory. The tag for objects was `000`. And `null`? The memory value was entirely zeros. Same tag → same `typeof`. The bug shipped, and for backward compatibility, it was never fixed.
+
+Here are 3 more JavaScript Data Type Gotchas that break code every day:
+
+✅ `NaN !== NaN`: Not-a-Number (which paradoxically has `typeof` "number") is the only value in JavaScript that is completely unequal to itself. You MUST use `Number.isNaN()` to check for it.
+
+✅ 𝗧𝗵𝗲 𝗜𝗘𝗘𝗘 𝟳𝟱𝟰 𝗙𝗹𝗼𝗮𝘁: JavaScript has NO separate `integer` and `float` types. Everything is a 64-bit float. That is why `0.1 + 0.2 = 0.30000000000000004`. 
+
+✅ `typeof [] === "object"`: Never use `typeof` to verify an array. Arrays are just objects disguised with numeric keys and a length property. Always use `Array.isArray()`!
+
+💡 The Golden Rule: `typeof` has three widely known wrong answers: null, NaN, and Arrays. Know the correct alternatives for each!
+
+#JavaScript #WebDevelopment #CodingInterviews #Frontend #SoftwareEngineering</div>
         </div>
     </section>
 </body>

@@ -3,43 +3,185 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chapter 06: Statements - Zero to Hero</title>
+    <title>Chapter 06: Conditional Statements - Zero to Hero</title>
     <link rel="stylesheet" href="../interactive_styles.css">
     <style>
-        :root { --grad: linear-gradient(135deg, #f85149, #bc8cff); --blue: #f85149; }
+        :root { --grad: linear-gradient(135deg, #00bcd4, #2196f3); --blue: #00bcd4; }
+        .hero::before { background: radial-gradient(ellipse at 50% 0%, rgba(0,188,212,0.15) 0%, transparent 60%), radial-gradient(ellipse at 80% 80%, rgba(33,150,243,0.1) 0%, transparent 50%); }
+        .hero-badge { border-color: rgba(0, 188, 212, 0.3); background: rgba(0, 188, 212, 0.08); color: var(--blue); }
     </style>
 </head>
 <body>
     <section class="hero">
         <div class="hero-badge">✨ Chapter 06</div>
-        <h1>Mastering <span>Statements</span></h1>
-        <p>Control flow using if, else, and else-if conditions.</p>
+        <h1>Mastering <span>Conditional Statements</span></h1>
+        <p>Control flow logic, the else-if ladder, and the absolute truth about Truthy and Falsy values in JavaScript.</p>
     </section>
+
+    <!-- DEEP INSIGHTS SECTION -->
     <section class="section">
-        <div class="section-header"><span class="section-label">Deep Insights</span><h2 class="section-title">Core Concepts Extracted</h2></div>
+        <div class="section-header">
+            <span class="section-label">Deep Insights</span>
+            <h2 class="section-title">Core Concepts Extracted</h2>
+        </div>
         <div class="grid-2">
             <div class="card">
-                <h3>🔀 If / Else Statement</h3>
-                <p class="qa-a">Executes a block of code if a specified condition is true. If false, another block of code can be executed.</p>
+                <h3>⚖️ The 7 Falsy Values</h3>
+                <p style="color: var(--muted);">JavaScript evaluates conditions based on their boolean truthiness. There are exactly 7 falsy values. Everything else in the language is truthy!</p>
                 <div class="code-container">
-                    <pre class="code-content"><span class="keyword">let</span> age = 16;
-<span class="keyword">if</span> (age > 18) {
-    <span class="function">console.log</span>(<span class="string">"Go Goa"</span>);
-} <span class="keyword">else</span> {
-    <span class="function">console.log</span>(<span class="string">"Not Goa"</span>);
-}</pre>
+                    <div class="code-header"><span>Memorize These</span></div>
+                    <pre class="code-content"><span class="comment">// If it's not one of these 7, it's TRUTHY:</span>
+<span class="keyword">false</span>
+0
+-0
+0n <span class="comment">// BigInt zero</span>
+<span class="string">""</span> <span class="comment">// Empty string</span>
+<span class="keyword">null</span>
+<span class="keyword">undefined</span>
+NaN</pre>
                 </div>
             </div>
+            
             <div class="card">
-                <h3>🪜 Else-If Ladder</h3>
-                <p class="qa-a">Useful for checking multiple separate conditions sequentially, like assigning grading scores.</p>
+                <h3>🤯 Truthy Surprises</h3>
+                <p style="color: var(--muted);">Empty objects and empty arrays are TRUTHY! Even the string `"0"` is truthy because it is a non-empty string. Only `null` and `undefined` represent the true absence of an object.</p>
+                <div class="code-container">
+                    <div class="code-header"><span>Truthy Gotchas</span></div>
+                    <pre class="code-content"><span class="keyword">if</span> (<span class="string">"0"</span>) { <span class="function">console.log</span>(<span class="string">"runs"</span>); }
+<span class="keyword">if</span> ([])  { <span class="function">console.log</span>(<span class="string">"runs"</span>); }
+<span class="keyword">if</span> ({})  { <span class="function">console.log</span>(<span class="string">"runs"</span>); }
+<span class="keyword">if</span> (-1)  { <span class="function">console.log</span>(<span class="string">"runs"</span>); }</pre>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>🪜 The Else-If Ladder</h3>
+                <p style="color: var(--muted);">An `else if` ladder checks conditions sequentially from top to bottom. Once a condition evaluates to true, it executes that block and **skips the rest of the entire chain**.</p>
+                <div class="code-container">
+                    <div class="code-header"><span>Execution Flow</span></div>
+                    <pre class="code-content"><span class="keyword">let</span> score = 85;
+<span class="keyword">if</span> (score >= 90) { <span class="comment">/* skipped */</span> }
+<span class="keyword">else if</span> (score >= 80) { 
+    <span class="comment">/* RUNS, then exits the ladder! */</span> 
+}
+<span class="keyword">else if</span> (score >= 70) { <span class="comment">/* ignored */</span> }</pre>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>🚫 The Dangling Else Problem</h3>
+                <p style="color: var(--muted);">Omitting curly braces `{}` on single-line `if` statements is technically valid, but it leads to the "Dangling Else" bug where an `else` binds to the wrong inner `if`.</p>
+                <div class="code-container">
+                    <div class="code-header"><span>Always Use Braces</span></div>
+                    <pre class="code-content"><span class="keyword">if</span> (a > 0)
+    <span class="keyword">if</span> (b > 0)
+        <span class="function">console.log</span>(<span class="string">"Both"</span>);
+<span class="keyword">else</span>
+    <span class="comment">// ❌ BUG: This else binds to the inner IF!</span>
+    <span class="function">console.log</span>(<span class="string">"Which one failed?"</span>);</pre>
+                </div>
             </div>
         </div>
     </section>
+
+    <!-- REAL WORLD & COMMON MISTAKES SECTION -->
     <section class="section">
-        <div class="section-header"><span class="section-label">Zero to Hero</span><h2 class="section-title">Interview Q&A</h2></div>
+        <div class="section-header">
+            <span class="section-label">Practical Application</span>
+            <h2 class="section-title">Real World & Common Mistakes</h2>
+        </div>
+        <div class="grid-2">
+            <div class="card">
+                <h3>🛠️ Real-World Use Case</h3>
+                <p style="color: var(--muted);"><strong>The Double-Null Guard:</strong> In real world data processing, we frequently need to verify that a value actually exists before doing work on it. Using the loose equality `== null` trick is incredibly common.</p>
+                <div class="code-container">
+                    <div class="code-header"><span>Practical Example</span></div>
+                    <pre class="code-content"><span class="comment">// Covers both null and undefined in one check!</span>
+<span class="keyword">if</span> (user.profileData == <span class="keyword">null</span>) {
+    <span class="function">console.log</span>(<span class="string">"Data is missing or unset"</span>);
+}
+
+<span class="comment">// Compare to strict equality:</span>
+<span class="keyword">if</span> (data === <span class="keyword">null</span> || data === <span class="keyword">undefined</span>) { ... }</pre>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>❌ Common Developer Mistake</h3>
+                <p style="color: var(--muted);"><strong>Assignment vs Comparison:</strong> Using a single `=` inside an `if` condition. This reassigns the variable instantly, and because the assigned value is truthy, the `if` block executes when it shouldn't!</p>
+                <div class="code-container">
+                    <div class="code-header"><span>Common Mistake</span></div>
+                    <pre class="code-content"><span class="keyword">let</span> status = <span class="string">"pass"</span>;
+
+<span class="comment">// MISTAKE: Reassigns to "fail", which is truthy</span>
+<span class="keyword">if</span> (status = <span class="string">"fail"</span>) {
+    <span class="function">console.log</span>(<span class="string">"Failed!"</span>); <span class="comment">// 💥 Always runs!</span>
+}
+
+<span class="comment">// CORRECT</span>
+<span class="keyword">if</span> (status === <span class="string">"fail"</span>) { ... }</pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- INTERVIEW PREPARATION -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-label">Zero to Hero</span>
+            <h2 class="section-title">Interview Preparation</h2>
+        </div>
         <div class="card">
-            <div class="qa-box"><div class="qa-q">Q1: Can an `else` statement exist without an `if`?</div><div class="qa-a">No, an `else` block must strictly follow an `if` or `else if` block. It acts as the default fallback when all preceding conditions evaluate to false.</div></div>
+            <div class="qa-box">
+                <div class="qa-q">Q1: Is an empty array `[]` truthy or falsy? What about `{}`?</div>
+                <div class="qa-a">Both are TRUTHY. In JavaScript, an empty array and an empty object are fully instantiated objects in memory. The only things that represent a true absence of value are `null` and `undefined`.</div>
+            </div>
+            <div class="qa-box">
+                <div class="qa-q">Q2: What is the difference between a chained `if` block and an `else if` ladder?</div>
+                <div class="qa-a">Chained `if` blocks evaluate *every single condition* sequentially; multiple blocks can potentially execute. An `else if` ladder evaluates top-to-bottom and stops executing the moment the *first* condition is met.</div>
+            </div>
+            <div class="qa-box">
+                <div class="qa-q">Q3: Why is it an anti-pattern to check `if (isLoggedIn === true)`?</div>
+                <div class="qa-a">It is completely redundant. The `if` statement automatically evaluates expressions for truthiness. You can simply write `if (isLoggedIn)`.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LINKEDIN POST SNIPPET -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-label">Social Ready</span>
+            <h2 class="section-title">LinkedIn Post Snippet</h2>
+        </div>
+        <div class="linkedin-box">
+            <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('li-post').innerText); this.innerText='Copied!'; setTimeout(()=>this.innerText='Copy Post', 2000);">Copy Post</button>
+            <div id="li-post" style="white-space: pre-wrap; font-size: 1.05rem; color: #c9d1d9; font-family: 'Inter', sans-serif;">🚀 Quick JS Quiz: Is `"0"` truthy or falsy in JavaScript?
+
+Most junior developers confidently answer "Falsy". 
+The correct answer is TRUTHY!
+
+JavaScript has EXACTLY 7 falsy values. If you memorize these 7, you will never get a truthy/falsy check wrong again:
+1️⃣ false
+2️⃣ 0
+3️⃣ -0
+4️⃣ 0n (BigInt zero)
+5️⃣ "" (Empty string)
+6️⃣ null
+7️⃣ undefined
+8️⃣ NaN
+
+Notice `"0"` is not in that list! Because it is a non-empty string, it evaluates to true. `if ("0")` will run!
+
+Here are a few more truthy surprises that trip up developers every single day:
+✅ `if ([])` — Empty arrays are TRUTHY. They are real objects in memory!
+✅ `if ({})` — Empty objects are TRUTHY. 
+✅ `if (-1)` — ANY non-zero number is TRUTHY, including negative ones!
+
+💡 One of the worst bugs you can write is this:
+`if (status = "fail") { ... }`
+Using a single `=` assigns the variable, returns the truthy string "fail", and bypasses your condition entirely! Always use `===`.
+
+#JavaScript #WebDevelopment #CodingInterviews #Frontend #SoftwareEngineering</div>
         </div>
     </section>
 </body>
