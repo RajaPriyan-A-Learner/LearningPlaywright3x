@@ -21,15 +21,11 @@ Learning JavaScript through hands-on examples and comprehensive interview-ready 
 
 **Triggers:** Chapter completed with all JS files, IQ_Notes, and MASTER file.
 
-#### Windows (PowerShell)
-```powershell
-.\.claude\scripts\go-pikachu.ps1
-```
+#### Triggering via Antigravity Agent
+Simply tell your AI assistant:
+> "Run Go Pikachu"
 
-#### Mac/Linux (Bash)
-```bash
-bash ./.claude/scripts/go-pikachu.sh
-```
+The agent will autonomously execute the workflow using the custom skill located in `.agents/skills/go-pikachu/SKILL.md`. *(Note: The legacy `.ps1` and `.sh` scripts have been deprecated and removed.)*
 
 #### What Happens
 1. **Scans** chapter JS files for missing IQ documentation
@@ -242,8 +238,7 @@ Co-Authored-By: Claude Haiku 4.5 <noreply@anthropic.com>
 ## Configuration Files
 
 - `.claude/settings.json` — Hook definitions and permissions
-- `.claude/scripts/go-pikachu.ps1` — PowerShell automation script
-- `.claude/scripts/go-pikachu.sh` — Bash automation script
+- `.agents/skills/go-pikachu/SKILL.md` — The Antigravity skill that automates the Go Pikachu workflow
 - `.claude/hooks/` — Individual hook scripts (don't modify unless needed)
 
 ---
@@ -271,3 +266,9 @@ Co-Authored-By: Claude Haiku 4.5 <noreply@anthropic.com>
 ## Summary
 
 Use Go Pikachu after completing each chapter to automate validation, commit, and publication. The workflow ensures all documentation is complete before code is pushed, maintaining high quality across all learning notes.
+
+---
+
+## 📈 Progress Tracker
+
+- ✅ **Chapter 11 (Functions):** Completed, validated, and pushed. Includes 24 JS examples and a comprehensive MASTER guide covering Hoisting, TDZ, Scope, and Arrow Functions.
