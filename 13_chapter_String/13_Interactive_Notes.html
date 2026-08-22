@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 13: Strings - Zero to Hero</title>
+    <link rel="stylesheet" href="../interactive_styles.css">
+    <style>
+        :root { --grad: linear-gradient(135deg, #3fb950, #58a6ff); --blue: #3fb950; }
+        .hero::before { background: radial-gradient(ellipse at 50% 0%, rgba(63,185,80,0.15) 0%, transparent 60%), radial-gradient(ellipse at 80% 80%, rgba(88,166,255,0.1) 0%, transparent 50%); }
+        .hero-badge { border-color: rgba(63, 185, 80, 0.3); background: rgba(63, 185, 80, 0.08); color: var(--blue); }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="hero-badge">✨ Chapter 13</div>
+        <h1>Mastering <span>Strings</span></h1>
+        <p>Text manipulation, template literals, immutability, and mastering string methods.</p>
+    </section>
+
+    <!-- DEEP INSIGHTS SECTION -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-label">Deep Insights</span>
+            <h2 class="section-title">Core Concepts Extracted</h2>
+        </div>
+        <div class="grid-2">
+            <div class="card">
+                <h3>📝 String Immutability</h3>
+                <p style="color: var(--muted);">Primitive strings in JavaScript are immutable. Methods like `.replace()` or `.toUpperCase()` do not modify the original string; they return a completely new string.</p>
+                <div class="code-container">
+                    <div class="code-header"><span>Immutability</span></div>
+                    <pre class="code-content"><span class="keyword">let</span> text = <span class="string">"hello"</span>;
+text.<span class="function">toUpperCase</span>();
+<span class="function">console.log</span>(text); <span class="comment">// Still "hello"!</span>
+
+<span class="comment">// Must reassign</span>
+text = text.<span class="function">toUpperCase</span>();</pre>
+                </div>
+            </div>
+            <div class="card">
+                <h3>✨ Template Literals</h3>
+                <p style="color: var(--muted);">String interpolation using backticks allows for embedded expressions and multi-line strings without needing manual concatenation or escape characters.</p>
+                <div class="code-container">
+                    <div class="code-header"><span>Backticks</span></div>
+                    <pre class="code-content"><span class="keyword">let</span> name = <span class="string">"Pramod"</span>;
+<span class="keyword">let</span> msg = <span class="string">`Welcome back, 
+${name}! Have a good day.`</span>;
+<span class="function">console.log</span>(msg);</pre>
+                </div>
+            </div>
+            <div class="card">
+                <h3>🔍 Modern Searching</h3>
+                <p style="color: var(--muted);">Checking contents of strings has been heavily modernized. Use `.includes()`, `.startsWith()`, and `.endsWith()` instead of `.indexOf() > -1`.</p>
+                <div class="code-container">
+                    <div class="code-header"><span>Modern Search</span></div>
+                    <pre class="code-content"><span class="keyword">let</span> url = <span class="string">"https://app.com"</span>;
+url.<span class="function">startsWith</span>(<span class="string">"https"</span>); <span class="comment">// true</span>
+url.<span class="function">includes</span>(<span class="string">"app"</span>); <span class="comment">// true</span></pre>
+                </div>
+            </div>
+            <div class="card">
+                <h3>✂️ Substrings</h3>
+                <p style="color: var(--muted);">You can extract parts of strings using `.slice(start, end)` or `.substring(start, end)`. `.slice()` is generally preferred as it supports negative indices.</p>
+                <div class="code-container">
+                    <div class="code-header"><span>Extraction</span></div>
+                    <pre class="code-content"><span class="keyword">let</span> str = <span class="string">"Javascript"</span>;
+<span class="function">console.log</span>(str.<span class="function">slice</span>(0, 4)); <span class="comment">// "Java"</span>
+<span class="function">console.log</span>(str.<span class="function">slice</span>(-6));   <span class="comment">// "script"</span></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- REAL WORLD & COMMON MISTAKES SECTION -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-label">Practical Application</span>
+            <h2 class="section-title">Real World & Common Mistakes</h2>
+        </div>
+        <div class="grid-2">
+            <div class="card">
+                <h3>🛠️ Real-World Use Case</h3>
+                <p style="color: var(--muted);"><strong>Parsing URLs & DOM Data:</strong> Strings are used extensively to parse query parameters, validate emails before submitting forms, and sanitize user input data (e.g. `.trim()`).</p>
+                <div class="code-container">
+                    <div class="code-header"><span>Practical Example</span></div>
+                    <pre class="code-content"><span class="keyword">let</span> userInput = <span class="string">"   John.Doe@gmail.com   "</span>;
+
+<span class="comment">// Sanitization Pipeline</span>
+<span class="keyword">let</span> cleanEmail = userInput.<span class="function">trim</span>().<span class="function">toLowerCase</span>();
+
+<span class="keyword">if</span> (!cleanEmail.<span class="function">includes</span>(<span class="string">"@"</span>)) {
+    <span class="function">alert</span>(<span class="string">"Invalid email!"</span>);
+}</pre>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>❌ Common Developer Mistake</h3>
+                <p style="color: var(--muted);"><strong>Using indexOf() in Boolean Checks:</strong> `.indexOf()` returns `0` if the match is at the very start of the string. But `0` is a falsy value in Javascript!</p>
+                <div class="code-container">
+                    <div class="code-header"><span>Common Mistake</span></div>
+                    <pre class="code-content"><span class="keyword">let</span> url = <span class="string">"http://api.com"</span>;
+
+<span class="comment">// MISTAKE: Returns 0, which evaluates to false!</span>
+<span class="keyword">if</span> (url.<span class="function">indexOf</span>(<span class="string">"http"</span>)) {
+    <span class="function">console.log</span>(<span class="string">"Secure"</span>); <span class="comment">// NEVER RUNS 💥</span>
+}
+
+<span class="comment">// CORRECT:</span>
+<span class="keyword">if</span> (url.<span class="function">includes</span>(<span class="string">"http"</span>)) { ... }</pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- INTERVIEW PREPARATION -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-label">Zero to Hero</span>
+            <h2 class="section-title">Interview Preparation</h2>
+        </div>
+        <div class="card">
+            <div class="qa-box">
+                <div class="qa-q">Q1: How do you reverse a string in JavaScript?</div>
+                <div class="qa-a">There is no built-in `.reverse()` method for strings. You must split it into an array, reverse the array, and join it back:<br>
+                <code>str.split('').reverse().join('')</code></div>
+            </div>
+            <div class="qa-box">
+                <div class="qa-q">Q2: What is the difference between `slice()` and `substring()`?</div>
+                <div class="qa-a">Both extract parts of a string. `slice()` accepts negative indices (which count from the end of the string). `substring()` treats negative indices as `0`.</div>
+            </div>
+            <div class="qa-box">
+                <div class="qa-q">Q3: How do you get the last character of a string?</div>
+                <div class="qa-a">The old way is <code>str[str.length - 1]</code>. The modern, preferred ES2022 way is <code>str.at(-1)</code>.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LINKEDIN POST SNIPPET -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-label">Social Ready</span>
+            <h2 class="section-title">LinkedIn Post Snippet</h2>
+        </div>
+        <div class="linkedin-box">
+            <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('li-post').innerText); this.innerText='Copied!'; setTimeout(()=>this.innerText='Copy Post', 2000);">Copy Post</button>
+            <div id="li-post" style="white-space: pre-wrap; font-size: 1.05rem; color: #c9d1d9; font-family: 'Inter', sans-serif;">🚀 Mastering JavaScript Strings: Stop making these 3 mistakes!
+
+Strings seem simple until you hit a weird logical bug. Here are my top tips for writing modern JS Strings:
+
+✅ 𝗦𝘁𝗼𝗽 𝘂𝘀𝗶𝗻𝗴 `𝗶𝗻𝗱𝗲𝘅𝗢𝗳` 𝗳𝗼𝗿 𝗯𝗼𝗼𝗹𝗲𝗮𝗻 𝗰𝗵𝗲𝗰𝗸𝘀! 
+Don't use `if (str.indexOf("x") !== -1)`. Use `str.includes("x")` — it's much cleaner! If you forget the `-1` check, `.indexOf` will return `0` for an exact match, which JavaScript evaluates as `false`!
+✅ 𝗚𝗲𝘁𝘁𝗶𝗻𝗴 𝘁𝗵𝗲 𝗹𝗮𝘀𝘁 𝗰𝗵𝗮𝗿𝗮𝗰𝘁𝗲𝗿?
+Forget `str[str.length - 1]`. ES2022 introduced `.at()`. Just use `str.at(-1)`!
+✅ 𝗧𝗲𝗺𝗽𝗹𝗮𝘁𝗲 𝗟𝗶𝘁𝗲𝗿𝗮𝗹𝘀 > 𝗖𝗼𝗻𝗰𝗮𝘁!
+Stop doing `"Hello " + name + "!"`. Use backticks `` `Hello ${name}!` ``. It even supports multi-line text out of the box without needing `\n`!
+✅ 𝗦𝘁𝗿𝗶𝗻𝗴𝘀 𝗮𝗿𝗲 𝗜𝗺𝗺𝘂𝘁𝗮𝗯𝗹𝗲!
+Remember, methods like `.replace()` do NOT modify the original string; they return a completely new string. You must reassign the variable!
+
+Keep your code clean and modern! 🚀
+
+#JavaScript #WebDevelopment #Frontend #CodingTips #SoftwareEngineering</div>
+        </div>
+    </section>
+</body>
+</html>

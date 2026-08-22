@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap');
+
+:root {
+    --bg: #010409;
+    --surface: #0d1117;
+    --surface2: #161b22;
+    --border: rgba(255, 255, 255, 0.08);
+    --blue: #58a6ff;
+    --purple: #bc8cff;
+    --green: #3fb950;
+    --yellow: #d29922;
+    --red: #f85149;
+    --text: #e6edf3;
+    --muted: #7d8590;
+    --grad: linear-gradient(135deg, #58a6ff, #bc8cff);
+    --grad-green: linear-gradient(135deg, #3fb950, #2ea043);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; overflow-x: hidden; }
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: #21262d; border-radius: 4px; }
+
+.hero { min-height: 80vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem; position: relative; }
+.hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 0%, rgba(88,166,255,0.15) 0%, transparent 60%), radial-gradient(ellipse at 80% 80%, rgba(188,140,255,0.1) 0%, transparent 50%); pointer-events: none; }
+.hero-badge { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 1.2rem; border-radius: 9999px; border: 1px solid rgba(88, 166, 255, 0.3); background: rgba(88, 166, 255, 0.08); color: var(--blue); font-size: 0.85rem; font-weight: 600; margin-bottom: 1.5rem; }
+.hero h1 { font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 900; line-height: 1.1; margin-bottom: 1.5rem; }
+.hero h1 span { background: var(--grad); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.hero p { font-size: 1.2rem; color: var(--muted); max-width: 600px; margin-bottom: 3rem; }
+
+.section { max-width: 1100px; margin: 0 auto; padding: 4rem 2rem; }
+.section-header { text-align: center; margin-bottom: 3rem; }
+.section-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--blue); margin-bottom: 0.75rem; display: block; }
+.section-title { font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+@media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s; }
+.card:hover { transform: translateY(-5px); border-color: rgba(88,166,255,0.4); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.card h3 { font-size: 1.25rem; margin-bottom: 1rem; color: var(--text); display: flex; align-items: center; gap: 0.5rem; }
+
+.code-container { background: #0d1117; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-top: 1.5rem; font-family: 'Fira Code', monospace; font-size: 0.9rem; }
+.code-header { background: var(--surface2); padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--muted); }
+.code-content { padding: 1rem; overflow-x: auto; color: #c9d1d9; line-height: 1.5; }
+.keyword { color: #ff7b72; } .function { color: #d2a8ff; } .string { color: #a5d6ff; } .comment { color: #8b949e; font-style: italic; }
+
+.qa-box { border-left: 3px solid var(--blue); padding-left: 1.5rem; margin-bottom: 2rem; }
+.qa-q { font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem; color: #fff; }
+.qa-a { color: var(--muted); }
+
+.linkedin-box { background: rgba(88, 166, 255, 0.05); border: 1px dashed var(--blue); border-radius: 12px; padding: 2rem; position: relative; }
+.copy-btn { position: absolute; top: 1rem; right: 1rem; background: var(--blue); color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.8rem; transition: opacity 0.2s; }
+.copy-btn:hover { opacity: 0.8; }

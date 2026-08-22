@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 03: Identifiers - Zero to Hero</title>
+    <link rel="stylesheet" href="../interactive_styles.css">
+    <style>
+        :root { --grad: linear-gradient(135deg, #bc8cff, #3fb950); --blue: #bc8cff; }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="hero-badge">✨ Chapter 03</div>
+        <h1>Mastering <span>Identifiers</span></h1>
+        <p>Rules, Naming Conventions, and best practices for naming variables.</p>
+    </section>
+    <section class="section">
+        <div class="section-header"><span class="section-label">Deep Insights</span><h2 class="section-title">Core Concepts Extracted</h2></div>
+        <div class="grid-2">
+            <div class="card">
+                <h3>📏 Identifier Rules</h3>
+                <p class="qa-a">Variables must start with a letter, underscore (_), or dollar sign ($). They cannot start with a number.</p>
+                <div class="code-container">
+                    <pre class="code-content"><span class="keyword">let</span> _privateVar = 10;
+<span class="keyword">let</span> $element = <span class="string">"div"</span>;
+<span class="keyword">let</span> camelCase = <span class="keyword">true</span>;</pre>
+                </div>
+            </div>
+            <div class="card">
+                <h3>💼 Naming Conventions</h3>
+                <p class="qa-a">JavaScript strictly uses `camelCase` for standard variables and `PascalCase` for Classes/Constructors.</p>
+            </div>
+        </div>
+    </section>
+    <section class="section">
+        <div class="section-header"><span class="section-label">Zero to Hero</span><h2 class="section-title">Interview Q&A</h2></div>
+        <div class="card">
+            <div class="qa-box"><div class="qa-q">Q1: Can we use Reserved Keywords as identifiers?</div><div class="qa-a">No! Keywords like `class`, `function`, or `const` cannot be used as variable names. However, they are case-sensitive, so technically `Function` is valid (though terrible practice!).</div></div>
+        </div>
+    </section>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 04: Literals - Zero to Hero</title>
+    <link rel="stylesheet" href="../interactive_styles.css">
+    <style>
+        :root { --grad: linear-gradient(135deg, #ffa657, #bc8cff); --blue: #ffa657; }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="hero-badge">✨ Chapter 04</div>
+        <h1>Mastering <span>Literals</span></h1>
+        <p>Directly representing values in source code: Null, Undefined, Numbers, and BigInt.</p>
+    </section>
+    <section class="section">
+        <div class="section-header"><span class="section-label">Deep Insights</span><h2 class="section-title">Core Concepts Extracted</h2></div>
+        <div class="grid-2">
+            <div class="card">
+                <h3>🌌 Null vs Undefined</h3>
+                <p class="qa-a">`undefined` means a variable exists but hasn't been assigned a value. `null` is an intentional assignment of "no value".</p>
+            </div>
+            <div class="card">
+                <h3>🔢 Number Literals</h3>
+                <p class="qa-a">JS numbers are always double-precision floats. You can also write numbers in Binary (0b), Hex (0x), and use Numeric Separators (_).</p>
+                <div class="code-container">
+                    <pre class="code-content"><span class="keyword">let</span> million = 1_000_000;
+<span class="keyword">let</span> hex = 0xFF; <span class="comment">// 255</span></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="section">
+        <div class="section-header"><span class="section-label">Zero to Hero</span><h2 class="section-title">Interview Q&A</h2></div>
+        <div class="card">
+            <div class="qa-box"><div class="qa-q">Q1: What is the type of `null`?</div><div class="qa-a"><code>typeof null</code> returns "object". This is a famous historical bug in JavaScript that was never fixed to avoid breaking legacy code.</div></div>
+        </div>
+    </section>
+</body>
+</html>

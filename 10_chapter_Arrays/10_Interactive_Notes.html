@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 10: Arrays - Zero to Hero</title>
+    <link rel="stylesheet" href="../interactive_styles.css">
+    <style>
+        :root { --grad: linear-gradient(135deg, #58a6ff, #bc8cff); --blue: #58a6ff; }
+        .hero::before { background: radial-gradient(ellipse at 50% 0%, rgba(88,166,255,0.15) 0%, transparent 60%), radial-gradient(ellipse at 80% 80%, rgba(188,140,255,0.1) 0%, transparent 50%); }
+        .hero-badge { border-color: rgba(88, 166, 255, 0.3); background: rgba(88, 166, 255, 0.08); color: var(--blue); }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="hero-badge">✨ Chapter 10</div>
+        <h1>Mastering <span>Arrays</span></h1>
+        <p>JavaScript's primary ordered collection type — zero-indexed, dynamically-sized, and capable of holding mixed types.</p>
+    </section>
+
+    <!-- DEEP INSIGHTS SECTION -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-label">Deep Insights</span>
+            <h2 class="section-title">Core Concepts Extracted</h2>
+        </div>
+        <div class="grid-2">
+            <div class="card">
+                <h3>📦 Creating Arrays</h3>
+                <p style="color: var(--muted);">The array literal is preferred. Avoid `new Array(n)` unless you specifically want a sparse array with empty holes (not `undefined`!).</p>
+                <div class="code-container">
+                    <div class="code-header"><span>Creation Methods</span></div>
+                    <pre class="code-content"><span class="keyword">let</span> arr = [<span class="string">"chrome"</span>, <span class="string">"firefox"</span>]; <span class="comment">// Best</span>
+
+<span class="keyword">let</span> sparse = <span class="keyword">new</span> Array(3); <span class="comment">// [ &lt;3 empty items&gt; ]</span>
+<span class="keyword">let</span> single = Array.<span class="function">of</span>(3);  <span class="comment">// [ 3 ]</span>
+<span class="keyword">let</span> chars = Array.<span class="function">from</span>(<span class="string">"hi"</span>); <span class="comment">// ["h", "i"]</span></pre>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>🔍 Searching & Indexing</h3>
+                <p style="color: var(--muted);">`.indexOf()` is for finding the exact position, while `.find()` is for predicate functions. ES2022 gave us `.at()` for negative indexing!</p>
+                <div class="code-container">
+                    <div class="code-header"><span>Search & Access</span></div>
+                    <pre class="code-content"><span class="keyword">let</span> res = [<span class="string">"pass"</span>, <span class="string">"fail"</span>, <span class="string">"error"</span>];
+
+res.<span class="function">at</span>(-1); <span class="comment">// "error" (last element)</span>
+res.<span class="function">includes</span>(<span class="string">"fail"</span>); <span class="comment">// true</span>
+res.<span class="function">findIndex</span>(s => s.<span class="function">startsWith</span>(<span class="string">"e"</span>)); <span class="comment">// 2</span></pre>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>🔄 Adding & Removing</h3>
+                <p style="color: var(--muted);">`push/pop` operate on the END of the array. `unshift/shift` operate on the START. `splice` handles the MIDDLE.</p>
+                <div class="code-container">
+                    <div class="code-header"><span>Mutation</span></div>
+                    <pre class="code-content"><span class="keyword">let</span> q = [1, 2, 3];
+q.<span class="function">push</span>(4);    <span class="comment">// [1, 2, 3, 4]</span>
+q.<span class="function">shift</span>();    <span class="comment">// [2, 3, 4]</span>
+
+<span class="comment">// Splice: start 1, delete 1, insert 99</span>
+q.<span class="function">splice</span>(1, 1, 99); <span class="comment">// [2, 99, 4]</span></pre>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>✨ ES2023 Non-Mutating Methods</h3>
+                <p style="color: var(--muted);">Old methods like `.sort()` and `.reverse()` mutated the original array. Modern ES2023 introduced non-mutating alternatives that return a fresh copy.</p>
+                <div class="code-container">
+                    <div class="code-header"><span>Immutability</span></div>
+                    <pre class="code-content"><span class="keyword">let</span> nums = [3, 1, 2];
+
+<span class="comment">// Returns NEW array, leaves nums alone</span>
+<span class="keyword">let</span> sorted = nums.<span class="function">toSorted</span>((a,b) => a - b);
+<span class="keyword">let</span> rev = nums.<span class="function">toReversed</span>();</pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- REAL WORLD & COMMON MISTAKES SECTION -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-label">Practical Application</span>
+            <h2 class="section-title">Real World & Common Mistakes</h2>
+        </div>
+        <div class="grid-2">
+            <div class="card">
+                <h3>🛠️ Real-World Use Case</h3>
+                <p style="color: var(--muted);"><strong>Managing UI State & Data Tables:</strong> Arrays are the absolute backbone of rendering lists in frameworks like React. You constantly use `.map()` to render components and `.filter()` to implement Search Bars.</p>
+                <div class="code-container">
+                    <div class="code-header"><span>Practical Example</span></div>
+                    <pre class="code-content"><span class="keyword">const</span> activeUsers = users.<span class="function">filter</span>(u => u.isActive);
+
+activeUsers.<span class="function">forEach</span>(user => {
+    <span class="comment">// Render user card to the DOM...</span>
+    <span class="function">console.log</span>(<span class="string">"Rendering: "</span>, user.name);
+});</pre>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>❌ Common Developer Mistake</h3>
+                <p style="color: var(--muted);"><strong>The `sort()` lexicographic trap:</strong> By default, JavaScript `.sort()` converts all values to strings before comparing them. This breaks numeric sorting!</p>
+                <div class="code-container">
+                    <div class="code-header"><span>Common Mistake</span></div>
+                    <pre class="code-content"><span class="keyword">let</span> scores = [10, 9, 2, 1, 100];
+
+<span class="comment">// MISTAKE: Sorts as strings!</span>
+scores.<span class="function">sort</span>(); 
+<span class="function">console.log</span>(scores); <span class="comment">// [1, 10, 100, 2, 9] 💥</span>
+
+<span class="comment">// CORRECT: Use a comparator</span>
+scores.<span class="function">sort</span>((a, b) => a - b); <span class="comment">// [1, 2, 9, 10, 100] ✅</span></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- INTERVIEW PREPARATION -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-label">Zero to Hero</span>
+            <h2 class="section-title">Interview Preparation</h2>
+        </div>
+        <div class="card">
+            <div class="qa-box">
+                <div class="qa-q">Q1: What is the output?</div>
+                <div class="code-container" style="margin-bottom:1rem; margin-top:0.5rem; max-width: 400px;">
+                    <pre class="code-content" style="padding: 0.5rem;"><span class="keyword">let</span> arr = [<span class="string">"a"</span>, <span class="string">"b"</span>, <span class="string">"c"</span>];
+<span class="function">console.log</span>(arr[-1]);
+<span class="function">console.log</span>(arr.<span class="function">at</span>(-1));</pre>
+                </div>
+                <div class="qa-a"><strong>Answer: `undefined` then `"c"`.</strong> `arr[-1]` looks for a literal property with the key `"-1"` (which doesn't exist). `arr.at(-1)` is the correct ES2022 method to get the last element.</div>
+            </div>
+            <div class="qa-box">
+                <div class="qa-q">Q2: How do you safely check if a value is an array?</div>
+                <div class="qa-a">Always use `Array.isArray(value)`. Do not use `typeof` (it returns "object") and be careful with `instanceof Array` (it fails across iframes).</div>
+            </div>
+            <div class="qa-box">
+                <div class="qa-q">Q3: What is the difference between `forEach` and `map`?</div>
+                <div class="qa-a">`forEach` iterates for side effects and always returns `undefined`. `map` transforms the array and returns a brand new array of the same length. Never use `map` if you don't intend to use the returned array!</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LINKEDIN POST SNIPPET -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-label">Social Ready</span>
+            <h2 class="section-title">LinkedIn Post Snippet</h2>
+        </div>
+        <div class="linkedin-box">
+            <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('li-post').innerText); this.innerText='Copied!'; setTimeout(()=>this.innerText='Copy Post', 2000);">Copy Post</button>
+            <div id="li-post" style="white-space: pre-wrap; font-size: 1.05rem; color: #c9d1d9; font-family: 'Inter', sans-serif;">🚀 Stop falling into these JavaScript Array traps! 
+
+I see these bugs in production code all the time. Here are the top 4 things you need to know about JS Arrays:
+
+✅ 𝗧𝗵𝗲 𝗦𝗼𝗿𝘁𝗶𝗻𝗴 𝗧𝗿𝗮𝗽: `[10, 9, 2, 1, 100].sort()` results in `[1, 10, 100, 2, 9]`. Why? Because JavaScript converts everything to strings before sorting! Always pass a comparator for numbers: `.sort((a,b) => a-b)`.
+✅ 𝗧𝗵𝗲 𝗠𝘂𝘁𝗮𝘁𝗶𝗼𝗻 𝗧𝗿𝗮𝗽: `.sort()` and `.reverse()` actually mutate the original array! `let copy = arr.sort()` means BOTH variables are now pointing to a sorted array! Spread it first: `[...arr].sort()`, or use ES2023's `.toSorted()`.
+✅ 𝗡𝗲𝗴𝗮𝘁𝗶𝘃𝗲 𝗜𝗻𝗱𝗲𝘅𝗶𝗻𝗴: Stop writing `arr[arr.length - 1]`. Welcome to ES2022! Just write `arr.at(-1)` to get the last element gracefully.
+✅ 𝗡𝗮𝗡 𝗕𝘂𝗴𝘀: `arr.indexOf(NaN)` always returns `-1`. Why? Because `NaN !== NaN` in Javascript! If you need to search for NaN, use `arr.includes(NaN)` instead.
+
+💡 Interview Tip: Never use `typeof` to check if a variable is an array (it returns "object"). Always use `Array.isArray(variable)` to be 100% safe!
+
+#JavaScript #WebDevelopment #CodingInterviews #Frontend #SoftwareEngineering</div>
+        </div>
+    </section>
+</body>
+</html>

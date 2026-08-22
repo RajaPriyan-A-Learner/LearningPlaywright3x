@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JS Async — Interactive Deep Insights</title>
+<style>
+:root{
+  --bg:#0a0e14; --surface:#111722; --surface2:#161e2c; --border:#232d3f;
+  --text:#dbe4f0; --muted:#7c8aa3;
+  --mono:'JetBrains Mono','Fira Code',Menlo,Consolas,monospace;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --pending:#e3a008; --fulfilled:#34d399; --rejected:#f2545b; --micro:#a78bfa; --macro:#38bdf8;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{background:var(--bg); color:var(--text); font-family:var(--sans); line-height:1.6; font-size:15px;}
+code,pre,.mono{font-family:var(--mono);}
+.wrap{max-width:980px; margin:0 auto; padding:0 24px;}
+button{font-family:var(--mono); font-size:12.5px; background:var(--surface2); color:var(--text); border:1px solid var(--border); border-radius:8px; padding:9px 16px; cursor:pointer; transition:.15s;}
+button:hover{border-color:var(--muted);}
+button:disabled{opacity:.4; cursor:not-allowed;}
+button.active{background:var(--micro); color:#0a0e14; border-color:var(--micro); font-weight:600;}
+
+.hero{border-bottom:1px solid var(--border); padding:54px 0 36px;
+  background:radial-gradient(600px 300px at 15% -10%, rgba(167,139,250,0.14), transparent 60%),
+             radial-gradient(500px 280px at 85% -20%, rgba(56,189,248,0.12), transparent 60%);}
+.hero .kicker{font-family:var(--mono); font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--micro); margin-bottom:16px;}
+.hero h1{font-family:var(--mono); font-size:clamp(26px,4vw,40px); font-weight:700; letter-spacing:-0.02em; max-width:760px;}
+.hero p{margin-top:14px; max-width:620px; color:var(--muted); font-size:15px;}
+
+.section{padding:50px 0; border-bottom:1px solid var(--border);}
+.section h2{font-family:var(--mono); font-size:20px; font-weight:600; margin-bottom:6px;}
+.section .sub{color:var(--muted); font-size:14px; margin-bottom:26px; max-width:680px;}
+
+.card{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:22px 24px;}
+
+pre.code{background:#0c1119; border:1px solid var(--border); border-radius:10px; padding:14px 18px; font-size:12.5px; line-height:1.85; overflow-x:auto; margin:0 0 18px;}
+pre.code div{opacity:.4; transition:opacity .15s;}
+pre.code div.active{opacity:1; background:rgba(167,139,250,0.12); border-radius:4px;}
+
+.queues{display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:18px;}
+.qbox{background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:12px 14px; min-height:70px;}
+.qbox .lbl{font-family:var(--mono); font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin-bottom:8px;}
+.pill{display:inline-block; font-family:var(--mono); font-size:11.5px; padding:5px 9px; border-radius:6px; margin:3px 4px 0 0;}
+.pill.stack{background:rgba(56,189,248,0.15); color:#7dd3fc;}
+.pill.micro{background:rgba(167,139,250,0.18); color:#c4b5fd;}
+.pill.macro{background:rgba(56,189,248,0.12); color:#7dd3fc;}
+.empty{font-size:11.5px; color:var(--muted);}
+
+.output-box{background:#0c1119; border:1px solid var(--border); border-radius:10px; padding:12px 16px; font-family:var(--mono); font-size:13px; margin-bottom:14px; min-height:22px;}
+.desc{font-size:13.5px; color:var(--text); min-height:40px; margin-bottom:14px;}
+.controls{display:flex; align-items:center; gap:10px;}
+.steplabel{margin-left:auto; font-family:var(--mono); font-size:11.5px; color:var(--muted);}
+
+/* Promise state machine */
+.psm-flow{display:flex; align-items:center; gap:16px; margin:20px 0; flex-wrap:wrap;}
+.psm-node{border:1px solid var(--border); border-radius:10px; padding:14px 22px; font-family:var(--mono); font-size:13px; text-align:center; min-width:120px; transition:.25s;}
+.psm-node.pending{background:rgba(227,160,8,0.1); border-color:var(--pending); color:var(--pending);}
+.psm-node.fulfilled{background:rgba(52,211,153,0.12); border-color:var(--fulfilled); color:var(--fulfilled);}
+.psm-node.rejected{background:rgba(242,84,91,0.12); border-color:var(--rejected); color:var(--rejected);}
+.psm-arrow{color:var(--muted); font-family:var(--mono); font-size:14px;}
+.toast{font-size:12.5px; color:var(--muted); margin-top:10px; min-height:18px;}
+
+/* Combinator race */
+.timeline-row{display:grid; grid-template-columns:70px 1fr 90px; align-items:center; gap:12px; margin-bottom:12px;}
+.tl-label{font-family:var(--mono); font-size:12.5px; color:var(--muted);}
+.tl-track{background:var(--surface2); border-radius:6px; height:22px; position:relative; overflow:hidden; border:1px solid var(--border);}
+.tl-bar{height:100%; width:0%; transition:width linear; background:var(--micro);}
+.tl-bar.ok{background:var(--fulfilled);}
+.tl-bar.fail{background:var(--rejected);}
+.tl-bar.ignored{opacity:.35;}
+.tl-status{font-family:var(--mono); font-size:11.5px; text-align:right;}
+.combo-btns{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:22px;}
+.result-panel{border-radius:10px; padding:14px 18px; font-family:var(--mono); font-size:13px; border:1px solid var(--border); min-height:22px; margin-top:6px;}
+.result-panel.fulfilled{background:rgba(52,211,153,0.1); border-color:var(--fulfilled); color:var(--fulfilled);}
+.result-panel.rejected{background:rgba(242,84,91,0.1); border-color:var(--rejected); color:var(--rejected);}
+.result-panel.settled{background:rgba(167,139,250,0.1); border-color:var(--micro); color:#c4b5fd;}
+
+/* LinkedIn share */
+.share-card{background:linear-gradient(160deg, #0c1119, #131b28); border:1px solid var(--border); border-radius:16px; padding:40px 36px; margin-bottom:22px;}
+.share-card .eyebrow{font-family:var(--mono); font-size:11.5px; color:var(--micro); text-transform:uppercase; letter-spacing:.1em; margin-bottom:18px;}
+.share-card pre{font-family:var(--mono); font-size:15px; background:#0c1119; border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin-bottom:18px; color:#7dd3fc;}
+.share-card .rule{font-size:16px; color:var(--text); max-width:560px;}
+.share-card .rule b{color:var(--fulfilled);}
+textarea{width:100%; background:var(--surface2); border:1px solid var(--border); border-radius:10px; color:var(--text); font-family:var(--mono); font-size:12.5px; padding:14px; min-height:220px; resize:vertical;}
+.copy-row{display:flex; align-items:center; gap:12px; margin-top:12px;}
+.copy-msg{font-size:12.5px; color:var(--fulfilled); opacity:0; transition:opacity .2s;}
+.copy-msg.show{opacity:1;}
+
+footer{padding:30px 0 50px; color:var(--muted); font-size:12px; font-family:var(--mono); text-align:center;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="wrap">
+    <div class="kicker">Interactive — Async JavaScript Deep Insights</div>
+    <h1>Watch the event loop run. Watch a Promise lock its state. Watch four combinators disagree on the same three tasks.</h1>
+    <p>Three live simulations built to make the mental model stick — the one interviewers actually check for, not just the syntax.</p>
+  </div>
+</div>
+
+<!-- EVENT LOOP STEPPER -->
+<div class="wrap">
+<div class="section">
+  <h2>01 · The event loop, one step at a time</h2>
+  <p class="sub">Sync code runs first. Then the microtask queue drains completely. Only then does the event loop take one macrotask. Step through two real traces to see why "0ms" never means "now".</p>
+
+  <div style="display:flex; gap:8px; margin-bottom:18px;">
+    <button class="active" id="scBtn0" onclick="setScenario(0)">Classic order</button>
+    <button id="scBtn1" onclick="setScenario(1)">Async / await</button>
+  </div>
+
+  <div class="card">
+    <pre class="code" id="elCode"></pre>
+    <div class="queues">
+      <div class="qbox"><div class="lbl">Call stack</div><div id="elStack"></div></div>
+      <div class="qbox"><div class="lbl">Microtask queue</div><div id="elMicro"></div></div>
+      <div class="qbox"><div class="lbl">Macrotask queue</div><div id="elMacro"></div></div>
+    </div>
+    <div class="output-box" id="elOutput"></div>
+    <div class="desc" id="elDesc"></div>
+    <div class="controls">
+      <button onclick="elPrev()">Prev</button>
+      <button onclick="elNext()">Next</button>
+      <button onclick="elReset()">Reset</button>
+      <span class="steplabel" id="elStepLabel"></span>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- PROMISE STATE MACHINE -->
+<div class="wrap">
+<div class="section">
+  <h2>02 · A promise settles once — try to break it</h2>
+  <p class="sub">Click resolve, then try to click reject afterward. The second call is not an error — it is simply ignored. That silent no-op is what makes a promise safe to hand to multiple consumers.</p>
+
+  <div class="card">
+    <div class="psm-flow">
+      <div class="psm-node pending" id="psmNode">pending</div>
+      <span class="psm-arrow">→</span>
+      <button id="psmResolve" onclick="psmSettle('fulfilled')">resolve('done')</button>
+      <button id="psmReject" onclick="psmSettle('rejected')">reject('failed')</button>
+      <button onclick="psmReset()">reset</button>
+    </div>
+    <div class="toast" id="psmToast"></div>
+  </div>
+</div>
+</div>
+
+<!-- COMBINATOR RACE -->
+<div class="wrap">
+<div class="section">
+  <h2>03 · Same three tasks, four different combinators</h2>
+  <p class="sub">Task A resolves in 900ms, task B resolves in 1500ms, task C rejects in 600ms. Run each combinator and watch when it actually settles — and what happens to the tasks still running after that.</p>
+
+  <div class="card">
+    <div class="combo-btns">
+      <button onclick="runCombo('all')">Promise.all</button>
+      <button onclick="runCombo('allSettled')">Promise.allSettled</button>
+      <button onclick="runCombo('race')">Promise.race</button>
+      <button onclick="runCombo('any')">Promise.any</button>
+      <button onclick="resetCombo()">Reset</button>
+    </div>
+
+    <div id="comboTimeline"></div>
+
+    <div class="result-panel" id="comboResult">Pick a combinator above to run the simulation.</div>
+  </div>
+</div>
+</div>
+
+<!-- LINKEDIN SHARE -->
+<div class="wrap">
+<div class="section" style="border-bottom:none;">
+  <h2>04 · Ready to post</h2>
+  <p class="sub">A screenshot-ready insight card, plus the full caption — copy and publish.</p>
+
+  <div class="share-card">
+    <div class="eyebrow">JavaScript · Event loop</div>
+    <pre>console.log('1')
+setTimeout(() => console.log('2'), 0)
+Promise.resolve().then(() => console.log('3'))
+console.log('4')
+
+// output: 1, 4, 3, 2</pre>
+    <p class="rule">One JS call stack. When it empties, the engine drains the <b>entire microtask queue</b> before it touches even one macrotask — no matter what delay you passed to setTimeout.</p>
+  </div>
+
+  <textarea id="postText" readonly>Most JavaScript developers can explain what a Promise is.
+
+Fewer can explain why this logs in this exact order:
+
+console.log('1')
+setTimeout(() => console.log('2'), 0)
+Promise.resolve().then(() => console.log('3'))
+console.log('4')
+
+Output: 1, 4, 3, 2
+
+Not 1, 2, 3, 4. Not 1, 4, 2, 3. The setTimeout callback -- even with a 0ms delay -- always loses to the Promise callback. Every time.
+
+The reason comes down to one rule most people have never had to name out loud:
+
+JavaScript has exactly one call stack. When it empties, the engine drains the ENTIRE microtask queue (Promises, async/await continuations) before it touches even one item from the macrotask queue (setTimeout, setInterval, I/O).
+
+Sync code -> all microtasks -> one macrotask -> repeat.
+
+That single rule is the answer key to almost every "gotcha" async question in a senior interview:
+-> Why does await pause a function but never block the thread
+-> Why Promise.all fails fast but Promise.allSettled never does
+-> Why Promise.race can reject even when a later promise would have succeeded (that's what Promise.any is actually for)
+-> Why "await inside a for loop" quietly turns 5 parallel API calls into 5 sequential ones
+-> Why a flaky test that checks state right after a fetch is usually a queue-ordering bug, not a timing bug
+
+I put together a full reference + interview prep resource covering Callbacks, new Promise, async/await, Promise.all, and Promise.race -- each with the pitfall that actually shows up in interviews, plus 36 Zero-to-Hero questions (Beginner through Expert) including from-scratch implementations of Promise.all, Promise.race, and a minimal Promise class.
+
+If you've ever been asked to "predict the output" of a setTimeout/Promise interleaving and second-guessed yourself -- this is for you.
+
+#JavaScript #AsyncJavaScript #EventLoop #SDET #QAEngineering #InterviewPrep #WebDevelopment #TestAutomation</textarea>
+  <div class="copy-row">
+    <button onclick="copyPost()">Copy caption</button>
+    <span class="copy-msg" id="copyMsg">Copied to clipboard</span>
+  </div>
+</div>
+</div>
+
+<footer>Built as an interview-prep and LinkedIn companion piece — verify runtime behavior in DevTools before relying on any single trace live.</footer>
+
+<script>
+/* ---------- Event loop stepper ---------- */
+const SCENARIOS = [
+{
+  code: ["console.log('1')","setTimeout(() => console.log('2'), 0)","Promise.resolve().then(() => console.log('3'))","console.log('4')"],
+  steps: [
+    {line:-1, stack:['main()'], micro:[], macro:[], out:[], desc:"Script begins executing on the call stack."},
+    {line:0, stack:['main()'], micro:[], macro:[], out:['1'], desc:"console.log('1') runs synchronously."},
+    {line:1, stack:['main()'], micro:[], macro:["console.log('2')"], out:['1'], desc:"setTimeout schedules its callback on the macrotask queue and returns immediately — the 0ms delay does not mean it runs now."},
+    {line:2, stack:['main()'], micro:["console.log('3')"], macro:["console.log('2')"], out:['1'], desc:"The promise is already resolved, so .then() schedules its callback on the microtask queue."},
+    {line:3, stack:['main()'], micro:["console.log('3')"], macro:["console.log('2')"], out:['1','4'], desc:"console.log('4') runs synchronously — the main script body is now finished."},
+    {line:-1, stack:[], micro:[], macro:["console.log('2')"], out:['1','4','3'], desc:"Call stack is empty, so the event loop drains the entire microtask queue before touching the macrotask queue."},
+    {line:-1, stack:[], micro:[], macro:[], out:['1','4','3','2'], desc:"Microtask queue is empty — only now does the event loop take one task from the macrotask queue."}
+  ]
+},
+{
+  code: ["async function a() {","  console.log('a-start')","  await b()","  console.log('a-end')","}","async function b() {","  console.log('b')","}","console.log('script-start')","a()","setTimeout(() => console.log('timeout'), 0)","Promise.resolve().then(() => console.log('promise'))","console.log('script-end')"],
+  steps: [
+    {line:-1, stack:['main()'], micro:[], macro:[], out:[], desc:"Script begins executing."},
+    {line:8, stack:['main()'], micro:[], macro:[], out:['script-start'], desc:"console.log('script-start') runs synchronously."},
+    {line:1, stack:['main()','a()'], micro:[], macro:[], out:['script-start','a-start'], desc:"a() is called — it runs synchronously up to its first await."},
+    {line:6, stack:['main()','a()','b()'], micro:[], macro:[], out:['script-start','a-start','b'], desc:"b() has no await, so it runs fully synchronously and returns an already-resolved promise."},
+    {line:2, stack:['main()'], micro:["a-end continuation"], macro:[], out:['script-start','a-start','b'], desc:"await suspends a(). Its continuation (a-end) is queued as a microtask, and control returns to the caller."},
+    {line:10, stack:['main()'], micro:["a-end continuation"], macro:["console.log('timeout')"], out:['script-start','a-start','b'], desc:"setTimeout registers its callback on the macrotask queue."},
+    {line:11, stack:['main()'], micro:["a-end continuation","console.log('promise')"], macro:["console.log('timeout')"], out:['script-start','a-start','b'], desc:"Promise.resolve().then() queues another microtask — behind the a-end continuation that was already waiting."},
+    {line:12, stack:['main()'], micro:["a-end continuation","console.log('promise')"], macro:["console.log('timeout')"], out:['script-start','a-start','b','script-end'], desc:"console.log('script-end') runs — the main script body finishes."},
+    {line:-1, stack:[], micro:[], macro:["console.log('timeout')"], out:['script-start','a-start','b','script-end','a-end','promise'], desc:"Stack empty → the microtask queue drains in order: a-end resumes first, then the promise callback runs."},
+    {line:-1, stack:[], micro:[], macro:[], out:['script-start','a-start','b','script-end','a-end','promise','timeout'], desc:"Microtask queue empty — the event loop finally takes the setTimeout callback from the macrotask queue."}
+  ]
+}
+];
+let elScenario = 0, elStep = 0;
+function elRenderCode(){
+  const sc = SCENARIOS[elScenario], cur = sc.steps[elStep];
+  document.getElementById('elCode').innerHTML = sc.code.map((l,i)=>`<div class="${i===cur.line?'active':''}">${l.replace(/</g,'&lt;')}</div>`).join('');
+}
+function elPillRow(id, items, cls, empty){
+  const el = document.getElementById(id);
+  el.innerHTML = items.length ? items.map(t=>`<span class="pill ${cls}">${t}</span>`).join('') : `<span class="empty">${empty}</span>`;
+}
+function elRender(){
+  const sc = SCENARIOS[elScenario], s = sc.steps[elStep];
+  elRenderCode();
+  elPillRow('elStack', s.stack, 'stack', 'empty');
+  elPillRow('elMicro', s.micro, 'micro', 'empty');
+  elPillRow('elMacro', s.macro, 'macro', 'empty');
+  document.getElementById('elOutput').textContent = s.out.length ? s.out.join('  →  ') : '(nothing logged yet)';
+  document.getElementById('elDesc').textContent = s.desc;
+  document.getElementById('elStepLabel').textContent = `Step ${elStep+1} of ${sc.steps.length}`;
+}
+function elNext(){ const sc=SCENARIOS[elScenario]; if(elStep<sc.steps.length-1){elStep++; elRender();} }
+function elPrev(){ if(elStep>0){elStep--; elRender();} }
+function elReset(){ elStep=0; elRender(); }
+function setScenario(i){
+  elScenario=i; elStep=0;
+  document.getElementById('scBtn0').classList.toggle('active', i===0);
+  document.getElementById('scBtn1').classList.toggle('active', i===1);
+  elRender();
+}
+elRender();
+
+/* ---------- Promise state machine ---------- */
+let psmState = 'pending';
+function psmSettle(state){
+  const node = document.getElementById('psmNode');
+  const toast = document.getElementById('psmToast');
+  if(psmState !== 'pending'){
+    toast.textContent = `Ignored — promise already ${psmState}. Only the first call to resolve/reject has any effect.`;
+    return;
+  }
+  psmState = state;
+  node.textContent = state;
+  node.className = 'psm-node ' + state;
+  toast.textContent = `State locked as "${state}". Try clicking the other button now.`;
+  document.getElementById('psmResolve').disabled = false;
+  document.getElementById('psmReject').disabled = false;
+}
+function psmReset(){
+  psmState = 'pending';
+  const node = document.getElementById('psmNode');
+  node.textContent = 'pending';
+  node.className = 'psm-node pending';
+  document.getElementById('psmToast').textContent = '';
+}
+
+/* ---------- Combinator race simulator ---------- */
+const TASKS = [
+  {id:'A', time:900, ok:true, value:"'A'"},
+  {id:'B', time:1500, ok:true, value:"'B'"},
+  {id:'C', time:600, ok:false, value:"Error('C failed')"}
+];
+const SCALE = 0.55;
+let comboTimers = [];
+
+function buildTimeline(){
+  const el = document.getElementById('comboTimeline');
+  el.innerHTML = TASKS.map(t=>`
+    <div class="timeline-row">
+      <span class="tl-label">${t.id}</span>
+      <div class="tl-track"><div class="tl-bar" id="bar-${t.id}"></div></div>
+      <span class="tl-status" id="status-${t.id}">pending</span>
+    </div>`).join('');
+}
+buildTimeline();
+
+function computeSettle(type){
+  if(type==='all'){
+    const fail = [...TASKS].filter(t=>!t.ok).sort((a,b)=>a.time-b.time)[0];
+    if(fail) return {time:fail.time, status:'rejected', detail:`Promise.all rejects at ${fail.time}ms — task ${fail.id} failed. Fail-fast: it does not wait for A or B.`, ignoreLater:true};
+    const maxT = Math.max(...TASKS.map(t=>t.time));
+    return {time:maxT, status:'fulfilled', detail:'All tasks fulfilled.', ignoreLater:false};
+  }
+  if(type==='allSettled'){
+    const maxT = Math.max(...TASKS.map(t=>t.time));
+    return {time:maxT, status:'settled', detail:`Promise.allSettled resolves at ${maxT}ms with an array of {status, value|reason} for every task — nothing is ever ignored.`, ignoreLater:false};
+  }
+  if(type==='race'){
+    const first = [...TASKS].sort((a,b)=>a.time-b.time)[0];
+    return {time:first.time, status:first.ok?'fulfilled':'rejected', detail:`Promise.race settles at ${first.time}ms with task ${first.id} (${first.ok?'fulfilled':'rejected'}) — first to settle wins, win or lose. A and B keep running but their outcome is now irrelevant.`, ignoreLater:true};
+  }
+  if(type==='any'){
+    const succ = [...TASKS].filter(t=>t.ok).sort((a,b)=>a.time-b.time);
+    if(succ.length) return {time:succ[0].time, status:'fulfilled', detail:`Promise.any fulfills at ${succ[0].time}ms with task ${succ[0].id} — first success wins. C's rejection at 600ms was ignored entirely.`, ignoreLater:true};
+    return {time:Math.max(...TASKS.map(t=>t.time)), status:'rejected', detail:'Every task rejected → AggregateError.', ignoreLater:false};
+  }
+}
+
+function resetCombo(){
+  comboTimers.forEach(clearTimeout);
+  comboTimers = [];
+  buildTimeline();
+  const rp = document.getElementById('comboResult');
+  rp.className = 'result-panel';
+  rp.textContent = 'Pick a combinator above to run the simulation.';
+}
+
+function runCombo(type){
+  resetCombo();
+  const settle = computeSettle(type);
+  let settled = false;
+
+  TASKS.forEach(t=>{
+    const bar = document.getElementById('bar-'+t.id);
+    const status = document.getElementById('status-'+t.id);
+    bar.style.transitionDuration = (t.time*SCALE)+'ms';
+    requestAnimationFrame(()=>{ bar.style.width = '100%'; });
+
+    const tm = setTimeout(()=>{
+      bar.classList.add(t.ok?'ok':'fail');
+      status.textContent = t.ok?'fulfilled':'rejected';
+      if(settled && settle.ignoreLater){
+        bar.classList.add('ignored');
+        status.textContent += ' (ignored)';
+      }
+    }, t.time*SCALE);
+    comboTimers.push(tm);
+  });
+
+  const settleTimer = setTimeout(()=>{
+    settled = true;
+    const rp = document.getElementById('comboResult');
+    rp.className = 'result-panel ' + settle.status;
+    rp.textContent = settle.detail;
+    if(settle.ignoreLater){
+      TASKS.forEach(t=>{
+        if(t.time > settle.time){
+          document.getElementById('status-'+t.id).textContent = 'still running…';
+        }
+      });
+    }
+  }, settle.time*SCALE);
+  comboTimers.push(settleTimer);
+}
+
+/* ---------- Copy caption ---------- */
+function copyPost(){
+  const ta = document.getElementById('postText');
+  ta.select();
+  navigator.clipboard.writeText(ta.value).then(()=>{
+    const msg = document.getElementById('copyMsg');
+    msg.classList.add('show');
+    setTimeout(()=>msg.classList.remove('show'), 1800);
+  }).catch(()=>{
+    document.execCommand('copy');
+  });
+}
+</script>
+</body>
+</html>

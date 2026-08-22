@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 16: Callbacks - Zero to Hero</title>
+    <link rel="stylesheet" href="../interactive_styles.css">
+    <style>
+        :root { --grad: linear-gradient(135deg, #f85149, #d29922); --blue: #f85149; }
+        .hero::before { background: radial-gradient(ellipse at 50% 0%, rgba(248,81,73,0.15) 0%, transparent 60%), radial-gradient(ellipse at 80% 80%, rgba(210,153,34,0.1) 0%, transparent 50%); }
+        .hero-badge { border-color: rgba(248, 81, 73, 0.3); background: rgba(248, 81, 73, 0.08); color: var(--blue); }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="hero-badge">✨ Chapter 16</div>
+        <h1>Mastering <span>Callbacks</span></h1>
+        <p>Understand asynchronous execution and how to handle data flowing through higher-order functions without falling into Callback Hell.</p>
+    </section>
+
+    <!-- DEEP INSIGHTS SECTION -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-label">Deep Insights</span>
+            <h2 class="section-title">Core Concepts Extracted</h2>
+        </div>
+        <div class="grid-2">
+            <div class="card">
+                <h3>🔄 Synchronous Callbacks</h3>
+                <p style="color: var(--muted);">A callback passed to a function that executes immediately and synchronously, blocking the main thread. Common in Array iteration methods like `.map()` and `.forEach()`.</p>
+                <div class="code-container">
+                    <div class="code-header"><span>Sync Callback</span></div>
+                    <pre class="code-content"><span class="keyword">function</span> <span class="function">greet</span>(name, callback) {
+    <span class="function">console.log</span>(<span class="string">"Hello "</span> + name);
+    <span class="function">callback</span>(); <span class="comment">// Executes immediately</span>
+}
+<span class="function">greet</span>(<span class="string">"Raja"</span>, <span class="keyword">function</span>() { 
+    <span class="function">console.log</span>(<span class="string">"Callback done!"</span>); 
+});</pre>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>⏳ Asynchronous Callbacks</h3>
+                <p style="color: var(--muted);">Executed after an asynchronous operation completes. Essential for non-blocking I/O operations (Timers, API calls, Events). Pushed to the Task Queue.</p>
+                <div class="code-container">
+                    <div class="code-header"><span>Async Callback</span></div>
+                    <pre class="code-content"><span class="function">setTimeout</span>(<span class="keyword">function</span>() {
+    <span class="function">console.log</span>(<span class="string">"Executed after 2 seconds"</span>);
+}, 2000);</pre>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>⚠️ Loss of 'this' Context</h3>
+                <p style="color: var(--muted);">When you pass an object method as a callback, it loses its `this` context because it is executed by a different part of the system (like the window object).</p>
+                <div class="code-container">
+                    <div class="code-header"><span>Gotcha Fix</span></div>
+                    <pre class="code-content"><span class="keyword">const</span> user = {
+    name: <span class="string">"John"</span>,
+    sayHi() { <span class="function">console.log</span>(<span class="keyword">this</span>.name); }
+};
+<span class="comment">// undefined!</span>
+<span class="function">setTimeout</span>(user.sayHi, 100); 
+
+<span class="comment">// Fix: Use arrow function</span>
+<span class="function">setTimeout</span>(() => user.<span class="function">sayHi</span>(), 100);</pre>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>😈 Callback Hell (Pyramid of Doom)</h3>
+                <p style="color: var(--muted);">When multiple sequential asynchronous operations are nested deeply inside callbacks, the code expands horizontally and becomes unmaintainable.</p>
+                <div class="code-container">
+                    <div class="code-header"><span>Pyramid of Doom</span></div>
+                    <pre class="code-content"><span class="function">download</span>(<span class="keyword">function</span>(data) {
+    <span class="function">process</span>(data, <span class="keyword">function</span>(processed) {
+        <span class="function">upload</span>(processed, <span class="keyword">function</span>(result) {
+            <span class="function">console.log</span>(<span class="string">"Done"</span>);
+        });
+    });
+});</pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- REAL WORLD & COMMON MISTAKES SECTION -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-label">Practical Application</span>
+            <h2 class="section-title">Real World & Common Mistakes</h2>
+        </div>
+        <div class="grid-2">
+            <div class="card">
+                <h3>🛠️ Real-World Use Case</h3>
+                <p style="color: var(--muted);"><strong>Event Listeners in the DOM:</strong> Callbacks are the foundation of Web UI interactions. Promises resolve only once, so callbacks are mandatory for buttons that can be clicked multiple times.</p>
+                <div class="code-container">
+                    <div class="code-header"><span>Practical Example</span></div>
+                    <pre class="code-content"><span class="keyword">const</span> btn = document.<span class="function">getElementById</span>(<span class="string">"submit"</span>);
+<span class="comment">// The callback runs every time a click occurs</span>
+btn.<span class="function">addEventListener</span>(<span class="string">"click"</span>, <span class="keyword">function</span>(event) {
+    <span class="function">console.log</span>(<span class="string">"User submitted form at: "</span>, event.timeStamp);
+});</pre>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>❌ Common Developer Mistake</h3>
+                <p style="color: var(--muted);"><strong>Executing the callback immediately instead of passing it!</strong> Adding parenthesis `()` when passing a callback executes it instantly instead of waiting.</p>
+                <div class="code-container">
+                    <div class="code-header"><span>Common Mistake</span></div>
+                    <pre class="code-content"><span class="keyword">function</span> <span class="function">showAlert</span>() { <span class="function">alert</span>(<span class="string">"Hi!"</span>); }
+
+<span class="comment">// MISTAKE: Alerts instantly, passing 'undefined' to setTimeout</span>
+<span class="function">setTimeout</span>(<span class="function">showAlert</span>(), 1000); 
+
+<span class="comment">// CORRECT: Pass the function reference (no parentheses)</span>
+<span class="function">setTimeout</span>(showAlert, 1000);</pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- INTERVIEW PREPARATION -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-label">Zero to Hero</span>
+            <h2 class="section-title">Interview Preparation</h2>
+        </div>
+        <div class="card">
+            <div class="qa-box">
+                <div class="qa-q">Q1: What will print first in this code block?</div>
+                <div class="code-container" style="margin-bottom:1rem; margin-top:0.5rem; max-width: 400px;">
+                    <pre class="code-content" style="padding: 0.5rem;"><span class="function">console.log</span>(<span class="string">"A"</span>);
+<span class="function">setTimeout</span>(() => <span class="function">console.log</span>(<span class="string">"B"</span>), 0);
+<span class="function">console.log</span>(<span class="string">"C"</span>);</pre>
+                </div>
+                <div class="qa-a"><strong>Answer: A, C, B.</strong> Even though the timeout is `0` milliseconds, `setTimeout` pushes the callback to the Task Queue. It must wait until the main Call Stack is empty before executing.</div>
+            </div>
+            <div class="qa-box">
+                <div class="qa-q">Q2: How do you solve Callback Hell?</div>
+                <div class="qa-a">By refactoring the code to use Promises, or modern `async/await` syntax, which flattens the execution flow and makes it look synchronous.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LINKEDIN POST SNIPPET -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-label">Social Ready</span>
+            <h2 class="section-title">LinkedIn Post Snippet</h2>
+        </div>
+        <div class="linkedin-box">
+            <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('li-post').innerText); this.innerText='Copied!'; setTimeout(()=>this.innerText='Copy Post', 2000);">Copy Post</button>
+            <div id="li-post" style="white-space: pre-wrap; font-size: 1.05rem; color: #c9d1d9; font-family: 'Inter', sans-serif;">🚀 Mastering Callbacks in JavaScript: Beyond the Basics!
+
+Ever wonder why sometimes your callbacks run immediately, and other times they wait? Not all callbacks are created equal!
+
+Here are my top takeaways from deep-diving into Callbacks:
+
+✅ 𝗧𝗵𝗲 𝗦𝘆𝗻𝗰 𝘃𝘀 𝗔𝘀𝘆𝗻𝗰 𝗥𝘂𝗹𝗲: Callbacks passed to array methods like `.forEach()` or `.map()` are 100% synchronous. They block the main thread! Callbacks passed to `setTimeout` or `fetch` are asynchronous and go to the Task Queue.
+✅ 𝗧𝗵𝗲 𝗜𝗻𝘃𝗼𝗰𝗮𝘁𝗶𝗼𝗻 𝗠𝗶𝘀𝘁𝗮𝗸𝗲: Never pass `myFunction()` to an event listener. Adding the parentheses runs it immediately instead of waiting for the click! Pass `myFunction` (the reference) instead.
+✅ 𝗟𝗼𝘀𝘁 𝗖𝗼𝗻𝘁𝗲𝘅𝘁 𝗚𝗼𝘁𝗰𝗵𝗮: Passing `user.sayHi` as a callback loses its `this` binding because the execution context changes. Wrap it in an arrow function `() => user.sayHi()` to secure the `this` keyword!
+✅ 𝗖𝗮𝗹𝗹𝗯𝗮𝗰𝗸𝘀 𝗔𝗿𝗲 𝗡𝗢𝗧 𝗗𝗲𝗮𝗱: Even with `async/await` taking over, callbacks are the absolute best and only pattern for continuous event handling (like buttons), because Promises only resolve once.
+
+💡 Interview Tip: Remember the Event Loop! A `setTimeout(fn, 0)` will always execute AFTER your synchronous code finishes, no matter what!
+
+#JavaScript #WebDevelopment #CodingInterviews #Frontend #SoftwareEngineering</div>
+        </div>
+    </section>
+</body>
+</html>

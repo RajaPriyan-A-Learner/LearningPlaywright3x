@@ -1,0 +1,3034 @@
+
+--- 01_chapter_javascript ---
+
+
+// File: 01_HelloWorld.js
+
+console.log("Hello The Testing Academy!");
+
+--- 02_chapter_javascript ---
+
+
+// File: let_concept.js
+
+let a=9;
+console.log(a);
+
+for(let i=0;;i++)
+{
+    console.log(i);
+    badCode();
+}
+
+function badCode(){
+    console.log("This is a bad code");
+}
+
+--- 03_chapter_identifier ---
+
+
+// File: 03_Identifier_Rules_Part01.js
+
+var a = 10;
+console.log(a);
+
+var $ = 10;
+var _a = 23;
+var pp = 34;
+
+var ab123 = 23;
+// var 45 = 34;
+var _ = 10;
+
+var Name = "raja";
+var name = "priyan";
+
+// var pramod dutta = "hello";
+var raja_priyan = "hello";
+var raja$priyan = "hello";
+var rajapriyan1134 = "hello";
+
+// File: 04_Identifier_Rules_Part02.js
+
+var name = "Raja";
+
+var firstName = "Raja";
+var This_is_a_very_long_name_variable = "Raja";
+var lastName = "Priyan"; // CamelCase
+
+// Naming Conventions (Cases)
+// ============================================
+// 1. camelCase (standard for JS variables and functions)
+let userName = "camelCase";
+let totalPrice = 99.99;
+let isLoggedIn = true;
+
+// 2. PascalCase (standard for JS classes and constructors)
+let UserProfile = "PascalCase";
+let ShoppingCart = "class name style";
+
+
+// 3. snake_case (underscore separated)
+let user_name = "snake_case";
+let total_price = 49.99;
+let is_logged_in = false;
+
+
+// 4. SCREAMING_SNAKE_CASE (constants)
+const MAX_SIZE = 100;
+const API_KEY = "abc123";
+const DATABASE_URL = "localhost";
+
+
+// 5. Hungarian Notation (prefix with type - older style)
+let strName = "string prefix";
+let bActive = true;       // boolean
+let nCount = 5;           // number
+let arrItems = [];        // array
+
+
+let strFirstName = "raja";
+
+// File: 05_Comments.js
+
+// This is single comment this will be ignore 
+// this line will be not executed
+
+/*
+ *  This is multi line
+ *  Author : Raja Priyan
+ *  Date : 19-Jul-2026
+ */
+
+/**
+ *  This is multi line
+ *  Author : Raja Priyan
+ *  Date : 19-Jul-2026
+ **/
+
+var g = 10; // cmd + /, ctr + /
+
+
+
+// File: 06_Identifier_IQ.js
+
+// ============================================
+// JavaScript Identifier Rules - IQ
+// ============================================
+
+let validName = "starts with letter";
+let _private = "starts with underscore";
+let $jquery = "starts with dollar sign";
+
+
+let item1 = "letter then digit";
+let _temp2 = "underscore then digit";
+let $var123 = "dollar then digits";
+let a1_b2 = "mixed letters digits underscore";
+
+//let 1stPlace = "invalid";
+//let 2ndItem = "invalid"; // SyntaxError: Invalid or unexpected token
+
+// Keyword
+// let class = "invalid"; 
+// let const = "invalid";
+//let function = "invalid";
+let Function = "invalid";
+
+let MyVar = "uppercase M";
+let myvar = "lowercase v";
+
+// Unicode letters and Unicode escape sequences are allowed
+
+let café = "Unicode letter é";
+let 变量 = "Chinese characters";
+let \u0041 = "Unicode escape for A";
+let \u005f = "Unicode escape for _";
+
+
+// let my-name = "invalid";
+// let my name = "invalid";      // SyntaxError: Unexpected identifier
+// let my@name = "invalid";      // SyntaxError: Unexpected token '@'
+// let my#name = "invalid";      // SyntaxError: Unexpected token '#'
+// let my!name = "invalid";      // SyntaxError: Unexpected token '!'
+
+
+// 1. camelCase (standard for JS variables and functions)
+let userName = "camelCase";
+let totalPrice = 99.99;
+let isLoggedIn = true;
+function getUserInfo() { return "function camelCase"; }
+
+// 2. PascalCase (standard for JS classes and constructors)
+let UserProfile = "PascalCase";
+let ShoppingCart = "class name style";
+function Person() { return "constructor"; }
+
+// 3. snake_case (underscore separated)
+let user_name = "snake_case";
+let total_price = 49.99;
+let is_logged_in = false;
+
+// 4. SCREAMING_SNAKE_CASE (constants)
+const MAX_SIZE = 100;
+const API_KEY = "abc123";
+const DATABASE_URL = "localhost";
+
+--- 04_chapter_Literal ---
+
+
+// File: 07_Literal.js
+
+let age = "raja"; //  String Lietal
+let isStudent = true; // This is a boolean literal assigned to the variable 'isStudent'.
+let pi = 3.14; // This is a numeric literal assigned to the variable 'pi'.
+let name = 'Alice'; // This is a string literal assigned to the variable 'name'.
+let nullValue = null; // This is a null literal assigned to the variable 'nullValue'.
+let undefinedValue; // This variable is declared but not assigned, so it has the value 'undefined'.
+let pi2 = 3; // numeric literal 
+
+// Numric Literal - Numeric
+// 1. int
+// 2. float
+
+// typeof - operatr - It will tell you what is a data type that it has. 
+console.log(typeof age);
+console.log(typeof pi);
+console.log(typeof pi2);
+console.log(typeof isStudent);
+console.log(typeof nullValue);
+console.log(typeof undefinedValue);
+
+// File: 08_null_undefined.js
+
+// ============================================================
+// Topic: null vs undefined in JavaScript
+// ============================================================
+
+/*
+  SIMPLE DEFINITIONS:
+
+  undefined  ->  A variable exists, but it has not been assigned any value yet.
+                 JavaScript itself sets this automatically.
+
+  null       ->  A variable exists, but the developer explicitly assigns 
+                "no value" or "empty".
+                 It is intentional absence of any value.
+*/
+
+// var x;
+// console.log(x);
+
+// var audi = null;
+// console.log(audi);
+
+
+
+// --------------------------------------------------------
+// 1. undefined
+// --------------------------------------------------------
+
+let userName; // declared but not assigned
+console.log(userName);
+console.log(typeof userName);
+
+// function greet() {
+//     // no return statement
+// }
+// console.log(greet()); 
+
+let x;
+x = 10;
+console.log(x);
+
+// --------------------------------------------------------
+// 2. null
+// --------------------------------------------------------
+let profilePicture = null;
+console.log(profilePicture);
+console.log(typeof profilePicture); // "object"  <-- known JS quirk!
+
+
+// --------------------------------------------------------
+// 3. Key Differences (Summary Table)
+// --------------------------------------------------------
+
+/*
+  | Feature              | undefined                     | null                           |
+  |----------------------|-------------------------------|--------------------------------|
+  | Meaning              | Not assigned yet              | Intentionally empty            |
+  | Who sets it?         | JavaScript automatically      | Developer manually             |
+  | Type                 | undefined                     | object (historical bug in JS)  |
+  | ==  comparison        | null == undefined  -> true    |                                |
+  | === comparison       | null === undefined -> false   |                                |
+*/
+
+// enthucutlet
+
+// File: 09_NULL.js
+
+let no_audi_raja_has = null;
+
+// File: 10_Literal.js
+
+let count = 42;
+let negative = -100;
+let zero = 0;
+
+let h = 0xFF;
+console.log(typeof h);
+let color_hex = 0xFF0000;
+
+let octal = 0o77; //base
+let million = 1e6;
+let tiny = 1.5e-4;
+
+// File: 11_Number.js
+
+// ============================================================
+// Topic: All Number Types in JavaScript
+/*
+  In JavaScript, numbers are ALWAYS of type "number" (except BigInt).
+  There is no separate int, float, double, etc.
+  JS uses IEEE 754 double-precision 64-bit binary format.
+*/
+
+
+// --------------------------------------------------------
+// 1. INTEGER LITERALS
+// --------------------------------------------------------
+
+// Decimal (Base 10) - most common
+let decimal = 42;
+console.log("Decimal:", decimal); // 42
+
+// Binary (Base 2) - starts with 0b or 0B
+let binary = 0b1010; // 10 in decimal
+console.log("Binary 0b1010:", binary); // 10
+
+// Octal (Base 8) - starts with 0o or 0O
+let octal = 0o52; // 42 in decimal
+console.log("Octal 0o52:", octal); // 42
+
+// Hexadecimal (Base 16) - starts with 0x or 0X
+let hex = 0x2A; // 42 in decimal
+console.log("Hexadecimal 0x2A:", hex); // 42
+
+
+// --------------------------------------------------------
+// 2. FLOATING-POINT LITERALS
+// --------------------------------------------------------
+
+let float1 = 3.14;
+let float2 = -0.5;
+let float3 = .5;    // valid, but avoid for readability
+let float4 = 5.;    // valid, but avoid for readability
+
+console.log("Float 3.14:", float1);
+console.log("Float -0.5:", float2);
+console.log("Float .5:", float3);
+console.log("Float 5.:", float4);
+
+
+// Exponential notation
+let exp1 = 1.5e3;   // 1.5 * 10^3 = 1500
+let exp2 = 1.5e-3;  // 1.5 * 10^-3 = 0.0015
+let exp3 = 2E10;    // 2 * 10^10 = 20000000000
+
+console.log("Exponential 1.5e3:", exp1);   // 1500
+console.log("Exponential 1.5e-3:", exp2);  // 0.0015
+console.log("Exponential 2E10:", exp3);    // 20000000000
+
+// File: 12_Number_Part2.js
+
+// --------------------------------------------------------
+// 3. NUMERIC SEPARATORS (ES2021+)
+// --------------------------------------------------------
+
+let million = 1_000_000;
+let binarySep = 0b1010_0001;
+let hexSep = 0xFF_FF;
+
+console.log("Separator 1_000_000:", million);      // 1000000
+console.log("Separator 0b1010_0001:", binarySep);  // 161
+console.log("Separator 0xFF_FF:", hexSep);         // 65535
+
+
+// --------------------------------------------------------
+// 4. BIGINT - For arbitrarily large integers
+// --------------------------------------------------------
+
+let big = 123456789012345678901234567890n;
+let big2 = BigInt("123456789012345678901234567890");
+let bigFromNum = BigInt(42);
+
+console.log("BigInt literal:", big);
+console.log("BigInt from string:", big2);
+console.log("BigInt from number:", bigFromNum);
+console.log("typeof BigInt:", typeof big); // "bigint"
+
+
+// --------------------------------------------------------
+// 5. SPECIAL NUMERIC VALUES
+// --------------------------------------------------------
+
+// Infinity
+console.log("Infinity:", Infinity);           // Infinity
+console.log("1 / 0:", 1 / 0);                 // Infinity
+console.log("-1 / 0:", -1 / 0);               // -Infinity
+console.log("typeof Infinity:", typeof Infinity); // "number"
+
+// -Infinity
+console.log("-Infinity:", -Infinity);
+
+// NaN (Not a Number) - result of invalid math
+console.log("NaN:", NaN);                     // NaN
+console.log("0 / 0:", 0 / 0);                 // NaN
+console.log("'hello' * 2:", "hello" * 2);     // NaN
+console.log("typeof NaN:", typeof NaN);       // "number" (quirky!)
+
+--- 05_chapter_Operator ---
+
+
+// File: 13_DataType.js
+
+// Data Type in the JS
+
+// string, number, boolean, bigInt, undefined, null, Symbol
+// array, NaN
+
+// File: 14_Assignment_Operator.js
+
+//  Assignment Operators
+
+let x = 10;
+x = "Rajjaprriyan";
+console.log(x);
+
+
+let x1 = 10;
+x1 += 5; //  x1 = x1 -5;
+console.log(x1);
+x1 -= 3; // x1 = x1-3;
+console.log(x1);
+
+x *= 2;        // x = x * 2 → 24
+x /= 4;        // x = x / 4 → 6
+x %= 4; 
+
+// File: 15_Arithmetic_Operator.js
+
+// +,-,*, /,
+
+// Assignment Operator
+let a = 10;
+let b = 3;
+
+// Arithmetic Operators
+let sum = a + b;
+let sub = a - b;
+let mul = a * b;
+let div = a / b;
+
+console.log(sum);
+console.log(sub);
+console.log(mul);
+console.log(div);
+
+// Modulus -> % -> It will give you remainder
+console.log(a % b);
+console.log(13 % 7);
+
+console.log(101 % 2);
+console.log(100 % 2);
+
+//  n%2 == 1 - odd number, [ n%2 == 0 , even]
+
+// Exponential **, power 2^3 -> 8
+console.log(2 ** 3);
+console.log(a ** b); // 10^3 -> 1000
+
+// File: 16_Comparison_Operator.js
+
+// Compasion Operator (will always result in the boolean, true or false)
+
+// =, ==, ===
+
+
+// = -> Assignment opearator
+// == -> losse comparsion ( sikh vs hindu )
+// === -> strict comparsion ( sikh vs hindu , languge, living)
+
+
+// Domiz = Pizz hut - Pizza Lose check
+// === -> Strict Comparsion ->
+
+// > , < , >= , <= 
+
+
+// console.log(3 > 4);
+// console.log(3 < 4);
+// console.log(4 >= 4); // (4 > 4 or 4 == 4, or gate)
+
+// console.log(5 == "5"); // lose couple comparsion , value
+// console.log(5 === "5"); // stict not allowed - valeu + datatype both
+
+// === Strict check we will check for both the datatype and value
+// == Lose check we will check either value or data type.
+
+// console.log(3 == "4");
+// ! -> not char
+console.log(5 != "5"); // lose -> datatype or value
+console.log(5 !== "5"); // true
+// console.log(5 !=== "5"); This dosn't
+
+console.log(5 === 5);
+
+// File: 17_Logical_Operator.js
+
+// && -> AND Gate
+// || -> OR Gate
+
+let a = true;
+let b = false;
+
+console.log(a && b);
+console.log(a || b);
+console.log(!a);
+
+// File: 18_Confusing_Comparison_P2.js
+
+// Rule of thumb:
+//   ==   → loose equality  (does type coercion, surprising)
+//   ===  → strict equality (no coercion, what you usually want)
+
+console.log(" — Confusing Comparisons in JS");
+
+// ---------- 2. null and undefined ----------
+console.log(null == undefined);   // true   → special rule in ==
+console.log(null === undefined);  // false  → different types
+console.log(null == 0);           // false  → null only == undefined/null
+console.log(null >= 0);           // true   → >= coerces null to 0  (gotcha!)
+console.log(null > 0);            // false
+console.log(null == 0 || null > 0); // false … but null >= 0 is true 🤯
+
+// File: 18_Confusing_Comparison.js
+
+// Rule of thumb:
+//   ==   → loose equality  (does type coercion, surprising)
+//   ===  → strict equality (no coercion, what you usually want)
+
+// ---------- 1. Empty string vs 0 vs "0"  (transitivity broken) ----------
+console.log("" == 0);        // true   → "" coerced to Number → 0
+console.log("0" == 0);       // true   → "0" coerced to Number → 0
+console.log("" == "0");      // false  → both strings, compared as-is
+
+// === fixes it
+console.log("" === 0);       // false
+console.log("0" === 0);      // false
+console.log("" === "0");     // false
+
+// File: 20_Question.js
+
+// console.log(5 == "5");
+// console.log(5 != "5");
+console.log(5 != "5"); // lose 
+console.log(5 !== "5");  // strict
+
+// File: 21_String_Op.js
+
+let s = "Hi, ";
+console.log(typeof s);
+s += "Dev";
+console.log(s);
+
+console.log("Hello" + "World");
+console.log("HELLO", "Prrammod");
+console.log(1, 2, 3, 4, "Hello", true);
+
+// File: 22_Ternary_Op.js
+
+// ## Ternary (Conditional) Operator
+// condition, either this or either that. 
+let age = 20;
+let is_pramod_will_go_to_goa = age > 18 ? "Yes" : "No";
+console.log("This person can go goa ? ", is_pramod_will_go_to_goa);
+
+// condition ?  value(if true)  : value (if false)
+
+// File: 23_IQ.js
+
+let actualStatusCode = 200;
+let expectedStatusCode = 200;
+let testResult = actualStatusCode === expectedStatusCode ? "✅ PASS" : "❌ FAIL";
+console.log(testResult);
+
+// File: 24_IQ3.js
+
+let isCI = true;
+let browserMode = isCI ? "headless" : "headed";
+console.log("Launching browser in:", browserMode, "mode");
+
+// File: 25_IQ4.js
+
+let responseTime = 850;  // ms
+let sla = 1000;          // ms
+let slaStatus = responseTime <= sla ? "Within SLA ✅" : "SLA breached ❌";
+console.log(`Response: ${responseTime}ms — ${slaStatus}`);
+// Template Literal
+console.log(`What is the SLA time ? - ${sla}`);
+
+// File: 26_Q2.js
+
+let environment = "staging";
+let baseUrl = environment === "prod"
+    ? "https://api.example.com"
+    : "https://staging-api.example.com";
+console.log(baseUrl);
+
+// File: 27_IQ5.js
+
+let condition = true;
+let isSKMale = condition ? true : false;
+console.log(isSKMale);
+
+// File: 28_Nested_Ternary_Op.js
+
+// Multiple Condition
+
+let age = 26;
+//   age > 18 -> he will goa, else not else
+// drink > 25  yes, else no 
+let is_pramod_enjoy = age > 18 ? (age > 26 ? "Drink" : "No") : false;
+console.log(`Can pramod Drink? : ${is_pramod_enjoy}`);
+
+// File: 29_IQ_NT.js
+
+let statusCode = 404;
+let category =
+    statusCode < 300 ? "Success" :
+        statusCode < 400 ? "Redirect" :
+            statusCode < 500 ? "Client Error" : "Server Error";
+
+
+
+console.log(`Status ${statusCode}: ${category}`);
+console.log("Status :" + statusCode, category);
+
+// File: 30_NT_IQ2.js
+
+let temp = 35;
+let feel = (temp >= 40) ? "Very Hot" :
+    (temp >= 30) ? "Hot" :
+        (temp >= 20) ? "Warm" :
+            (temp >= 10) ? "Cool" : "Cold";
+console.log("7. Temperature:", temp, "| Feel:", feel);
+
+// File: 31_Type_Op.js
+
+//7. Type Operators
+
+console.log(typeof "hello");
+console.log(typeof 123); // int -> number
+console.log(typeof 31.4); // float -> number
+// typeof true
+//typeof undefined
+// typeof null -> object
+console.log(typeof []);  // -> object
+
+// File: 32_In_De_Op.js
+
+// Pre Increment
+// let a = 10;
+// let b = ++a;
+// console.log(b);
+
+
+// Post Increment
+let a = 10;
+let b = a++;
+console.log(b);
+
+// File: 33_Advance_Inc.js
+
+let a = 10;
+console.log(++a + a);
+console.log(a);
+
+// File: 34_Incre_Part2.js
+
+// let a = 10;
+// console.log(++a + a + a++);
+// console.log(a);
+
+// let i = 1;
+// let result = i++ + ++i;
+// console.log(result, i);
+
+
+// let a = 10;
+// console.log(++a + ++a);
+// console.log(a);
+
+let a = 34;
+let result = a++;
+console.log(result);
+console.log(a);
+
+// File: 35_Decrement.js
+
+// let a = 10;
+// let b = --a;
+// console.log(b);
+// console.log(a);
+
+let a = 10;
+let b = a--;
+console.log(b);
+console.log(a);
+
+// File: 36_Null_Coalescing.js
+
+let amul = null;
+let val = amul ?? "NANDANI Milk";
+console.log(val);
+
+
+let api_response = null;
+let responsedata = api_response ?? "{}";
+console.log(responsedata);
+
+
+let api_response1 = "Pramod";
+let responsedata1 = api_response1 ?? "{}";
+console.log(responsedata1);
+
+--- 06_chapter_Statement ---
+
+
+// File: 37_IQ.js
+
+let age = 16;
+if (age > 18) {
+    console.log("Go Goa");
+} else {
+    console.log("Not Goa");
+}
+
+// File: 38_IQ2.js
+
+let age = 27;
+if (age > 18) {
+    console.log("GOA");
+    if (age > 26) {
+        console.log("DRINK!");
+    }
+    else {
+        console.log("You CAN'T DRINK!");
+    }
+} else {
+    console.log("No GOA");
+}
+
+// File: 38_Multiple_Condition.js
+
+let score = 78;
+
+if (score >= 90) {
+    console.log("Grade: A — Excellent");
+}
+else if (score >= 80 && score < 90) {
+    console.log("Grade: B — Good");
+}
+else if (score >= 70 && score < 80) {
+    console.log("Grade: C — Can do better");
+}
+else if (score >= 60 && score < 70) {
+    console.log("Grade: D — Needs Improvement");
+}
+else if (score >= 50 && score < 60) {
+    console.log("Grade: E : Bring Paranets");
+} else {
+    console.log("You can sell momos, pizza!")
+}
+
+--- 07_chapter_switch ---
+
+
+// File: 39_switch.js
+
+let day = 2;
+// 1 - mon, 2 = tue
+switch (day) {
+    case 1:
+        console.log('Mon');
+        break;
+    case 2:
+        console.log('Tue');
+        let a = 10;
+        let b = 30;
+        console.log(a + b);
+        break;
+    case 3:
+        console.log('Wed');
+        break;
+    case 4:
+        console.log('Thur');
+        break;
+    case 5:
+        console.log('Fri');
+        break;
+    case 6:
+        console.log('Sat');
+        break;
+    case 7:
+        console.log('Sun');
+        break;
+    default:
+        console.log("No idea which day it is");
+}
+
+// File: 40_IQ.js
+
+// Switch
+// 0 - Sunday, 1 - Monday, 2 - Tue.....
+let day = 2;
+switch (day) {
+    case 0:
+        console.log("Sunday — Rest Day");
+    case 1:
+        console.log("Monday — Sprint Planning");
+    case 2:
+        console.log("Tuesday — Development");
+    case 3:
+        console.log("Wednesday — Code Review");
+    case 4:
+        console.log("Thursday — Testing");
+    case 5:
+        console.log("Friday — Deployment & Retro");
+    case 6:
+        console.log("Saturday — Rest Day");
+    default:
+        console.log("Invalid day value");
+}
+
+// File: 41_IQ2.js
+
+// Switch
+// 0 - Sunday, 1 - Monday, 2 - Tue.....
+let day = 10;
+switch (day) {
+    case 0:
+        console.log("Sunday — Rest Day");
+        break;
+    case 1:
+        console.log("Monday — Sprint Planning");
+        break;
+    case 2:
+        console.log("Tuesday — Development");
+        break;
+    case 3:
+        console.log("Wednesday — Code Review")
+        break;
+    case 4:
+        console.log("Thursday — Testing");
+        break;
+    case 5:
+        console.log("Friday — Deployment & Retro");
+        break;
+    case 6:
+        console.log("Saturday — Rest Day");
+        break;
+    default:
+        console.log("Invalid day value");
+}
+
+// File: 42_REAL_API_Testing.js
+
+let responseCode = 404;
+
+switch (responseCode) {
+
+    case 200:
+        console.log("200 Ok");
+        break;
+    case 404:
+        console.log("404 Not found!");
+        break;
+    default:
+        console.log("Not status code match");
+
+}
+
+// File: 43_Switch_Group.js
+
+let browser = "Brave";
+
+switch (browser) {
+    case "Chrome":
+    case "Edge":
+    case "Brave":
+    case "Opera":
+        console.log("Chromium Project!");
+        break;
+    case "Firefox":
+        console.log("Mozilla Project!");
+        break;
+    case "Safari":
+        console.log("Apple browser — uses JavaScriptCore engine");
+        break;
+    default:
+        console.log("Unknown browser — manual testing needed");
+
+}
+
+// File: 44_IQ.js
+
+let fruit = "banana";
+switch (fruit) {
+    case "apple":
+        console.log("Apple selected");
+    case "banana":
+        console.log("Banana selected");
+    case "cherry":
+        console.log("Cherry selected");
+    case "date":
+        console.log("Date selected");
+    default:
+        console.log("Default reached");
+}
+
+// File: 45_IQ2.js
+
+let testScore = 85;
+switch (true) {
+    case (testScore >= 95):
+        console.log("Outstanding — Top performer");
+        break;
+    case (testScore >= 85):
+        console.log("Excellent — Above expectations");
+        break;
+    case (testScore >= 70):
+        console.log("Good — Meets expectations");
+        break;
+    case (testScore >= 50):
+        console.log("Needs Improvement");
+        break;
+    default:
+        console.log("Unsatisfactory — Requires training");
+}
+
+// File: 46_IQ3.js
+
+let x = 10;
+switch (x) {
+    case 10:
+        let b1 = 1;
+        console.log(b1);
+        break;
+    case 10:
+        let b2 = 2;
+        console.log(b2);
+        break;
+    default:
+        console.log("d");
+
+}
+
+// File: 47_IQ4.js
+
+let status = 0;
+console.log(typeof status)
+switch (status) {
+    case false:
+        console.log("false matched");
+        break;
+    case 0:
+        console.log("0 matched");
+        break;
+}
+// === Strict, value and data type both of them shoul be same.
+// && ->  and gate
+// ||  or gate
+// & - bitwise, | bitwse, never use
+// == -> loose comparsion - value or data type.
+
+--- 08_chapter_UserInputs ---
+
+
+// File: 48_JS.js
+
+let num = prompt("Enter a number:");
+num = Number(num);  // convert string to number
+
+if (num % 2 === 0) {
+    console.log(num + " is Even");
+} else {
+    console.log(num + " is Odd");
+}
+
+// File: 49_Node_UI.js
+
+const readline = require("readline");
+
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+rl.question("Enter a number: ", (input) => {
+    let num = Number(input);
+
+    if (num % 2 === 0) {
+        console.log(num + " is Even");
+    } else {
+        console.log(num + " is Odd");
+    }
+
+    rl.close();
+});
+
+// File: 50_Prompt.js
+
+const prompt = require("prompt-sync")();
+let num = Number(prompt("Enter a number: "));
+if (num % 2 === 0) {
+    console.log(num + " is Even");
+} else {
+    console.log(num + " is Odd");
+}
+
+// File: 51_Fs.js
+
+console.log("Enter the number!");
+const data = require('fs').readFileSync(0, 'utf8');
+console.log("Hi", data);
+
+// In the terminal:
+// Type 15
+// Press Enter
+// Press Ctrl+D
+
+--- 09_chapter_Loops ---
+
+
+// File: 52_Loops.js
+
+console.log(1);
+console.log(2);
+console.log(3);
+console.log(4);
+console.log(5);
+console.log("...");
+console.log(10);
+
+// File: 53_For_Loop.js
+
+// For Loop
+// Help you to repeat a block of code.
+
+// ICU
+// INIT - let i=0
+// CONDITION -  i< 10
+
+// for (let i = 0; i < 10; i++) {
+//     console.log(i);
+// }
+
+for (let i = 0; i < 10; ++i) {
+    console.log(i);
+}
+
+// File: 54_Increment.js
+
+let a = 10;
+let b = ++a;
+console.log(a);
+console.log(b);
+
+// //  Exp and Result Table
+// // Line No | a | Result b
+// // 1       |  10 |  NA
+// // 2       |  11 |  11
+// // 3       | 11 - print | 11
+// // 4       | 11 | 11 - print
+
+// File: 55_For_Loops2.js
+
+// for (let somya = 0; somya < 10; somya++) {
+//     console.log(somya);
+// }
+
+// for (let somya = 0; somya <= 10; somya++) {
+//     console.log(somya);
+// }
+
+for (let somya = 1; somya <= 10; somya++) {
+    console.log(somya);
+}
+
+// File: 56_For_Loops3.js
+
+// for (let _1 = 0; _1 <= 10; _1++) {
+//     console.log(_1);
+// }
+
+// for (let pramod = 0; pramod > 1; pramod++) {
+//     console.log(pramod);
+// }
+
+// for (let pramod = 0; ; pramod++) {
+//     console.log(pramod);
+// }
+
+for (let somya = 0; somya < 18; somya++) {
+    if (somya > 15) {
+        console.log("Gift from papa, iphone this year")
+    } else {
+        console.log("No Gift, iphone only barbie doll")
+    }
+
+}
+
+// File: 57_While.js
+
+let i = 0;
+for (; i < 10; i++) {
+    console.log(i);
+}
+
+let j = 0;
+while (j < 10) {
+    console.log(j);
+    j++;
+}
+
+// File: 58_While2.js
+
+let attempts = 0; // Init
+
+while (attempts < 3) {
+    console.log("Attempt", attempts);
+    attempts++;
+}
+
+// File: 59_Example1.js
+
+let modi = 1;
+while (modi <= 15) {
+    console.log("Modi will do 15+ years");
+    modi++;
+
+}
+
+// File: 60_While_Vs_for.js
+
+let age = 7;
+while (true) {
+    if (age > 10) {
+        break;
+    }
+    else {
+        console.log(age);
+    }
+    age++;
+}
+
+// File: 61_Do_while.js
+
+// let retry = 0;
+// do {
+//     console.log("Execute a Code!");
+//     console.log("RETRYing.......", retry);
+//     retry++;
+// } while (retry < 3);
+
+// File: 62_DoWhile_Vs_While.js
+
+// let a = 10;
+// while (a < 10) {
+//     console.log(a);
+//     a++;
+// }
+
+let a = 10;
+do {
+    console.log(a);
+    a++;
+} while (a < 10);
+
+// File: 63_Nested_For_Loops.js
+
+// Nested the For Loop
+// 1 Array - W
+
+for (let i = 0; i < 3; i++) {
+    for (let j = 0; j < 3; j++) {
+        console.log(i, j);
+    }
+}
+
+--- 10_chapter_Arrays ---
+
+
+// File: 64_Array.js
+
+let fruit = [];
+let browsers = ["chrome", "firefox", "webkit"];
+console.log(browsers[0]);
+console.log(browsers.at(-1));
+console.log(browsers.length);
+console.log(fruit.length);
+
+// For the Negative indexedDB, use the at
+console.log(browsers[-1]); // undefined
+console.log(browsers.at(0));
+
+// File: 65_Array2.js
+
+let arr = [10, 20, 30, 40];
+console.log(arr.length);
+// 0 to 3
+console.log(arr[4]); // undefined
+
+
+let testResults = ["pass", "fail", "pass", "skip"];
+let mixed = [1, "hello", true, null];
+
+// File: 66_Array_Creation.js
+
+// Array literal (preferred)
+
+let browsers = ["Chrome", "Firefox", "Safari"];
+
+// Array constructor
+let scores = new Array(3); // creates [empty x 3]
+scores[0] = "1";
+let scores2 = new Array(1, 2, 3); // creates [1, 2, 3]
+
+
+let numbers = new Array(100, 200, 300, 400);
+
+
+let test = Array.of(10, 20, 30, 40, 50);
+console.log(test.length);
+
+
+// Array.from()
+let chars = Array.from("hello");
+// ["h", "e", "l", "l", "o"]
+
+// File: 67_Array_Access_Modifies.js
+
+// Accessing & Modifying
+
+let statuses = ["pass", "fail", "skip"];
+
+console.log(statuses[0]);
+console.log(statuses[2]);
+
+
+console.log(statuses.at(-1));
+console.log(statuses.at(-2));
+
+console.log(statuses.at(-4));
+
+// Modify
+statuses[1] = "blocked";
+console.log(statuses);
+
+// Length
+console.log(statuses.length);
+
+// File: 68_Array_adding_removing.js
+
+let arr = [1, 2, 3];
+console.log(arr);
+
+// Add to END
+arr.push(4);
+console.log(arr);
+
+// Remove from END
+arr.pop();
+console.log(arr);
+
+arr.push(5, 6);
+console.log(arr);
+
+// Add to BEGINNING
+arr.unshift(0);
+console.log(arr);
+
+// Remove from BEGINNING
+arr.shift();
+console.log(arr);
+
+// [ 1, 2, 3, 5, 6 ]
+
+arr.splice(2, 1);
+console.log(arr);
+
+arr.splice(2, 0, 99);
+console.log(arr);
+
+arr.splice(1, 2, 10, 20);
+console.log(arr);
+
+// File: 69_Array_REAL.js
+
+let browser = ['chrome', 'firefox', 'safari', 'opera', 'edge'];
+console.log(browser.length);
+
+browser.pop();
+// console.log(browser);
+
+let removed = browser.shift();
+// console.log(browser);
+// console.log(removed);
+
+for (let i = 0; i < browser.length; i++) {
+    console.log(browser[i]);
+    if (browser[i] === "opera") {
+        console.log("Opera doesn't support Automation Now!");
+    }
+}
+
+// File: 70_Array_searching.js
+
+//Searching
+
+let results = ["pass", "fail", "pass", "error", "fail"];
+
+// indexOf — returns first index, or -1 if not found
+
+results.indexOf("fail"); //1
+results.indexOf("skip");  // -1
+
+// lastIndexOf — searches from the end
+results.lastIndexOf("fail");
+
+// includes — returns boolean
+results.includes("error"); // true
+
+// File: 71_IQ.js
+
+let nums = [10, 25, 30, 45];
+let result = nums.find(temp => temp > 20);
+console.log(result);
+
+// findIndex
+let index = nums.findIndex(n => n > 20);
+console.log(index);
+
+nums.findLast(n => n > 20); //  45
+nums.findLastIndex(n => n > 20); // 3
+
+// File: 72_Array_iterate.js
+
+let tests = ["login", "checkout", "search"];
+
+for (let i = 0; i < tests.length; i++) {
+    console.log(i, tests[i]);
+}
+
+console.log("----");
+
+// for...of (cleanest for values)
+for (let test of tests) {
+    console.log(test) // value
+}
+console.log("----");
+
+// forEach (no return value)
+tests.forEach((test, index) => {
+
+    console.log(`${index}: ${test}`);
+});
+
+// entries() — index + value
+
+for (let [i, test] of tests.entries()) {
+    console.log(i, test);
+}
+
+console.log("----");
+
+
+let students = ["methis", "senthil", "ajay", "rahul"];
+
+for (let student in students) {
+    console.log(student, " -> ", students[student]); // index = in
+}
+
+// File: 73_Array_Transform.js
+
+let scores = [45, 82, 91, 60, 73];
+
+let grades = scores.map(item_score => item_score > 70 ? "Pass": "Fail");
+console.log(grades);
+
+// Map My app is generally used whenever we want to 
+// transform the array into a new array of the same size. 
+
+// Filter
+
+let passing = scores.filter(s => s >= 70);
+console.log(passing);
+
+// File: 74_Sorting.js
+
+let fruits = ["banana", "apple", "cherry"];
+fruits.sort();
+console.log(fruits);
+//  alphabetical by default 
+
+let score = [4,3,2];
+console.log(score.sort());
+
+let nums = [10,1,21,2];
+// nums.sort();
+console.log(nums); //  1,2,10,21 -
+// Natural Sorting - Lexicographic / string sort 
+
+// Proper Sorting, Asc , Desc
+// nums.sort((a,b) => a-b);
+
+nums.sort((a,b) => b-a); // Desc
+console.log(nums);
+nums.reverse();
+console.log(nums);
+
+// File: 75_Slicing.js
+
+// Slice & Combining
+
+let arr = [1, 2, 3, 4, 5];
+// slice(start, end) — returns new array, 
+// does NOT mutate actual -> ( start, end-1) . index = 0
+//Don't give the end, it will automatically 
+// take from start to end.
+
+console.log(arr.slice(1, 3));
+console.log(arr);
+
+console.log(arr.slice(2));
+
+
+console.log(arr.slice(-2)); // Right side.
+console.log(arr.slice(-3));
+
+console.log(arr.slice(0));
+
+console.log(arr.slice(-5));
+
+console.log(arr.slice(-3, -5));
+
+// File: 76_Array_Concat.js
+
+let a = [1, 2];
+let b = [3, 4];
+let c = a.concat(b);
+console.log(c);
+
+// spread (modern way) - concatenation. (...)
+// ... all the eleement
+let d = [...a,...b];
+console.log(d);
+
+// Join 
+// array into bug string
+let s = ["pass", "fail", "skip"].join(" | ");
+console.log(s);
+
+// File: 77_Array_Checking.js
+
+// Checking Arrays
+
+// Check if something IS an array
+
+let result = Array.isArray([1, 2, 3]);
+let result1 = Array.isArray("a");
+console.log(result);
+console.log(result1);
+
+// map, filter, reduce
+
+// every — ALL must pass
+// GOTCHA: the missing ; below would make ASI glue the next line's [ ... ]
+// into an index access -> TypeError. Always end these lines with ;
+console.log([80, 90, 85].every(s => s >= 70)); // true
+console.log([80, 60, 85].every(s => s >= 70)); // false
+
+// some — AT LEAST ONE must pass
+console.log([80, 60, 85].some(s => s < 70)); // true
+console.log([80, 90, 85].some(s => s < 70)); // false
+
+// File: 78_Copy.js
+
+// Shallow Copy
+// Original array will not change if you change the copy. 
+
+let original = [1, 2, 3];
+let copy1 = [...original]; // spread
+// console.log(original);
+// console.log(copy1);
+
+let copy2 = original.slice();
+// console.log(copy2);
+
+let copy3 = Array.from(original);
+//  console.log(copy3);
+
+let copy4 = original.concat();
+// console.log(copy4);
+
+console.log(" ---- ");
+copy1.push(99);
+console.log(original);
+console.log(copy1);
+
+// Deep cOPY
+let deep_copy_array = original;
+// Deep copy
+
+deep_copy_array.push(91);
+console.log(original);
+console.log(deep_copy_array);
+
+// File: 79_Destructing.js
+
+let [first, second, third] = [10, 20, 30];
+
+console.log(first);
+console.log(second);
+console.log(third);
+
+// Rest pattern (...) — collects everything left over into a NEW array.
+// Note: cannot reuse first/second/third here, `let` cannot be redeclared
+// in the same scope (SyntaxError: Identifier has already been declared).
+let [a, b, ...rest] = [10, 20, 30, 40, 50];
+console.log(a);    // 10
+console.log(b);    // 20
+console.log(rest); // [30, 40, 50]
+
+// Default values — used only when the slot is undefined
+let [x = 1, y = 2, z = 99] = [10, 20];
+console.log(x, y, z); // 10 20 99
+
+// Skip elements with a hole, and swap without a temp variable
+let [, , thirdOnly] = [10, 20, 30];
+console.log(thirdOnly); // 30
+
+let p = 1, q = 2;
+[p, q] = [q, p];
+console.log(p, q); // 2 1
+
+--- 11_chapter_Function ---
+
+
+// File: 100_TDZ.js
+
+{
+    console.log(a);
+    let a = 10;
+}
+
+// Enter Block
+//  ↓
+// a is created ✅
+// a has NO value yet ❌
+//     ↓
+// console.log(a)  ❌ Error (TDZ)
+//     ↓
+// let a = 10;
+//     ↓
+// a = 10 ✅
+
+// File: 101_IQ1.js
+
+var a = "Pramod";
+
+if(true){
+    console.log(a);
+    var a = "temp";
+    console.log(a);
+}
+
+// File: 102_IQ2.js
+
+let a = 10
+console.log(a)
+if (true){ 
+    console.log(a); 
+    let a = 20;
+}
+
+// File: 103_IQ3.js
+
+// console.log(MAX_RETRIES); // TDZ
+// const MAX_RETRIES = 3;
+// // MAX_RETRIES = 4;
+
+const score = 100
+// score = score+10;
+
+const pi = 3.14;
+const prod_api_url = "https://app.vwo.com/#login";
+//prod_api_url = "https://google.com"
+const qa_api_url = "https://qa.vwo.com/#login";
+
+let abc = "anil";
+console.log(abc);
+
+// File: 105_IQ.js
+
+greet("Alice"); 
+
+function greet(name) {
+    console.log('Hi');
+    return `Hello, ${name}!`;
+}
+
+sayHi("Bob"); // ❌ TypeError: sayHi is not a function
+
+const sayHi = function (name) {
+    return `Hi, ${name}!`;
+};
+
+// File: 80_Function_Basics1.js
+
+// Without functions — repeated logic
+
+// let score1 = 85;
+// let result1 = score1 >= 70 ? "pass" : "fail";
+// console.log(result1);
+
+// let score2 = 45;
+// let result2 = score2 >= 70 ? "pass" : "fail";
+// console.log(result2);
+
+// Define
+function getResult(score){
+    return score >= 70 ? "pass" : "fail";
+}
+
+// Calling
+getResult(85); // Pass
+getResult(45); // Fail
+
+// File: 81_Function_Basic2.js
+
+// Define
+function sayHello(name){
+        console.log(name);
+        // 1000 lines....
+}
+// Called
+sayHello("PrrammodDutta");
+
+sayHello("Siba");
+sayHello("Kishan");
+
+// File: 82_TYPE1_Fn.js
+
+// Type 1 - No param, No Return -> final retunr undefined.
+// Define
+function greet(){
+    console.log("Hi");
+}
+// No Param and no Return (void)
+
+// Call
+greet();
+greet();
+greet();
+
+let output = greet();
+console.log(output);
+
+
+function openBrowser(){
+    console.log("Open Browser");
+    // open the brower
+    
+}
+
+// File: 83_TYPE2_Fn.js
+
+// Type 2 Functions
+
+// So with argument/parameter but no return type. 
+
+function greetByName(name){
+      console.log("Hi", name);
+}
+greetByName("Pramod"); // argument
+greetByName("Dipak");
+greetByName("Meeti");
+greetByName("Sangeetha");
+
+let name1 = greetByName("Sumit");
+console.log(name1);
+
+// File: 84_TYPE3_Fn.js
+
+// Type 3. - No Param/Arg but Return Type
+
+function sayHello(){
+
+    console.log("Hi");
+    return "helllo";
+
+}
+
+let call = sayHello();
+console.log(call);
+
+
+function greetByHi(){
+    // console.log("WhatsApp")
+    return [12,2,3,3,2];
+}
+
+let op = greetByHi();
+console.log(op);
+
+// File: 85_TYPE4_Fn.js
+
+// Type 4 - With arg/ With return
+function sumOfTwoNumbers(a,b){
+    return a+b;
+}
+
+let c = sumOfTwoNumbers(4,5);
+console.log(c);
+console.log(sumOfTwoNumbers(4,5));
+
+// File: 86_Template_literal.js
+
+function greet(name){
+    return `Hello. ${name}`;
+}
+
+let op = greet('Alice');
+console.log(op);
+
+// File: 87_Funtion_Expression.js
+
+function greet(name){
+    return `Hello, ${name}`;
+}
+
+// Function as Expression
+const greet1 = function (name1){
+    return `Hello, ${name1}`;
+}
+
+
+console.log(greet("Bob"));
+console.log(greet1("Bob"));
+
+// File: 88_Function_Arrow1.js
+
+function greet(name){
+    return `Hello, ${name}!`;
+}
+
+const greet1 = function (name1) {
+    return `Hello, ${name1}!`;
+}
+
+const greet2 = (name2) => `Hello, ${name2}!`;
+
+// Arrow Fn
+
+// If you want to make a normal function to arrow function. 
+// Remove the keyword function, remove the keyword return, remove the curly braces, and use the =>
+
+
+console.log(greet("Pramod"));
+console.log(greet1("Pramod"));
+console.log(greet2("Pramod"));
+
+// File: 89_Function_Arrow2.js
+
+function doubleMe(a){
+    return a*2;
+}
+
+const doubtA = (a)=> a*2;
+doubtA(10);
+
+const getEnv = () => "staging";
+console.log(getEnv());
+
+//Mutiline
+const getResult = (score) => {
+    if(score > 70) return "Pass";
+    return "fail";
+}
+
+console.log(getResult(78));
+console.log(getResult(43));
+
+// File: 90_REAL.js
+
+function validateStatusCode(status) {
+    if (status >= 200 && status <= 300) {
+        console.log("Request is fine!")
+    }
+}
+
+const validateStatusCode_Exp = function (status) {
+    if (status >= 200 && status <= 300) {
+        console.log("Request is fine!")
+    }
+}
+
+const validateStatusCode_Arrow = (status) => {
+    if (status >= 200 && status <= 300) {
+        console.log("Request is fine!");
+    }
+}
+
+validateStatusCode(200);
+validateStatusCode_Exp(200);
+validateStatusCode_Arrow(200);
+
+// File: 91_IIFE.js
+
+//Immediately Invoked Function Expression (IIFE)
+//They don't need to be called. 
+
+function name1() {
+    console.log("Hi")
+}
+name1();
+
+
+// IIFE
+(function(){
+    console.log("Anonymous Fun");
+})();
+
+(function () {
+    console.log("Staging")
+})();
+
+//Arrow Crazy
+
+(() => {
+    console.log("Setup complete");
+})();
+
+// File: 92_Spread_Function.js
+
+function add(a, b, c) {
+    return a + b + c;
+}
+let num = [1, 2, 3,5];
+console.log(add(...num));
+
+// ----
+function hasError(...codes) {
+    return codes.some(c => c >= 400);
+}
+
+
+let responseCodes = [200, 201, 404];
+let responseCodes2 = [200, 201, 404, 500];
+hasError(...responseCodes);
+
+// File: 93_Return_function.js
+
+function getStatus(code) {
+    if (code >= 200 && code < 300) {
+        return "Success";
+    } else if (code >= 400 && code < 500) {
+        return "client error";
+    } else if (code >= 500) {
+        return "server error";
+    } else {
+        return "unknown";
+    }
+}
+
+getStatus(200); 
+getStatus(404);
+getStatus(500); 
+
+
+// Returns nothing → undefined
+function logTest(name) {
+    console.log(`Running: ${name}`);
+    // no return statement
+}
+
+logTest("Hi this is a a log");
+
+
+function aaa() {
+    return [2, 2, 3, 5, 4];
+    /// return {"name : pramod"}; - object
+}
+
+// File: 94_Var_Let_Const_Function.js
+
+// var a = 10;
+// console.log(a); // 10
+// // Var - Function Scoped(), Traitor
+
+// // Define
+// function printHello(){
+//     console.log("Hello TheTestingAcademy");
+//     var a = 20;
+//     console.log(a); // 20
+//     if(true){
+//         var a = 30;
+//         console.log(a); // 30
+//     }
+//     console.log(a); //20
+
+// }
+
+// printHello();
+
+
+// let - Block Scoped
+
+let b =20; // Global Scope
+console.log(b); //  20
+
+function printHello(){
+        console.log("Hello TheTestingAcademy!");
+        let b = 30; // Local Scope
+        console.log(b); // 30
+        if(true){
+            let b = 5;
+            console.log(b); // 5
+        }
+        console.log("let ->",b);   // 30
+}
+
+// Calling of the function
+printHello();
+console.log(b);
+
+// Let does not allow you to have a re-declaration. 
+// let a = 10;
+// let a = 10;
+
+
+// var allow you to have a re-declaration 
+var a =11;
+var a = 100;
+
+// let nn = "Pramod";
+// var nn = "Pramod"; 
+
+const pi = 3.14;
+console.log(pi);
+pi = 3.14159; // Assignment to constant variable.
+
+{
+
+}
+
+
+const a = [1,2,3];
+a.push(10);
+
+
+function adasd(){
+
+}
+
+// File: 95_Hoisting.js
+
+// var a;
+console.log(a);
+var a = "Pramod";
+console.log(a);
+
+// ---- Phase 1: Memory Creation ----
+// var a  = undefined;
+// var b  = undefined;
+console.log(a); // undefind
+var a = "Pramod";
+console.log(a); // changed
+
+// Hoisting does NOT physically move your code. 
+// It is a mental model to understand how the
+//  JS engine handles declarations during compilation.
+
+// File: 96_Var_Hoisting.js
+
+console.log(greeting); 
+var greeting = "Hello!";
+console.log(greeting); 
+
+// Behind the scenes:
+// var greeting;              <-- hoisted with undefined
+// console.log(greeting);    <-- undefined
+// greeting = "Hello!";      <-- assignment stays in place
+// console.log(greeting);    <-- "Hello!"
+
+// File: 97_Function_Hoisting.js
+
+// Step 1 - Defination of functions
+function getUserStatus(){
+    // var status_code = undefined; - not shown to you.
+    console.log(status_code);
+    var status_code = "Active";
+    console.log(status_code);
+
+}
+
+// Step 2 - Calling of the functions
+getUserStatus();
+
+// File: 98_Let_Hoisting.js
+
+console.log(username);
+let username = "Dutta";
+console.log(username);
+
+// File: 99_Let.js
+
+var a = "Pramod";
+// 10,000lines 
+if(true){
+    console.log(a); 
+    var a = "temp";
+}
+
+// Temporal Dead Zone
+
+// Global Scope
+// a = "Pramod"
+// Enter Block , Block Scope
+//  a = TDZ (exist but not initialized)
+// console.log(a);
+
+--- 12_chapter_function_Closure ---
+
+
+// File: 106_Closure_remembers.js
+
+function makeCounter(start = 0) {
+    let count = start; 
+    return {
+        increment(){ count++;},
+        decrement() { count--; },
+        get() { return count; }
+    };
+}
+
+let counter = makeCounter(0);
+counter.increment();
+counter.increment();
+counter.increment();
+console.log(counter.get());
+counter.decrement();
+console.log(counter.get());
+
+// increment();
+
+// File: 107_Closure.js
+
+function startBrowser() {
+    let name = "edge";
+
+    function installBrowser() {
+        console.log(name);
+        let fail = true;
+        if (fail) {
+            console.log('Failed!');
+        }
+    }
+
+    return installBrowser;
+}
+
+const runTc = startBrowser();
+runTc();
+
+//installBrowser();
+
+// File: 108_Scope_function.js
+
+// Scope in Functions
+
+let env = "staging";  // global scope
+
+function setupConfig() {
+    let timeout = 3000;   // local scope
+    console.log(env);     // ✅ can access global
+    console.log(timeout); // ✅ can access local
+}
+
+setupConfig();
+console.log(env);
+console.log(timeout); // ❌ ReferenceError — not accessible outside
+
+
+// ---- 
+let g_x = 10;
+
+function outer() {
+    let x = 10;
+
+    function inner() {
+        let y = 20;
+        console.log(x);  // ✅ inner can access outer's variables
+    }
+
+
+    inner();
+    console.log(y); // ❌ outer cannot access inner's variables
+
+}
+
+// File: 109_Function_Closure_REAL.js
+
+const { run } = require("node:test");
+
+function maxRetryTRacker(max) {
+    let attempts = 0;
+    function tryAgain(testName) {
+        attempts++;
+        if (attempts > max) {
+            return `${testName} exceeded max retries (${max})`;
+        }
+        return `Attempt ${attempts}/${max} for ${testName}`;
+    };
+    return tryAgain;
+}
+
+let runTCRetry = maxRetryTRacker(3);
+console.log(runTCRetry("Login"));
+console.log(runTCRetry("Login"));
+console.log(runTCRetry("Login"));
+console.log(runTCRetry("Login"));
+
+// File: 110_Function_closure_simple.js
+
+function makeRateLimiter(limit) {
+
+    let call = 0;
+    function check() {
+        call++;
+        return call <= limit;
+    }
+    return check;
+
+}
+
+let limiter = makeRateLimiter(3);
+console.log(limiter());
+console.log(limiter());
+console.log(limiter());
+console.log(limiter());
+
+--- 13_chapter_String ---
+
+
+// File: 111_String.js
+
+let url = "https://app.vwo.com";
+let status = 'pass';
+let message = `Test completed in ${320}ms`;
+
+// Single quotes
+let a = 'hello';
+
+// Double quotes
+let b = "world";
+
+// Template literals (backticks) — allows expressions & multiline
+let name1 = "Alice";
+let msg = `Hello, ${name1}! 2 + 2 = ${2 + 2}`;
+console.log(msg);
+
+// Multiline
+let report = `
+  Test: Login
+  Status: Pass
+  Duration: 320ms
+`;
+
+console.log(String(200));
+String(true); //  "true"
+String(null); // "null"
+String([1, 2]); // "[1,2]"
+
+// File: 112_String_function.js
+
+// String Properties & Basic Access
+
+let a = "dasdadas\nadasd";
+let a2 = 'dasdad "a"sdsa\ndasd';
+
+let str = "Hello, World!";
+console.log(str.length); // start 1
+console.log(str[0]); // index = 0
+console.log(str[7]);
+console.log(str.at(-1));
+console.log(str.at(-6));
+
+// charAt()
+str.charAt(0); 
+str.charCodeAt(0);  // 72
+
+// File: 113_String_Searching.js
+
+// Searching & Checking
+
+let url = "https://staging.vwo.com/api/login?retry=true";
+// includes()
+url.includes("staging");  
+url.includes("production");
+
+// startsWith / endsWith
+url.startsWith("https");
+url.startsWith("http://"); 
+url.endsWith("true"); 
+
+// indexOf / lastIndexOf
+console.log(url.indexOf("a"));
+console.log(url.lastIndexOf("a"));
+console.log(url.indexOf("nothere"));
+
+// ASCII -> A -> 65
+
+// File: 114_Extracting_String.js
+
+// Extracting Substrings
+
+let str = "Login_Test_Pass_001";
+
+// slice(start, end) — negative indexes supported ( start, end-1)
+console.log(str.slice(0, 5)); // (0,4) -> "Login"
+console.log(str.slice(11));
+console.log(str.slice(-3));
+
+let testNumber = str.slice(-3);
+
+// substring(start, end) — no negatives (treats as 0)
+str.substring(6, 10);  // "Test"
+
+// at() for single chars
+str.at(0);   // "L"
+str.at(-1);  // "1"
+
+// File: 115_String_More.js
+
+let str = "  Hello, World!  ";
+console.log(str.toUpperCase());
+console.log(str.toLowerCase());
+
+// Trim whitespace
+console.log(str.trim());
+
+str.trimStart();
+str.trimEnd();
+
+// Replace
+let msg = "Test: FAIL. Retry: FAIL.";
+msg.replace("FAIL", "PASS"); // // "Test: PASS. Retry: FAIL."  (first only)
+msg.replaceAll("FAIL", "PASS");
+msg.replace(/FAIL/g, "PASS"); // replace all with Regex
+
+
+// Concatenation
+
+"Hello" + " " + "World";
+"Hello".concat(" ", "World");
+`${"Hello"} ${"World"}`;
+
+// File: 116_Extra.js
+
+let url = "https://app.vwo.com?app=pramod";
+console.log(url.replace(/app/g, "qa"));
+
+// Splitting & Joining
+"pass,fail,skip".split(",");  // ["pass", "fail", "skip"]
+"hello".split("");  // ["h","e","l","l","o"]
+
+// Template literal (joining with format)
+let parts = ["2024", "03", "07"];
+let date = parts.join("-");
+console.log(date);
+
+// File: 117_String_Conversion.js
+
+// String Conversion
+
+
+// To string
+(200).toString(); // "200"
+true.toString();  // "true"
+
+Number("42");  //  42
+
+parseInt("42px");  // 42
+parseFloat("3.14rem"); //3.14
+
+let str = "hello"; //. Things are immutable in nature in JS.
+str[0] = "H";
+console.log(str);
+
+let upper = str.toUpperCase();
+console.log(str);
+console.log(upper);
+
+--- 14_chapter_Objects ---
+
+
+// File: 118_Objects.js
+
+// let a = { status: "pass" };
+// console.log(a.status);
+// console.log(a["status"]);
+
+// let a1 = { status: 'pass' };
+// console.log(a1.status);
+
+// keys are case sensitive.
+// let a22 = { status: "pass", Status: "fail" };
+// console.log(a22["status"]);
+// console.log(a22["Status"]);
+
+let a = { status: "pass" };
+let b = a;  //Copy the reference
+b.status = "fail";
+console.log(a.status);
+
+
+let c = { status: "pass" };
+let d = { status: "pass" };
+console.log(c === d);
+
+
+const t_json = {
+    "name": "pramod",
+    "age": 10
+};
+console.log(t_json);
+
+const t_js = {
+    name: "pramod",
+    age: 10
+};
+console.log(t_js);
+
+// File: 119_Object_Person.js
+
+// Synthetic training fixture: all personal details and identifiers are fictional.
+const user = {
+    id: 1001,
+    username: "pramod_dutta",
+    firstName: "Pramod",
+    middleName: null,
+    lastName: "Dutta",
+    fullName: "Pramod Dutta",
+    age: 65,
+    dateOfBirth: "1961-04-15",
+    gender: "Male",
+    email: "pramod.dutta@example.com",
+    alternateEmail: "pramod.work@example.com",
+    phone: "+91-98765-43210",
+    isActive: true,
+    isEmailVerified: true,
+    profilePicture: "https://example.com/images/pramod.jpg",
+
+    address: {
+        houseNumber: "42B",
+        street: "MG Road",
+        landmark: "Near Central Park",
+        city: "Bengaluru",
+        state: "Karnataka",
+        postalCode: "560001",
+        country: "India",
+        coordinates: {
+            latitude: 12.9716,
+            longitude: 77.5946,
+        },
+    },
+
+    permanentAddress: {
+        village: "Rampur",
+        district: "Patna",
+        state: "Bihar",
+        postalCode: "800001",
+        country: "India",
+    },
+
+    languages: ["English", "Hindi", "Bengali"],
+    hobbies: ["Reading", "Travelling", "Gardening", "Photography"],
+    skills: [
+        "JavaScript",
+        "Playwright",
+        "API Testing",
+        "SQL",
+        "Git",
+    ],
+
+    education: [
+        {
+            degree: "Bachelor of Technology",
+            specialization: "Computer Science",
+            institution: "Delhi Technical University",
+            graduationYear: 1983,
+            grade: "8.4 CGPA",
+        },
+        {
+            degree: "Master of Business Administration",
+            specialization: "Information Systems",
+            institution: "Indian Institute of Management",
+            graduationYear: 1987,
+            grade: "Distinction",
+        },
+    ],
+
+    employment: {
+        company: "Tech Solutions Pvt. Ltd.",
+        jobTitle: "Senior QA Architect",
+        department: "Quality Engineering",
+        employeeId: "EMP-2048",
+        employmentType: "Full-time",
+        joiningDate: "2015-06-01",
+        annualSalary: 1800000,
+        currency: "INR",
+        isRemote: true,
+        officeDays: ["Monday", "Wednesday"],
+        manager: {
+            name: "Ananya Sharma",
+            email: "ananya.sharma@example.com",
+        },
+    },
+
+    workExperience: [
+        {
+            company: "Quality Labs",
+            role: "Test Engineer",
+            from: 1987,
+            to: 1995,
+        },
+        {
+            company: "Automation Systems",
+            role: "QA Manager",
+            from: 1995,
+            to: 2015,
+        },
+    ],
+
+    family: {
+        maritalStatus: "Married",
+        spouse: {
+            name: "Sunita Dutta",
+            age: 61,
+        },
+        children: [
+            { name: "Rahul Dutta", age: 34, occupation: "Software Engineer" },
+            { name: "Neha Dutta", age: 30, occupation: "Doctor" },
+        ],
+        emergencyContact: {
+            name: "Rahul Dutta",
+            relationship: "Son",
+            phone: "+91-99887-76655",
+        },
+    },
+
+    socialMedia: {
+        linkedIn: "https://example.com/profiles/pramod-dutta",
+        github: "https://example.com/profiles/pramod-dutta",
+        twitter: "https://example.com/profiles/pramod-dutta",
+    },
+
+    preferences: {
+        theme: "dark",
+        language: "English",
+        timezone: "Asia/Kolkata",
+        notifications: {
+            email: true,
+            sms: false,
+            push: true,
+        },
+        favoriteColors: ["Blue", "Black", "Green"],
+    },
+
+    bankAccounts: [
+        {
+            bankName: "Example Bank",
+            accountType: "Savings",
+            accountNumber: "XXXX-XXXX-4821",
+            isPrimary: true,
+        },
+    ],
+
+    documents: {
+        panCard: "ABCDE1234F",
+        passportNumber: "P1234567",
+        drivingLicense: "KA01-2020-1234567",
+    },
+
+    loginHistory: [
+        { date: "2026-08-08T09:30:00Z", device: "MacBook Pro", success: true },
+        { date: "2026-08-07T17:45:00Z", device: "iPhone", success: true },
+    ],
+
+    createdAt: "2024-01-10T10:00:00Z",
+    updatedAt: "2026-08-08T09:30:00Z",
+    lastLoginAt: "2026-08-08T09:30:00Z",
+
+    getIntroduction() {
+        return `Hi, I am ${this.fullName}, a ${this.employment.jobTitle} from ${this.address.city}.`;
+    },
+
+    getFullAddress() {
+        return `${this.address.houseNumber}, ${this.address.street}, ${this.address.city}, ${this.address.state} - ${this.address.postalCode}`;
+    },
+};
+
+console.log(user);
+console.log(user.getIntroduction());
+console.log(user.getFullAddress());
+
+// File: 120_Object_IQ1.js
+
+const user = {
+    name : "Pramod",
+    printName(){
+        return this.name;
+    }
+}
+
+// File: 121_Object_IQ2.js
+
+const user = {
+    name: "John",
+    age: 30,
+    email: "john@example.com"
+};
+
+console.log(user);
+
+// Accessing properties
+console.log(user.name);
+console.log(user["age"]);
+
+// Adding/modifying properties
+user.city = "NYC";
+user.age = 31;
+
+console.log(user);
+
+// File: 122_Config.js
+
+let config = {};
+config.browser = "Chrome";
+config.timeout = 3000;
+config.timeout = 5000; // latest
+console.log(config);
+delete config.browser;
+console.log(config);
+
+// File: 123_Call_ByVal_Call_ByRef.js
+
+// Primitive data types - call by value
+// Primitive, number, string, boolean, null, undefined
+let a = 10;
+let b = a;
+b = 99;
+console.log(a);
+console.log(b);
+a = 90;
+console.log(a);
+console.log(b);
+
+
+console.log("-----")
+
+// Objects — the reference value is copied, so both variables point to the same object.
+// Reference - object, array, function
+let obj1 = { val: 10 };
+let obj2 = obj1;
+obj2.val = 99;
+console.log(obj1.val);
+
+--- 15_chapter_Multi_Dimensional_Array ---
+
+
+// File: 124_Array.js
+
+// 1D array,list - duplicate element
+let results = ["pass", "fail", "pass"];
+
+
+
+// 2D — array of arrays (like a table/grid)
+let matrix = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+];
+
+let mad = [
+    [1,2,3,4] //1x4
+]
+
+let grid = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+];
+
+for(let i=0;i<3;i++){
+    for(let j=0;j<3;j++){
+        process.stdout.write(grid[i][j]+"");
+    }
+    console.log("");
+}
+
+// File: 125_Array2.js
+
+let grid = [
+    [10, 20, 30],
+    [40, 50, 60],
+    [70, 80, 90]
+];
+
+console.log(grid[0][0])
+// grid[2][1]; 
+// grid[1][2];
+
+grid[0][0] = 99;
+console.log(grid);
+
+console.log(grid.length); // 3 — number of rows
+console.log(grid[0].length);
+
+console.log(grid[grid.length - 1][grid[0].length - 1]);
+console.log(grid[2][2]);
+
+let testMatrix = [
+    ["login", "pass", 200],
+    ["checkout", "fail", 404],
+    ["search", "pass", 180]
+];
+
+for(let i=0;i< testMatrix.length;i++){
+    for(let j=0;j< testMatrix[i].length;j++){
+        process.stdout.write(testMatrix[i][j]+" ");
+    }
+    console.log("");
+}
+
+console.log(" --------- ");
+
+for (let row of testMatrix) {
+    for (let cell of row) {
+        process.stdout.write(cell + " ")
+    }
+    console.log();
+}
+console.log(" --------- ");
+
+// forEach
+testMatrix.forEach(row => {
+    row.forEach(cell => process.stdout.write(cell + " "));
+    console.log();
+});
+
+console.log(" --------- ");
+
+// File: 126_Array_Function.js
+
+let scores = [
+    [85, 90, 78],   // student 0 , 253
+    [60, 45, 70],   // student 1,  175
+    [95, 88, 92]    // student 2, 275
+];
+
+let rowSums = scores.map(row => row.reduce((a,b) => a+b));
+console.log(rowSums);
+
+let suiteResults = [
+    ["login-pass", "register-pass", "logout-pass"],  // Auth suite
+    ["search-pass", "filter-fail", "sort-pass"],  // Search suite
+    ["checkout-fail", "payment-fail", "confirm-pass"]   // Payment suite
+];
+
+for (let i = 0; i < suiteResults.length; i++) {
+    for (let j = 0; j < suiteResults[i].length; j++) {
+        if (suiteResults[i][j].includes("fail")) {
+            console.log(suiteResults[i][j]);
+        }
+    }
+}
+
+// File: 127_Right_pattern.js
+
+// n = 3
+// *
+// * *
+// * * *
+
+const process = require("process");
+
+let n = 3;
+// for (let i = 1; i <= n; i++) {
+//     for(let j=1;j<=i;j++){
+//         process.stdout.write("*");
+//     }
+//     console.log("");  
+// }
+for (let i=0; i < n; i++) {
+    for(let j=0;j<=i;j++){
+        process.stdout.write("*");
+    }
+    console.log("");  
+}
+
+// File: 128_Left_pattern.js
+
+// *****
+// ****
+// ***
+// **
+// *
+
+let n = 5;
+for(let i=n;i>=1;i--)
+ {       
+    for(let j=1;j<=i;j++)
+    {
+        process.stdout.write("*");
+    }
+    console.log("");
+}
+
+// File: 129_Pyramid_pattern.js
+
+//   *
+//  ***
+// ***** 
+
+let n = 3;
+for(let i=1;i<=n;i++){
+        let row = "";
+        for(let j=1;j<=n-i;j++){
+               row += " ";
+        }
+        for(let j=1;j<=2*i-1;j++){
+            row = row + "*";
+        }
+        console.log(row);
+}
+
+--- 16_chapter_Callback ---
+
+
+// File: 130_CallBack.js
+
+function placeOrder(item, callback){
+    console.log("Order Placed....");
+    callback();
+}
+
+// Define
+function print() {
+    console.log("Normal Fn - Done with the order");
+}
+// First Way
+placeOrder("Burger", print);
+
+// Sencond Way Anoy
+placeOrder("Burger", function(){
+    console.log("Order is ready!, pick it up!");
+})
+
+// Third Way - Arrow Fn
+placeOrder("Burger", () => {
+    console.log("Arrow Fn, I am also a function wihtout name!")
+});
+
+
+// test('has title', async ({ page }) => {
+//   await page.goto('https://playwright.dev/');
+
+//   // Expect a title "to contain" a substring.
+//   await expect(page).toHaveTitle(/Playwright/);
+// });
+
+
+test('has title', async ({ page }) => {
+
+});
+
+// File: 131_CallBack2.js
+
+function test(dadad, callMewhenDone){
+    console.log("Hi start the Testcase");
+    callMewhenDone();
+}
+
+test("Verify the login page is working", async (page) =>{
+
+});
+
+function garimaStory(item, callMeWhenStoreIsEmpty){
+    console.log("Store is busy!")
+    //....
+    console.log("Store is empty!")
+    callMeWhenStoreIsEmpty();
+}
+
+garimaStory("starting shoppping", ()=>{
+     console.log("lets start shopping....")
+});
+
+// File: 132_Sync_callBack.js
+
+let testResults = ["PASS", "FAIL", "PASS", "SKIP"];
+
+testResults.forEach(function(result, index){
+            console.log("Test " + index + " -> " + result)
+});
+
+// "All done" prints LAST because forEach is synchronous — it finishes all 4 iterations first, then moves on.
+
+// File: 133_Async_callback.js
+
+console.log("Test 1: started");
+
+setTimeout(function () {
+    console.log("Test 2 : API response received!")
+}, 5000);
+
+console.log("Test 3: Moving to next last");
+
+// File: 134_Callback_hell.js
+
+// Real QA Scenario: E2E Login Flow app.vwo.com
+
+function openBrowser(callback){
+    console.log("opening the browser");
+    setTimeout(function () {
+        console.log("Step 1 - browser starting...");
+        callback();
+    }, 500);
+}
+
+function goToLoginPage(callback) {
+    setTimeout(function () {
+        console.log("Step 2: Login page loaded");
+        callback();
+    }, 500);
+}
+
+function enterCredentials(callback) {
+    setTimeout(function () {
+        console.log("Step 3: Credentials entered");
+        callback();
+    }, 500);
+}
+
+function clickLogin(callback) {
+    setTimeout(function () {
+        console.log("Step 4: Login button clicked");
+        callback();
+    }, 500);
+}
+
+// // THIS IS CALLBACK HELL 👇
+openBrowser(function(){
+    goToLoginPage(function(){
+        enterCredentials(function(){
+            clickLogin(function(){
+                console.log("Test is Complete!")
+            })
+        })
+    })
+})
+
+// File: 135_callback_Real_Hell.js
+
+loginUser("pramod@example.com", "password123", function (loginError, user) {
+
+    if (loginError) {
+        console.log("Login failed:", loginError);
+        return;
+    }
+
+    console.log("User logged in:", user.id);
+
+    getUserProfile(user.id, function (profileError, profile) {
+
+        if (profileError) {
+            console.log("Failed to get profile:", profileError);
+            return;
+        }
+
+        console.log("Profile received");
+
+        getUserOrders(user.id, function (ordersError, orders) {
+
+            if (ordersError) {
+                console.log("Failed to get orders:", ordersError);
+                return;
+            }
+
+            console.log("Orders received");
+
+            getOrderDetails(orders[0].id, function (orderError, order) {
+
+                if (orderError) {
+                    console.log("Failed to get order:", orderError);
+                    return;
+                }
+
+                console.log("Order details received");
+
+                getPaymentDetails(order.paymentId, function (paymentError, payment) {
+
+                    if (paymentError) {
+                        console.log("Failed to get payment:", paymentError);
+                        return;
+                    }
+
+                    console.log("Payment details received");
+
+                    getShippingDetails(order.shippingId, function (shippingError, shipping) {
+
+                        if (shippingError) {
+                            console.log("Failed to get shipping:", shippingError);
+                            return;
+                        }
+
+                        console.log("Shipping details received");
+
+                        getProductDetails(order.productId, function (productError, product) {
+
+                            if (productError) {
+                                console.log("Failed to get product:", productError);
+                                return;
+                            }
+
+                            console.log("Product details received");
+
+                            sendConfirmationEmail(
+                                user.email,
+                                order,
+                                payment,
+                                shipping,
+                                product,
+                                function (emailError, emailResult) {
+
+                                    if (emailError) {
+                                        console.log(
+                                            "Failed to send email:",
+                                            emailError
+                                        );
+                                        return;
+                                    }
+
+                                    console.log("Confirmation email sent");
+
+                                    updateNotificationStatus(
+                                        user.id,
+                                        function (notificationError, result) {
+
+                                            if (notificationError) {
+                                                console.log(
+                                                    "Failed to update notification:",
+                                                    notificationError
+                                                );
+                                                return;
+                                            }
+
+                                            console.log(
+                                                "Notification status updated"
+                                            );
+
+                                            generateReport(
+                                                user,
+                                                profile,
+                                                order,
+                                                payment,
+                                                shipping,
+                                                product,
+                                                function (reportError, report) {
+
+                                                    if (reportError) {
+                                                        console.log(
+                                                            "Failed to generate report:",
+                                                            reportError
+                                                        );
+                                                        return;
+                                                    }
+
+                                                    console.log(
+                                                        "Everything completed!"
+                                                    );
+
+                                                    console.log(report);
+                                                }
+                                            );
+                                        }
+                                    );
+                                }
+                            );
+                        });
+                    });
+                });
+            });
+        });
+    });
+});
+
+// File: 136_Callback_return.js
+
+function calculate(a, b, operation) {
+    return operation(a, b);
+}
+
+let sum = calculate(10, 5, function (x, y) {
+    return x + y;
+});
+
+console.log(sum);
+
+// File: 137_Pyramid_DOM.js
+
+function step1(callback) {
+    console.log("Open browser");
+    callback();
+}
+
+function step2(callback) {
+    console.log("Navigate to page");
+    callback();
+}
+
+function step3(callback) {
+    console.log("Click button");
+    callback();
+}
+
+function step4(callback) {
+    console.log("Click button");
+    callback();
+}
+
+step1(function () {
+    step2(function () {
+        step3(function () {
+            step4(function () {
+                console.log("Done!");
+            });
+        });
+    });
+});

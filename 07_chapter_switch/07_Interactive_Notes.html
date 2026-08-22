@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 07: Switch Statement - Zero to Hero</title>
+    <link rel="stylesheet" href="../interactive_styles.css">
+    <style>
+        :root { --grad: linear-gradient(135deg, #d29922, #ffa657); --blue: #d29922; }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="hero-badge">✨ Chapter 07</div>
+        <h1>Mastering <span>Switch</span></h1>
+        <p>A cleaner alternative to complex if-else chains when matching single values.</p>
+    </section>
+    <section class="section">
+        <div class="section-header"><span class="section-label">Deep Insights</span><h2 class="section-title">Core Concepts Extracted</h2></div>
+        <div class="grid-2">
+            <div class="card">
+                <h3>🔀 The Switch Block</h3>
+                <p class="qa-a">Evaluates an expression, matching the expression's value against a series of case clauses.</p>
+                <div class="code-container">
+                    <pre class="code-content"><span class="keyword">let</span> day = 2;
+<span class="keyword">switch</span>(day) {
+    <span class="keyword">case</span> 1: <span class="function">console.log</span>(<span class="string">"Mon"</span>); <span class="keyword">break</span>;
+    <span class="keyword">case</span> 2: <span class="function">console.log</span>(<span class="string">"Tue"</span>); <span class="keyword">break</span>;
+    <span class="keyword">default</span>: <span class="function">console.log</span>(<span class="string">"Unknown"</span>);
+}</pre>
+                </div>
+            </div>
+            <div class="card">
+                <h3>🛑 The 'break' Keyword</h3>
+                <p class="qa-a">If you forget the `break` keyword, execution "falls through" to the next case automatically, executing its code as well!</p>
+            </div>
+        </div>
+    </section>
+    <section class="section">
+        <div class="section-header"><span class="section-label">Zero to Hero</span><h2 class="section-title">Interview Q&A</h2></div>
+        <div class="card">
+            <div class="qa-box"><div class="qa-q">Q1: Does Switch use strict equality?</div><div class="qa-a">Yes! Switch uses strict equality (<code>===</code>) for comparison. The type and the value must match exactly. <code>case "2":</code> will not match a numeric <code>2</code>.</div></div>
+        </div>
+    </section>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 05: Operators - Zero to Hero</title>
+    <link rel="stylesheet" href="../interactive_styles.css">
+    <style>
+        :root { --grad: linear-gradient(135deg, #79c0ff, #3fb950); --blue: #79c0ff; }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="hero-badge">✨ Chapter 05</div>
+        <h1>Mastering <span>Operators</span></h1>
+        <p>Assignment, Arithmetic, Comparison, Logical, and Ternary Operators.</p>
+    </section>
+    <section class="section">
+        <div class="section-header"><span class="section-label">Deep Insights</span><h2 class="section-title">Core Concepts Extracted</h2></div>
+        <div class="grid-2">
+            <div class="card">
+                <h3>⚖️ Strict vs Loose Comparison</h3>
+                <p class="qa-a">Always prefer strict equality (===) over loose (==) to avoid unexpected type coercion.</p>
+                <div class="code-container">
+                    <pre class="code-content"><span class="function">console.log</span>(5 == <span class="string">"5"</span>);  <span class="comment">// true</span>
+<span class="function">console.log</span>(5 === <span class="string">"5"</span>); <span class="comment">// false</span></pre>
+                </div>
+            </div>
+            <div class="card">
+                <h3>🎭 Ternary Operator</h3>
+                <p class="qa-a">A shorthand for if-else statements. Perfect for conditional assignments.</p>
+                <div class="code-container">
+                    <pre class="code-content"><span class="keyword">let</span> result = (age > 18) ? <span class="string">"Pass"</span> : <span class="string">"Fail"</span>;</pre>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="section">
+        <div class="section-header"><span class="section-label">Zero to Hero</span><h2 class="section-title">Interview Q&A</h2></div>
+        <div class="card">
+            <div class="qa-box"><div class="qa-q">Q1: What does `null == undefined` evaluate to?</div><div class="qa-a"><code>true</code>. They loosely equal each other in Javascript. However, <code>null === undefined</code> is <code>false</code>.</div></div>
+        </div>
+    </section>
+</body>
+</html>
