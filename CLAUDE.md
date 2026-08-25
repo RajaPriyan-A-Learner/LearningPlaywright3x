@@ -272,3 +272,5 @@ Use Go Pikachu after completing each chapter to automate validation, commit, and
 ## 📈 Progress Tracker
 
 - ✅ **Chapter 11 (Functions):** Completed, validated, and pushed. Includes 24 JS examples and a comprehensive MASTER guide covering Hoisting, TDZ, Scope, and Arrow Functions.
+- ✅ **Chapter 19 (Import & Export):** Completed, validated, and documented. Includes 6 JS examples and a comprehensive MASTER guide covering ES Modules, Named/Default Exports, Aliasing, Live Bindings, and Dynamic Imports.
+- ✅ **Chapter 20 (Classes & Objects):** Completed, validated, and documented. Includes JS examples and a comprehensive MASTER guide covering ES6 Classes, Constructors, Private Fields (#), Inheritance, Super, and Page Object Model patterns.
