@@ -513,3 +513,8 @@ flowchart TD
 - [185_IQ3_IQ.md](file:///c:/Users/rajap/OneDrive/%E0%B9%80%E0%B8%AD%E0%B8%81%E0%B8%AA%E0%B8%B2%E0%B8%A3/LEARNINGPLAYWRIGHT3X/IQ_Notes/Chapter_Notes/22/185_IQ3_IQ.md) — Polymorphic Test Execution and the Strategy Pattern
 - [186_IQ4_IQ.md](file:///c:/Users/rajap/OneDrive/%E0%B9%80%E0%B8%AD%E0%B8%81%E0%B8%AA%E0%B8%B2%E0%B8%A3/LEARNINGPLAYWRIGHT3X/IQ_Notes/Chapter_Notes/22/186_IQ4_IQ.md) — Polymorphic Page Verification in Page Object Models
 - [187_REAL2_IQ.md](file:///c:/Users/rajap/OneDrive/%E0%B9%80%E0%B8%AD%E0%B8%81%E0%B8%AA%E0%B8%B2%E0%B8%A3/LEARNINGPLAYWRIGHT3X/IQ_Notes/Chapter_Notes/22/187_REAL2_IQ.md) — Multi-Format Test Reporting with Polymorphic Classes
+- [188_Multiple_Inheritance_IQ.md](file:///c:/Users/rajap/OneDrive/%E0%B9%80%E0%B8%AD%E0%B8%81%E0%B8%AA%E0%B8%B2%E0%B8%A3/LEARNINGPLAYWRIGHT3X/IQ_Notes/Chapter_Notes/22/188_Multiple_Inheritance_IQ.md) — Multiple Inheritance Restrictions in JavaScript
+- [189_Mixins_Multiple_Inheritance_IQ.md](file:///c:/Users/rajap/OneDrive/%E0%B9%80%E0%B8%AD%E0%B8%81%E0%B8%AA%E0%B8%B2%E0%B8%A3/LEARNINGPLAYWRIGHT3X/IQ_Notes/Chapter_Notes/22/189_Mixins_Multiple_Inheritance_IQ.md) — Simulating Multiple Inheritance via Mixins
+- [190_Multi_Level_Inheritance_IQ.md](file:///c:/Users/rajap/OneDrive/%E0%B9%80%E0%B8%AD%E0%B8%81%E0%B8%AA%E0%B8%B2%E0%B8%A3/LEARNINGPLAYWRIGHT3X/IQ_Notes/Chapter_Notes/22/190_Multi_Level_Inheritance_IQ.md) — Multi-Level Inheritance in Test Frameworks
+- [191_Hierarchical_Inheritance_IQ.md](file:///c:/Users/rajap/OneDrive/%E0%B9%80%E0%B8%AD%E0%B8%81%E0%B8%AA%E0%B8%B2%E0%B8%A3/LEARNINGPLAYWRIGHT3X/IQ_Notes/Chapter_Notes/22/191_Hierarchical_Inheritance_IQ.md) — Hierarchical Inheritance and Tree Modeling
+
