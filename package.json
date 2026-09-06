@@ -4,7 +4,9 @@
   "description": "This will have daily notes and coding practice exercises in Java script and Type scripts",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:book": "node scripts/build_virtual_book.js",
+    "watch:book": "node scripts/watch_virtual_book.js"
   },
   "repository": {
     "type": "git",

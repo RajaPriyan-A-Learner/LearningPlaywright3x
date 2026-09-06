@@ -40,11 +40,14 @@ Verify that a master reference file (e.g., `MASTER_Function_IQ.md`) exists in th
   8. Memory Map & Visual Flowchart (Use mermaid.js code blocks)
   9. LinkedIn-Style Post
 
-### 4. Stage, Commit, and Push
-Once all files are verified to be complete and placeholder-free, use the `run_command` tool to execute the Git workflow:
+### 4. Rebuild the Virtual Book
+Run `node scripts/build_virtual_book.js` to automatically sync all newly added JS/TS files, chapter notes, and MASTER guides into `Playwright_Virtual_Book.html`.
+
+### 5. Stage, Commit, and Push
+Once all files are verified to be complete and the virtual book has been rebuilt, use the `run_command` tool to execute the Git workflow:
 - `git add -A`
-- `git commit -m "feat: complete IQ documentation for Chapter <chapter_num> newly added files\n\n- Scaffolded missing IQ notes\n- Validated MASTER reference\n\nTriggered by: Go Pikachu Skill\nCo-Authored-By: Claude Haiku 4.5 <noreply@anthropic.com>"`
+- `git commit -m "feat: complete IQ documentation for Chapter <chapter_num> newly added files\n\n- Scaffolded missing IQ notes\n- Validated MASTER reference\n- Updated Playwright_Virtual_Book.html\n\nTriggered by: Go Pikachu Skill\nCo-Authored-By: Claude Haiku 4.5 <noreply@anthropic.com>"`
 - `git push origin main`
 
-### 5. Present Results
+### 6. Present Results
 Create a `walkthrough.md` artifact to summarize the actions taken, list the files created, and confirm to the user that the code has been successfully pushed.
