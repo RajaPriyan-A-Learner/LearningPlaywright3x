@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:book": "node scripts/build_virtual_book.js",
-    "watch:book": "node scripts/watch_virtual_book.js"
+    "build:book": "node virtual_book/build_virtual_book.js",
+    "watch:book": "node virtual_book/watch_virtual_book.js",
+    "open:book": "explorer.exe virtual_book\\Playwright_Virtual_Book.html"
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,7 @@
   },
   "homepage": "https://github.com/RajaPriyan-A-Learner/LearningPlaywright3x#readme",
   "devDependencies": {
-    "@playwright/test": "^1.62.1"
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^26.5.0"
   }
 }

@@ -33,7 +33,8 @@ const CHAPTER_TITLES = {
   '25': 'Chapter 25: TypeScript Compilation, Types & Type Erasure',
   '26': 'Chapter 26: Abstractions: Interfaces, Enums & Abstract Classes',
   '27': 'Chapter 27: Generics: Constraints & API Envelopes',
-  '28': 'Chapter 28: Access Modifiers & Page Object Model'
+  '28': 'Chapter 28: Access Modifiers & Page Object Model',
+  '29': 'Chapter 29: Playwright Fundamentals & E2E Testing'
 };
 
 function getPartForChapter(ch) {
@@ -41,7 +42,7 @@ function getPartForChapter(ch) {
   if (num >= 1 && num <= 10) return 'Part I: JavaScript Core Engine (Ch 01-10)';
   if (num >= 11 && num <= 18) return 'Part II: Asynchronous Architecture & Closures (Ch 11-18)';
   if (num >= 19 && num <= 24) return 'Part III: Object-Oriented Design & Patterns (Ch 19-24)';
-  if (num >= 25 && num <= 28) return 'Part IV: TypeScript & Playwright Abstractions (Ch 25-28)';
+  if (num >= 25 && num <= 29) return 'Part IV: TypeScript & Playwright Abstractions (Ch 25-29)';
   return 'Additional Modules';
 }
 
@@ -173,7 +174,7 @@ const templateHtml = fs.readFileSync(templatePath, 'utf8');
 const jsonPayload = JSON.stringify(documents).replace(/<\/script>/g, '<\\/script>');
 const finalHtml = templateHtml.split('__DATABASE_JSON__').join(jsonPayload);
 
-const outputPath = path.join(__dirname, '..', 'Playwright_Virtual_Book.html');
+const outputPath = path.join(__dirname, 'Playwright_Virtual_Book.html');
 fs.writeFileSync(outputPath, finalHtml, 'utf8');
 
 console.log(`✅ Playwright Virtual Book successfully generated at: ${outputPath}`);
