@@ -292,3 +292,14 @@ Master the fundamentals, write resilient tests, and elevate your SDET engineerin
 
 ## Summary
 **Key Takeaway:** Playwright combines asynchronous event-driven architecture, ultra-fast `BrowserContext` isolation, auto-waiting accessibility locators, and rich trace diagnostics to deliver reliable, lightning-fast end-to-end testing suites.
+
+---
+
+## 🔗 Chapter 29 Topic Index & Deep Dives
+- **[227 — Playwright Config & Multi-Browser Runner Setup](./227_Playwright_Config_IQ.md)** — Centralized configuration, projects cascade, and parallel execution.
+- **[228 — Playwright Example Specs](./228_Playwright_Example_Specs_IQ.md)** — Basic assertions, title verification, and locator syntax.
+- **[229 — App Testing Academy E2E Test Suite](./229_App_TestingAcademy_E2E_IQ.md)** — Live app end-to-end tests, screenshots, and actionability.
+- **[230 — Playwright Architecture Deep Dive](./230_Playwright_Architecture_DeepDive_IQ.md)** — Complete protocol stack (TCP → WebSocket → CDP), Selenium vs Playwright architecture, Chromium vs Chrome, 6-layer deep insights, and BLAST framework.
+- **[231 — Standalone Playwright Scripting & Lifecycle](./231_Older_Playwright_Script_IQ.md)** — Raw `chromium.launch()`, `BrowserContext`, `Page`, and strict reverse-order disposal.
+- **[232 — Multi-User Testing with Independent BrowserContexts](./232_Multiple_Context_Isolation_IQ.md)** — Multi-role testing (Admin vs Viewer) with complete session and storage isolation.
+- **[233 — Accessibility Locators & Auto-Waiting in Practice](./233_TTA_Element_Filter_Spec_IQ.md)** — Accessible `getByRole` locators, test IDs, and elimination of manual sleep timers.
