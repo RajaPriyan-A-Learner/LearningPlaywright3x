@@ -1,6 +1,7 @@
-# 230 — Playwright Architecture Deep Dive : Protocols, Internals & The Complete Picture
+# Playwright Architecture Deep Dive : Protocols, Internals & The Complete Picture
 
-> **One-Paragraph Elevator Pitch:** Playwright's revolutionary speed and reliability stem from a fundamentally different architectural philosophy—instead of talking to browsers through a slow, synchronous HTTP REST middleman (like Selenium's W3C WebDriver), Playwright opens a **single persistent WebSocket pipe** speaking the browser's native debugging protocol (CDP for Chromium, custom patches for Firefox/WebKit), enabling real-time bidirectional event streaming, zero-latency command dispatch, and features like auto-waiting that are architecturally impossible in REST-based tools.
+## Overview
+Playwright's revolutionary speed and reliability stem from a fundamentally different architectural philosophy—instead of talking to browsers through a slow, synchronous HTTP REST middleman (like Selenium's W3C WebDriver), Playwright opens a **single persistent WebSocket pipe** speaking the browser's native debugging protocol (CDP for Chromium, custom patches for Firefox/WebKit), enabling real-time bidirectional event streaming, zero-latency command dispatch, and features like auto-waiting that are architecturally impossible in REST-based tools.
 
 ---
 
@@ -944,3 +945,4 @@ The Playwright Server (`browserType.launchServer()`) launches a browser instance
 6. **Patched Browser Builds** ensure cross-engine uniformity without depending on W3C standardization speed
 
 Each layer multiplies the speed and reliability advantage, resulting in an automation tool that is architecturally a generation ahead of the REST-based WebDriver model.
+

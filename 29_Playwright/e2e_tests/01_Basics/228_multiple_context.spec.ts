@@ -1,4 +1,4 @@
-import { chromium } from "playwright";
+import { chromium } from "@playwright/test";
 async function multiUserTest() {
     let browser = await chromium.launch({ headless: false });
     // Admin

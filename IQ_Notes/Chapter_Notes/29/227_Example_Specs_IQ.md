@@ -1,6 +1,6 @@
-# 228 — Playwright Basics, Web-First Assertions & Role-Based Locators
+# 227 — Playwright Basics, Web-First Assertions & Role-Based Locators
 
-**File:** `29_Playwright/01_Playwright_Fundamentals/e2e_tests/example.spec.ts`
+**File:** `29_Playwright/e2e_tests/01_Basics/227_example.spec.ts`
 
 ## Overview
 This file demonstrates the fundamental building blocks of Playwright end-to-end testing: declaring test blocks with the `test` runner function, interacting with the async `page` fixture, navigating web pages via `page.goto()`, performing auto-waiting web-first assertions with `expect(page).toHaveTitle()`, and locating semantic accessibility elements using `page.getByRole()`.
@@ -23,28 +23,21 @@ Unlike legacy automation tools where engineers must write manual `sleep()` or ex
 ```typescript
 import { test, expect } from '@playwright/test';
 
-test.describe('Playwright Documentation Portal', () => {
-  
-  test('has title and validates branding', async ({ page }) => {
-    // Navigate to target site with network idle / load awareness
-    await page.goto('https://playwright.dev/');
+test('has title', async ({ page }) => {
+  await page.goto('https://playwright.dev/');
 
-    // Retrying web-first assertion against page title
-    await expect(page).toHaveTitle(/Fast and reliable end-to-end testing/);
-  });
+  // Expect a title "to contain" a substring.
+  await expect(page).toHaveTitle(/Playwright/);
+});
 
-  test('get started link navigates to installation guide', async ({ page }) => {
-    await page.goto('https://playwright.dev/');
+test('get started link', async ({ page }) => {
+  await page.goto('https://playwright.dev/');
 
-    // Locate element using accessible role 'link' with accessible name
-    const getStartedLink = page.getByRole('link', { name: 'Get started' });
-    await getStartedLink.click();
+  // Click the get started link.
+  await page.getByRole('link', { name: 'Get started' }).click();
 
-    // Verify presence of top-level heading
-    const installationHeading = page.getByRole('heading', { name: 'Installation', level: 1 });
-    await expect(installationHeading).toBeVisible();
-  });
-
+  // Expects page to have a heading with the name of Installation.
+  await expect(page.getByRole('heading', { name: 'Installation' })).toBeVisible();
 });
 ```
 
@@ -58,9 +51,9 @@ test.describe('Playwright Documentation Portal', () => {
 ## Common Mistakes
 - **Forgetting `await` on Assertions and Actions:** Writing `expect(locator).toBeVisible()` without `await` creates an unhandled promise that fails silently or executes out of order.
 - **Using Non-Retrying Synchronous Matchers:** `expect(await page.innerText('#title')).toBe('Title')` breaks on dynamic single-page applications. Always use `await expect(page.locator('#title')).toHaveText('Title')`.
-- **Over-reliance on Implementation Details:** Locating elements via deep CSS paths (e.g. `div > span:nth-child(2)`) breaks when UI markup refactors occur. Use `page.getByRole()` instead.
+- **Relying on Fragile CSS/XPath Selectors:** Hardcoded XPaths like `//div[2]/span/button` break whenever markup changes. Prefer `getByRole('button', { name: 'Submit' })`.
 
 ---
 
 ## Summary
-**Key Takeaway:** Playwright tests utilize auto-waiting `Page` fixtures, accessible `getByRole` locators, and retrying web-first assertions to deliver rock-solid, non-flaky E2E test scripts.
+**Key Takeaway:** Playwright simplifies test architecture through automatic fixture injection (`{ page }`), strict actionability checks before execution, user-centric locators (`getByRole`), and retry-aware web-first assertions (`expect(page).toHaveTitle(...)`).

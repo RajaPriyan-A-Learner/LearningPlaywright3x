@@ -296,10 +296,16 @@ Master the fundamentals, write resilient tests, and elevate your SDET engineerin
 ---
 
 ## 🔗 Chapter 29 Topic Index & Deep Dives
-- **[227 — Playwright Config & Multi-Browser Runner Setup](./227_Playwright_Config_IQ.md)** — Centralized configuration, projects cascade, and parallel execution.
-- **[228 — Playwright Example Specs](./228_Playwright_Example_Specs_IQ.md)** — Basic assertions, title verification, and locator syntax.
-- **[229 — App Testing Academy E2E Test Suite](./229_App_TestingAcademy_E2E_IQ.md)** — Live app end-to-end tests, screenshots, and actionability.
-- **[230 — Playwright Architecture Deep Dive](./230_Playwright_Architecture_DeepDive_IQ.md)** — Complete protocol stack (TCP → WebSocket → CDP), Selenium vs Playwright architecture, Chromium vs Chrome, 6-layer deep insights, and BLAST framework.
-- **[231 — Standalone Playwright Scripting & Lifecycle](./231_Older_Playwright_Script_IQ.md)** — Raw `chromium.launch()`, `BrowserContext`, `Page`, and strict reverse-order disposal.
-- **[232 — Multi-User Testing with Independent BrowserContexts](./232_Multiple_Context_Isolation_IQ.md)** — Multi-role testing (Admin vs Viewer) with complete session and storage isolation.
-- **[233 — Accessibility Locators & Auto-Waiting in Practice](./233_TTA_Element_Filter_Spec_IQ.md)** — Accessible `getByRole` locators, test IDs, and elimination of manual sleep timers.
+- **[227 — Playwright Basics, Web-First Assertions & Role-Based Locators](./227_Example_Specs_IQ.md)** — Basic assertions, title verification, and locator syntax.
+- **[228 — Multi-User Testing with Independent BrowserContexts](./228_Multiple_Context_Isolation_IQ.md)** — Multi-role testing (Admin vs Viewer) with complete session and storage isolation.
+- **[229 — Standalone Playwright Scripting & Manual Lifecycle Management](./229_Older_Playwright_Script_IQ.md)** — Raw `chromium.launch()`, `BrowserContext`, `Page`, and strict reverse-order disposal.
+- **[230 — Accessibility Locators, Test IDs, and Auto-Waiting in Practice](./230_TTA_Element_Filter_Spec_IQ.md)** — Accessible `getByRole` locators, test IDs, and elimination of manual sleep timers.
+- **[231 — End-to-End Workflow: Form Inputs, Authentication & Dashboard Navigation](./231_App_TestingAcademy_E2E_IQ.md)** — Live app end-to-end tests, modal dismissal, and tab state navigation.
+- **[232 — BCP Architecture: Browser, Context, and Page 3-Tier Hierarchy](./232_BCP_Lifecycle_IQ.md)** — Core foundational 3-tier hierarchy, lightweight context profiles, and disposal.
+- **[233 — Test Fixtures: Automatic Isolation vs Custom Multi-Context Workflows](./233_Test_Fixtures_IQ.md)** — Dependency injection via `{ page }` and `{ browser }` fixtures for concurrent multi-role testing.
+- **[234 — BrowserContext Options: Viewport, Geolocation, Locale & Device Emulation](./234_Test_Options_IQ.md)** — Deep environmental emulation, geolocation permissions, locale, and mobile iPhone profiling.
+- **[235 — Playwright Test Annotations: skip, fixme, only, and fail](./235_Test_Annotations_IQ.md)** — Declarative execution control, conditional skips, fixme bug tracking, and `forbidOnly` CI protection.
+- **[236 — Test Suite Architecture: test.describe Grouping & CLI Filtering](./236_Test_Describe_Grouping_IQ.md)** — Hierarchical describe blocks, scoped hooks, serial execution, and regex CLI filtering (`-g`).
+- **[237 — Locator Commands: Lazy Resolution, Multiple Element Filtering & Actionability](./237_Locator_Commands_IQ.md)** — Lazy resolution, strict mode enforcement, element filtering, and actionability checks.
+- **[Playwright Configuration & Multi-Browser Test Runner Setup](./Playwright_Config_IQ.md)** — Centralized configuration, projects cascade, and parallel execution.
+- **[Playwright Architecture Deep Dive](./Playwright_Architecture_DeepDive_IQ.md)** — Complete protocol stack (TCP → WebSocket → CDP), Selenium vs Playwright architecture, Chromium vs Chrome, 6-layer deep insights, and BLAST framework.

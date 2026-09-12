@@ -2,6 +2,14 @@
 <html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
+    <script>
+        (function() {
+            try {
+                var t = localStorage.getItem('pw_architecture_theme') || 'dark';
+                document.documentElement.setAttribute('data-theme', t);
+            } catch(e) {}
+        })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Playwright Architecture Deep Dive — The Complete Picture</title>
     <meta name="description" content="A comprehensive visual guide to Playwright's internal architecture: protocols, WebSocket, CDP, browser hierarchy, and Selenium comparison.">
@@ -51,6 +59,117 @@
 
             --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             --transition-smooth: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+            --nav-bg: rgba(10, 14, 23, 0.85);
+            --nav-mask-bg: rgba(10, 14, 23, 0.98);
+        }
+
+        /* ── LIGHT THEME ── */
+        html[data-theme="light"] {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #f1f5f9;
+            --bg-card: rgba(255, 255, 255, 0.92);
+            --bg-card-hover: #ffffff;
+            --bg-glass: rgba(15, 23, 42, 0.04);
+            --border-glass: rgba(15, 23, 42, 0.12);
+            --border-glow: rgba(13, 148, 136, 0.35);
+
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+
+            --accent-pw: #0d9488;
+            --accent-pw-dim: rgba(13, 148, 136, 0.12);
+            --accent-se: #ea580c;
+            --accent-se-dim: rgba(234, 88, 12, 0.12);
+            --accent-blue: #6366f1;
+            --accent-blue-dim: rgba(99, 102, 241, 0.12);
+            --accent-purple: #9333ea;
+            --accent-pink: #db2777;
+            --accent-green: #16a34a;
+            --accent-yellow: #d97706;
+
+            --gradient-hero: linear-gradient(135deg, #0d9488 0%, #6366f1 50%, #db2777 100%);
+            --gradient-card: linear-gradient(135deg, rgba(13, 148, 136, 0.06), rgba(99, 102, 241, 0.06));
+
+            --shadow-card: 0 4px 24px rgba(15, 23, 42, 0.08), 0 0 0 1px var(--border-glass);
+            --shadow-glow: 0 0 35px rgba(13, 148, 136, 0.14);
+
+            --nav-bg: rgba(248, 250, 252, 0.92);
+            --nav-mask-bg: rgba(248, 250, 252, 0.98);
+        }
+
+        html[data-theme="light"] body::before {
+            background:
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(13, 148, 136, 0.08), transparent),
+                radial-gradient(ellipse 60% 40% at 80% 60%, rgba(99, 102, 241, 0.06), transparent),
+                radial-gradient(ellipse 50% 30% at 20% 80%, rgba(219, 39, 119, 0.04), transparent);
+        }
+        html[data-theme="light"] .hero-subtitle { color: #475569; }
+        html[data-theme="light"] .nav-links a { color: #475569; }
+        html[data-theme="light"] .bp-tbl td,
+        html[data-theme="light"] .spec-table td { color: #334155; }
+        html[data-theme="light"] .bp-tbl tr:nth-child(even) td { background: rgba(15, 23, 42, 0.02); }
+        html[data-theme="light"] .bp-tbl-wrap,
+        html[data-theme="light"] .sim-workspace,
+        html[data-theme="light"] .bp-code-box,
+        html[data-theme="light"] .blast-pane {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: rgba(15, 23, 42, 0.12);
+        }
+
+        /* ── SEPIA THEME (Vintage Book) ── */
+        html[data-theme="sepia"] {
+            --bg-primary: #f4ecda;
+            --bg-secondary: #ebdcc4;
+            --bg-card: rgba(249, 243, 232, 0.92);
+            --bg-card-hover: #fdf8f0;
+            --bg-glass: rgba(68, 48, 30, 0.04);
+            --border-glass: rgba(68, 48, 30, 0.14);
+            --border-glow: rgba(180, 83, 9, 0.35);
+
+            --text-primary: #2d1c10;
+            --text-secondary: #5e4635;
+            --text-muted: #846d5a;
+
+            --accent-pw: #b45309;
+            --accent-pw-dim: rgba(180, 83, 9, 0.14);
+            --accent-se: #c2410c;
+            --accent-se-dim: rgba(194, 65, 12, 0.14);
+            --accent-blue: #6d28d9;
+            --accent-blue-dim: rgba(109, 40, 217, 0.12);
+            --accent-purple: #7e22ce;
+            --accent-pink: #be185d;
+            --accent-green: #15803d;
+            --accent-yellow: #b45309;
+
+            --gradient-hero: linear-gradient(135deg, #b45309 0%, #6d28d9 50%, #be185d 100%);
+            --gradient-card: linear-gradient(135deg, rgba(180, 83, 9, 0.07), rgba(109, 40, 217, 0.07));
+
+            --shadow-card: 0 4px 24px rgba(45, 28, 16, 0.08), 0 0 0 1px var(--border-glass);
+            --shadow-glow: 0 0 35px rgba(180, 83, 9, 0.15);
+
+            --nav-bg: rgba(244, 236, 218, 0.92);
+            --nav-mask-bg: rgba(244, 236, 218, 0.98);
+        }
+
+        html[data-theme="sepia"] body::before {
+            background:
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(180, 83, 9, 0.08), transparent),
+                radial-gradient(ellipse 60% 40% at 80% 60%, rgba(109, 40, 217, 0.05), transparent),
+                radial-gradient(ellipse 50% 30% at 20% 80%, rgba(190, 24, 93, 0.04), transparent);
+        }
+        html[data-theme="sepia"] .hero-subtitle { color: #5e4635; }
+        html[data-theme="sepia"] .nav-links a { color: #5e4635; }
+        html[data-theme="sepia"] .bp-tbl td,
+        html[data-theme="sepia"] .spec-table td { color: #433022; }
+        html[data-theme="sepia"] .bp-tbl tr:nth-child(even) td { background: rgba(68, 48, 30, 0.025); }
+        html[data-theme="sepia"] .bp-tbl-wrap,
+        html[data-theme="sepia"] .sim-workspace,
+        html[data-theme="sepia"] .bp-code-box,
+        html[data-theme="sepia"] .blast-pane {
+            background: rgba(250, 245, 236, 0.9);
+            border-color: rgba(68, 48, 30, 0.14);
         }
 
         /* ═══════════════════════════════════════════
@@ -96,18 +215,18 @@
             z-index: 1000;
             backdrop-filter: blur(20px) saturate(180%);
             -webkit-backdrop-filter: blur(20px) saturate(180%);
-            background: rgba(10, 14, 23, 0.85);
+            background: var(--nav-bg, rgba(10, 14, 23, 0.85));
             border-bottom: 1px solid var(--border-glass);
             transition: var(--transition-smooth);
         }
 
         .nav-inner {
-            max-width: 1280px;
+            max-width: 100%;
             margin: 0 auto;
-            padding: 0 2rem;
+            padding: 0 1.5rem;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            gap: 1rem;
             height: 64px;
         }
 
@@ -116,9 +235,11 @@
             align-items: center;
             gap: 10px;
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             text-decoration: none;
             color: var(--text-primary);
+            flex-shrink: 0;
+            white-space: nowrap;
         }
 
         .nav-brand .logo {
@@ -130,16 +251,140 @@
             align-items: center;
             justify-content: center;
             font-size: 18px;
+            flex-shrink: 0;
         }
 
+        .nav-links-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        /* Edge gradient masks to hint horizontal scroll */
+        .nav-links-wrapper::before,
+        .nav-links-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 32px;
+            pointer-events: none;
+            z-index: 2;
+            transition: opacity 0.25s ease;
+            opacity: 0;
+        }
+        .nav-links-wrapper::before {
+            left: 0;
+            background: linear-gradient(90deg, var(--nav-mask-bg, rgba(10, 14, 23, 0.98)), transparent);
+        }
+        .nav-links-wrapper::after {
+            right: 0;
+            background: linear-gradient(270deg, var(--nav-mask-bg, rgba(10, 14, 23, 0.98)), transparent);
+        }
+        .nav-links-wrapper.can-scroll-left::before { opacity: 1; }
+        .nav-links-wrapper.can-scroll-right::after { opacity: 1; }
+
+        /* Theme Toggle Button */
+        .nav-theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border-glass);
+            color: var(--text-primary);
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            flex-shrink: 0;
+            user-select: none;
+        }
+        .nav-theme-toggle:hover {
+            background: var(--accent-pw-dim);
+            border-color: var(--accent-pw);
+            color: var(--accent-pw);
+            transform: scale(1.03);
+        }
+        @media (max-width: 768px) {
+            .nav-theme-toggle .theme-label { display: none; }
+            .nav-theme-toggle { padding: 6px 8px; }
+        }
+
+        /* Scroll Buttons */
+        .nav-scroll-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(17, 24, 39, 0.85);
+            border: 1px solid var(--border-glass);
+            color: var(--text-secondary);
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: all var(--transition-fast);
+            z-index: 3;
+            padding: 0;
+            backdrop-filter: blur(8px);
+        }
+        .nav-scroll-btn:hover {
+            background: var(--accent-pw-dim);
+            border-color: var(--accent-pw);
+            color: var(--accent-pw);
+            transform: scale(1.1);
+        }
+        .nav-scroll-btn.hidden {
+            opacity: 0;
+            pointer-events: none;
+            visibility: hidden;
+        }
+        .nav-scroll-left { margin-right: 6px; }
+        .nav-scroll-right { margin-left: 6px; }
+
+        /* Nav links list with horizontal scroll */
         .nav-links {
             display: flex;
+            align-items: center;
             gap: 6px;
             list-style: none;
             overflow-x: auto;
-            scrollbar-width: none;
+            overflow-y: hidden;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            flex: 1;
+            min-width: 0;
+            padding: 6px 2px;
+            cursor: grab;
+            /* Sleek modern scrollbar */
+            scrollbar-width: thin;
+            scrollbar-color: rgba(45, 212, 191, 0.35) rgba(255, 255, 255, 0.04);
         }
-        .nav-links::-webkit-scrollbar { display: none; }
+        .nav-links.dragging {
+            cursor: grabbing;
+            user-select: none;
+            scroll-behavior: auto;
+        }
+        .nav-links::-webkit-scrollbar {
+            height: 4px;
+        }
+        .nav-links::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 999px;
+        }
+        .nav-links::-webkit-scrollbar-thumb {
+            background: rgba(45, 212, 191, 0.3);
+            border-radius: 999px;
+            transition: background 0.2s ease;
+        }
+        .nav-links::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-pw);
+        }
 
         .nav-links a {
             color: var(--text-secondary);
@@ -150,6 +395,8 @@
             border-radius: var(--radius-sm);
             transition: var(--transition-fast);
             white-space: nowrap;
+            user-select: none;
+            flex-shrink: 0;
         }
 
         .nav-links a:hover, .nav-links a.active {
@@ -2923,7 +3170,9 @@
            RESPONSIVE
            ═══════════════════════════════════════════ */
         @media (max-width: 768px) {
-            .nav-links { display: none; }
+            .nav-inner { padding: 0 1rem; gap: 8px; }
+            .nav-scroll-btn { display: none; }
+            .nav-brand-text { display: none; }
             .hero-stats { gap: 24px; }
             .section { padding: 60px 1.2rem; }
             .card { padding: 24px; }
@@ -2948,6 +3197,599 @@
             .bp-narr { flex-direction: column; gap: 8px; }
             .chapter-card { padding: 20px; }
         }
+
+        /* ═══════════════════════════════════════════
+           ARCHITECTURE AI ASSISTANT (OLLAMA/GROQ/DEEPSEEK/CLOUD)
+           ═══════════════════════════════════════════ */
+        .ai-floating-trigger {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 1200;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 18px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, rgba(17, 24, 39, 0.95), rgba(30, 41, 59, 0.95));
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            color: #f1f5f9;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(56, 189, 248, 0.2);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .ai-floating-trigger:hover {
+            transform: translateY(-2px) scale(1.03);
+            border-color: #38bdf8;
+            box-shadow: 0 14px 35px rgba(0, 0, 0, 0.6), 0 0 28px rgba(56, 189, 248, 0.35);
+        }
+        .ai-floating-trigger .ai-pulse {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #2dd4bf;
+            box-shadow: 0 0 8px #2dd4bf;
+            animation: aiPulseAnim 2s infinite;
+        }
+        @keyframes aiPulseAnim {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.6; }
+        }
+        .ai-floating-trigger .ai-badge {
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            color: #94a3b8;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        /* Modal Container */
+        .ai-modal {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 490px;
+            max-width: calc(100vw - 32px);
+            height: 690px;
+            max-height: calc(100vh - 48px);
+            border-radius: 20px;
+            background: rgba(11, 16, 27, 0.97);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75), 0 0 45px rgba(56, 189, 248, 0.12);
+            display: flex;
+            flex-direction: column;
+            z-index: 1300;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translateY(24px) scale(0.95);
+            opacity: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .ai-modal.open {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .ai-modal.expanded {
+            width: 760px;
+            height: 840px;
+            max-height: calc(100vh - 48px);
+        }
+
+        /* Header */
+        .ai-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 18px;
+            background: rgba(17, 24, 39, 0.85);
+            border-bottom: 1px solid var(--border-glass);
+            user-select: none;
+        }
+        .ai-header-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .ai-header-title {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: #f8fafc;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .ai-model-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 999px;
+            background: rgba(45, 212, 191, 0.12);
+            border: 1px solid rgba(45, 212, 191, 0.3);
+            color: #2dd4bf;
+            font-family: var(--font-mono);
+        }
+        .ai-model-pill .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #2dd4bf;
+        }
+        .ai-model-pill.configured-groq {
+            background: rgba(249, 115, 22, 0.12);
+            border-color: rgba(249, 115, 22, 0.3);
+            color: #fb923c;
+        }
+        .ai-model-pill.configured-groq .status-dot { background: #fb923c; }
+        .ai-model-pill.configured-deepseek {
+            background: rgba(129, 140, 248, 0.12);
+            border-color: rgba(129, 140, 248, 0.3);
+            color: #818cf8;
+        }
+        .ai-model-pill.configured-deepseek .status-dot { background: #818cf8; }
+
+        .ai-header-tools {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .ai-tool-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-secondary);
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        .ai-tool-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--border-glass);
+            color: var(--text-primary);
+        }
+        .ai-tool-btn.active {
+            background: rgba(56, 189, 248, 0.15);
+            border-color: rgba(56, 189, 248, 0.35);
+            color: #38bdf8;
+        }
+
+        /* Settings Drawer */
+        .ai-settings {
+            background: rgba(15, 23, 42, 0.98);
+            border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+            padding: 16px;
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            font-size: 0.82rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .ai-settings.open {
+            display: flex;
+        }
+        .ai-settings-tabs {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            background: rgba(10, 14, 23, 0.6);
+            padding: 4px;
+            border-radius: 10px;
+            border: 1px solid var(--border-glass);
+        }
+        .ai-tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 6px 4px;
+            border-radius: 6px;
+            font-size: 0.74rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-align: center;
+            white-space: nowrap;
+        }
+        .ai-tab-btn.active {
+            background: rgba(56, 189, 248, 0.15);
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+        .ai-form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .ai-form-label {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+        .ai-input {
+            width: 100%;
+            background: rgba(10, 14, 23, 0.7);
+            border: 1px solid var(--border-glass);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            outline: none;
+            transition: border-color var(--transition-fast);
+        }
+        .ai-input:focus {
+            border-color: var(--accent-pw);
+        }
+        .ai-key-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .ai-key-toggle {
+            position: absolute;
+            right: 8px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.75rem;
+            padding: 2px 4px;
+        }
+        .ai-key-toggle:hover { color: var(--text-primary); }
+        .ai-settings-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 4px;
+        }
+        .ai-btn-sm {
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border: 1px solid transparent;
+        }
+        .ai-btn-primary {
+            background: var(--accent-pw);
+            color: #0a0e17;
+        }
+        .ai-btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        .ai-btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--border-glass);
+            color: var(--text-secondary);
+        }
+        .ai-btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+        .ai-conn-status {
+            font-size: 0.76rem;
+            padding: 4px 8px;
+            border-radius: 6px;
+            display: none;
+        }
+        .ai-conn-status.success {
+            display: block;
+            background: rgba(52, 211, 153, 0.1);
+            border: 1px solid rgba(52, 211, 153, 0.3);
+            color: #6ee7b7;
+        }
+        .ai-conn-status.error {
+            display: block;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+        .ai-tip-box {
+            font-size: 0.74rem;
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.02);
+            padding: 8px 10px;
+            border-radius: 6px;
+            border-left: 2px solid var(--accent-blue);
+            line-height: 1.5;
+        }
+
+        /* Context & Quick Prompt Chips */
+        .ai-context-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 16px;
+            background: rgba(10, 14, 23, 0.4);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+        .ai-chips-scroll {
+            display: flex;
+            gap: 6px;
+            padding: 8px 16px;
+            overflow-x: auto;
+            border-bottom: 1px solid var(--border-glass);
+            scrollbar-width: none;
+            background: rgba(10, 14, 23, 0.3);
+        }
+        .ai-chips-scroll::-webkit-scrollbar { display: none; }
+        .ai-chip-pill {
+            flex-shrink: 0;
+            font-size: 0.74rem;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-glass);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            white-space: nowrap;
+        }
+        .ai-chip-pill:hover {
+            background: rgba(56, 189, 248, 0.12);
+            border-color: rgba(56, 189, 248, 0.3);
+            color: #38bdf8;
+            transform: translateY(-1px);
+        }
+
+        /* Chat Body & Messages */
+        .ai-chat-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            scroll-behavior: smooth;
+        }
+        .ai-chat-body::-webkit-scrollbar {
+            width: 5px;
+        }
+        .ai-chat-body::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 999px;
+        }
+        .ai-message-row {
+            display: flex;
+            gap: 10px;
+            max-width: 92%;
+            animation: fadeIn 0.25s ease-out;
+        }
+        .ai-message-row.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+        .ai-message-row.assistant {
+            align-self: flex-start;
+            width: 100%;
+        }
+        .ai-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border-glass);
+        }
+        .ai-message-row.user .ai-avatar {
+            background: linear-gradient(135deg, #2dd4bf, #818cf8);
+        }
+        .ai-message-row.assistant .ai-avatar {
+            background: rgba(56, 189, 248, 0.15);
+            border-color: rgba(56, 189, 248, 0.3);
+        }
+        .ai-bubble {
+            padding: 10px 14px;
+            font-size: 0.84rem;
+            line-height: 1.65;
+            word-break: break-word;
+        }
+        .ai-message-row.user .ai-bubble {
+            background: linear-gradient(135deg, rgba(45, 212, 191, 0.15), rgba(129, 140, 248, 0.18));
+            border: 1px solid rgba(45, 212, 191, 0.35);
+            border-radius: 14px 14px 2px 14px;
+            color: #f8fafc;
+        }
+        .ai-message-row.assistant .ai-bubble {
+            background: rgba(17, 24, 39, 0.7);
+            border: 1px solid var(--border-glass);
+            border-radius: 14px 14px 14px 2px;
+            color: #cbd5e1;
+            flex: 1;
+        }
+
+        /* Formatted elements inside assistant bubble */
+        .ai-bubble h4, .ai-bubble h5 {
+            color: #f1f5f9;
+            margin: 10px 0 4px;
+            font-size: 0.9rem;
+        }
+        .ai-bubble p {
+            margin: 6px 0;
+        }
+        .ai-bubble p:first-child { margin-top: 0; }
+        .ai-bubble p:last-child { margin-bottom: 0; }
+        .ai-bubble ul, .ai-bubble ol {
+            margin: 6px 0;
+            padding-left: 20px;
+        }
+        .ai-bubble li {
+            margin-bottom: 4px;
+        }
+        .ai-bubble strong {
+            color: #f8fafc;
+        }
+        .ai-bubble code:not(.ai-code-card code) {
+            background: rgba(56, 189, 248, 0.12);
+            color: #38bdf8;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+        }
+        .ai-code-card {
+            margin: 10px 0;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: #060911;
+            overflow: hidden;
+        }
+        .ai-code-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4px 12px;
+            background: rgba(255, 255, 255, 0.04);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+        .ai-copy-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: all var(--transition-fast);
+        }
+        .ai-copy-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+        .ai-code-card pre {
+            margin: 0;
+            padding: 10px 12px;
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            line-height: 1.5;
+            color: #e2e8f0;
+        }
+        .ai-cursor {
+            display: inline-block;
+            width: 7px;
+            height: 15px;
+            background: #38bdf8;
+            vertical-align: middle;
+            margin-left: 2px;
+            animation: aiBlink 1s infinite;
+        }
+        @keyframes aiBlink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* Input Footer */
+        .ai-footer {
+            padding: 12px 16px;
+            background: rgba(17, 24, 39, 0.95);
+            border-top: 1px solid var(--border-glass);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .ai-input-row {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+        }
+        .ai-textarea {
+            flex: 1;
+            background: rgba(10, 14, 23, 0.7);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 10px 14px;
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            font-size: 0.84rem;
+            outline: none;
+            resize: none;
+            max-height: 120px;
+            min-height: 44px;
+            line-height: 1.4;
+            transition: border-color var(--transition-fast);
+        }
+        .ai-textarea:focus {
+            border-color: rgba(56, 189, 248, 0.5);
+        }
+        .ai-send-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #2dd4bf, #38bdf8);
+            border: none;
+            color: #0a0e17;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            flex-shrink: 0;
+        }
+        .ai-send-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+        }
+        .ai-send-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .ai-send-btn.stop {
+            background: #ef4444;
+            color: #ffffff;
+        }
+        .ai-input-hint {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            text-align: right;
+            padding-right: 2px;
+        }
+
+        @media (max-width: 768px) {
+            .ai-modal {
+                right: 8px;
+                bottom: 8px;
+                width: calc(100vw - 16px);
+                height: 85vh;
+                max-height: 85vh;
+            }
+            .ai-floating-trigger {
+                bottom: 16px;
+                right: 16px;
+                padding: 8px 14px;
+                font-size: 0.8rem;
+            }
+            .ai-floating-trigger .ai-badge { display: none; }
+        }
     </style>
 </head>
 <body>
@@ -2957,26 +3799,39 @@
         <div class="nav-inner">
             <a href="#hero" class="nav-brand">
                 <div class="logo">🎭</div>
-                Playwright Architecture
+                <span class="nav-brand-text">Playwright Architecture</span>
             </a>
-            <ul class="nav-links">
-                <li><a href="#blueprint-player" style="color: var(--accent-pw); font-weight: 700;">🗺️ Journey Player</a></li>
-                <li><a href="#blueprint-chapters" style="color: var(--accent-blue); font-weight: 700;">📚 7 Chapters</a></li>
-                <li><a href="#stack">Protocol Stack</a></li>
-                <li><a href="#comparison">Selenium vs PW</a></li>
-                <li><a href="#e2e-deepdive">E2E Behavior</a></li>
-                <li><a href="#protocols">Protocols</a></li>
-                <li><a href="#architecture">3-Layer Arch</a></li>
-                <li><a href="#websocket">WebSocket</a></li>
-                <li><a href="#hierarchy">Browser Tree</a></li>
-                <li><a href="#chromium">Chromium vs Chrome</a></li>
-                <li><a href="#simulator" style="color: var(--accent-pw); font-weight: 700;">⚡ Spec Simulator</a></li>
-                <li><a href="#deep-layers">6-Layer Insights</a></li>
-                <li><a href="#killer-features">Killer Features</a></li>
-                <li><a href="#blast-framework">BLAST Framework</a></li>
-                <li><a href="#interview-market">Market Interview Q&A</a></li>
-                <li><a href="#table">Matrix</a></li>
-            </ul>
+            <div class="nav-links-wrapper">
+                <button class="nav-scroll-btn nav-scroll-left hidden" id="navScrollLeft" aria-label="Scroll navigation left" title="Scroll left">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="#blueprint-player" style="color: var(--accent-pw); font-weight: 700;">🗺️ Journey Player</a></li>
+                    <li><a href="#blueprint-chapters" style="color: var(--accent-blue); font-weight: 700;">📚 7 Chapters</a></li>
+                    <li><a href="#stack">Protocol Stack</a></li>
+                    <li><a href="#comparison">Selenium vs PW</a></li>
+                    <li><a href="#e2e-deepdive">E2E Behavior</a></li>
+                    <li><a href="#protocols">Protocols</a></li>
+                    <li><a href="#architecture">3-Layer Arch</a></li>
+                    <li><a href="#websocket">WebSocket</a></li>
+                    <li><a href="#hierarchy">Browser Tree</a></li>
+                    <li><a href="#chromium">Chromium vs Chrome</a></li>
+                    <li><a href="#simulator" style="color: var(--accent-pw); font-weight: 700;">⚡ Spec Simulator</a></li>
+                    <li><a href="#deep-layers">6-Layer Insights</a></li>
+                    <li><a href="#killer-features">Killer Features</a></li>
+                    <li><a href="#blast-framework">BLAST Framework</a></li>
+                    <li><a href="#interview-market">Market Interview Q&A</a></li>
+                    <li><a href="#table">Matrix</a></li>
+                    <li><a href="javascript:void(0)" id="navOpenAiBtn" class="nav-ai-btn" style="color: #38bdf8; font-weight: 700; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: var(--radius-sm);">🤖 Ask AI</a></li>
+                </ul>
+                <button class="nav-scroll-btn nav-scroll-right" id="navScrollRight" aria-label="Scroll navigation right" title="Scroll right">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                </button>
+            </div>
+            <button class="nav-theme-toggle" id="navThemeToggle" title="Switch Theme (Dark / Light / Sepia) [Alt+T]" aria-label="Toggle Theme">
+                <span class="theme-icon" id="themeIcon">🌙</span>
+                <span class="theme-label" id="themeLabel">Dark</span>
+            </button>
         </div>
     </nav>
 
@@ -7461,9 +8316,13 @@ test('Access protected admin dashboard directly', async ({ page }) => {
             initBlueprintPlayer();
         }
 
-        // ── Active Nav Link ──
+        // ── Active Nav Link & Auto-scroll ──
         const sections = document.querySelectorAll('.section, .hero');
         const navLinks = document.querySelectorAll('.nav-links a');
+        const navLinksContainer = document.getElementById('navLinks');
+        const navLinksWrapper = document.querySelector('.nav-links-wrapper');
+        const btnScrollLeft = document.getElementById('navScrollLeft');
+        const btnScrollRight = document.getElementById('navScrollRight');
 
         const navObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -7472,6 +8331,8 @@ test('Access protected admin dashboard directly', async ({ page }) => {
                         link.classList.remove('active');
                         if (link.getAttribute('href') === '#' + entry.target.id) {
                             link.classList.add('active');
+                            // Ensure active header is smoothly scrolled into view within the horizontal bar
+                            link.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
                         }
                     });
                 }
@@ -7479,6 +8340,90 @@ test('Access protected admin dashboard directly', async ({ page }) => {
         }, { threshold: 0.3 });
 
         sections.forEach(section => navObserver.observe(section));
+
+        // ── Nav Horizontal Scroll Support (Wheel, Buttons, Drag) ──
+        if (navLinksContainer) {
+            // 1. Mouse wheel to horizontal scroll
+            navLinksContainer.addEventListener('wheel', (e) => {
+                if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+                    e.preventDefault();
+                    navLinksContainer.scrollLeft += e.deltaY;
+                }
+            }, { passive: false });
+
+            // 2. Click & drag to scroll
+            let isDown = false;
+            let startX = 0;
+            let scrollLeftStart = 0;
+            let hasDragged = false;
+
+            navLinksContainer.addEventListener('mousedown', (e) => {
+                isDown = true;
+                hasDragged = false;
+                navLinksContainer.classList.add('dragging');
+                startX = e.pageX - navLinksContainer.offsetLeft;
+                scrollLeftStart = navLinksContainer.scrollLeft;
+            });
+
+            window.addEventListener('mouseup', () => {
+                if (isDown) {
+                    isDown = false;
+                    navLinksContainer.classList.remove('dragging');
+                }
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                const x = e.pageX - navLinksContainer.offsetLeft;
+                const walk = (x - startX);
+                if (Math.abs(walk) > 4) {
+                    hasDragged = true;
+                }
+                navLinksContainer.scrollLeft = scrollLeftStart - walk;
+            });
+
+            // Prevent unwanted navigation when dragging
+            navLinksContainer.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    if (hasDragged) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                });
+            });
+
+            // 3. Arrow scroll buttons
+            if (btnScrollLeft && btnScrollRight) {
+                btnScrollLeft.addEventListener('click', () => {
+                    navLinksContainer.scrollBy({ left: -240, behavior: 'smooth' });
+                });
+                btnScrollRight.addEventListener('click', () => {
+                    navLinksContainer.scrollBy({ left: 240, behavior: 'smooth' });
+                });
+            }
+
+            // 4. Update scroll indicators (fade masks and buttons)
+            function updateScrollIndicators() {
+                const maxScrollLeft = navLinksContainer.scrollWidth - navLinksContainer.clientWidth;
+                const currentScroll = navLinksContainer.scrollLeft;
+                const buffer = 5;
+
+                const canScrollLeft = currentScroll > buffer;
+                const canScrollRight = currentScroll < maxScrollLeft - buffer;
+
+                if (btnScrollLeft) btnScrollLeft.classList.toggle('hidden', !canScrollLeft);
+                if (btnScrollRight) btnScrollRight.classList.toggle('hidden', !canScrollRight);
+
+                if (navLinksWrapper) {
+                    navLinksWrapper.classList.toggle('can-scroll-left', canScrollLeft);
+                    navLinksWrapper.classList.toggle('can-scroll-right', canScrollRight);
+                }
+            }
+
+            navLinksContainer.addEventListener('scroll', updateScrollIndicators);
+            window.addEventListener('resize', updateScrollIndicators);
+            setTimeout(updateScrollIndicators, 100);
+        }
 
         // ── Nav Shadow on Scroll ──
         window.addEventListener('scroll', () => {
@@ -7489,6 +8434,718 @@ test('Access protected admin dashboard directly', async ({ page }) => {
                 nav.style.boxShadow = 'none';
             }
         });
+
+        // ── Theme Switcher Engine ──
+        (function initThemeSwitcher() {
+            const THEME_KEY = 'pw_architecture_theme';
+            const themes = ['dark', 'light', 'sepia'];
+            const themeIcons = { dark: '🌙', light: '☀️', sepia: '📜' };
+            const themeLabels = { dark: 'Dark', light: 'Light', sepia: 'Sepia' };
+
+            function applyTheme(theme) {
+                if (!themes.includes(theme)) theme = 'dark';
+                document.documentElement.setAttribute('data-theme', theme);
+                try { localStorage.setItem(THEME_KEY, theme); } catch (e) {}
+
+                const iconEl = document.getElementById('themeIcon');
+                const labelEl = document.getElementById('themeLabel');
+                if (iconEl) iconEl.textContent = themeIcons[theme];
+                if (labelEl) labelEl.textContent = themeLabels[theme];
+            }
+
+            function cycleTheme() {
+                const current = document.documentElement.getAttribute('data-theme') || 'dark';
+                const next = themes[(themes.indexOf(current) + 1) % themes.length];
+                applyTheme(next);
+            }
+
+            const themeBtn = document.getElementById('navThemeToggle');
+            if (themeBtn) {
+                themeBtn.addEventListener('click', cycleTheme);
+            }
+
+            // Keyboard shortcut Alt + T
+            window.addEventListener('keydown', (e) => {
+                if (e.altKey && (e.key === 't' || e.key === 'T')) {
+                    e.preventDefault();
+                    cycleTheme();
+                }
+            });
+
+            // Initial theme restore
+            const saved = (function() {
+                try { return localStorage.getItem(THEME_KEY); } catch(e) { return null; }
+            })();
+            applyTheme(saved || 'dark');
+        })();
+
+        // ═══════════════════════════════════════════
+        // ARCHITECTURE AI ASSISTANT CLIENT ENGINE
+        // Supports: Ollama (Local), Groq, DeepSeek, Cloud/OpenAI
+        // ═══════════════════════════════════════════
+        function initArchitectureAi() {
+            const STORAGE_KEY = 'pw_architecture_ai_config';
+            const HISTORY_KEY = 'pw_architecture_ai_history';
+
+            const DEFAULT_PROVIDERS = {
+                ollama: {
+                    name: 'Ollama',
+                    endpoint: 'http://localhost:11434/v1/chat/completions',
+                    model: 'llama3.2',
+                    apiKey: '',
+                    tip: '💡 <strong>Local Ollama</strong>: 100% private, free, runs offline. If requests are blocked by CORS from file://, start Ollama with <code>set OLLAMA_ORIGINS=* && ollama serve</code>.'
+                },
+                groq: {
+                    name: 'Groq',
+                    endpoint: 'https://api.groq.com/openai/v1/chat/completions',
+                    model: 'llama-3.3-70b-versatile',
+                    apiKey: '',
+                    tip: '⚡ <strong>Groq API</strong>: Ultra-fast Llama-3.3 inference (~500 tokens/sec). Get a free API key at <a href="https://console.groq.com/keys" target="_blank" style="color:#38bdf8;text-decoration:underline;">console.groq.com</a>.'
+                },
+                deepseek: {
+                    name: 'DeepSeek',
+                    endpoint: 'https://api.deepseek.com/chat/completions',
+                    model: 'deepseek-chat',
+                    apiKey: '',
+                    tip: '🧠 <strong>DeepSeek API</strong>: Deep reasoning & code comprehension. Get an API key at <a href="https://platform.deepseek.com/" target="_blank" style="color:#38bdf8;text-decoration:underline;">platform.deepseek.com</a>.'
+                },
+                cloud: {
+                    name: 'Cloud / OpenAI',
+                    endpoint: 'https://api.openai.com/v1/chat/completions',
+                    model: 'gpt-4o-mini',
+                    apiKey: '',
+                    tip: '🌐 <strong>Cloud / OpenAI / OpenRouter</strong>: Compatible with any OpenAI-standard endpoint. Enter your endpoint URL, model, and Bearer token.'
+                }
+            };
+
+            let config = {
+                activeProvider: 'ollama',
+                providers: JSON.parse(JSON.stringify(DEFAULT_PROVIDERS))
+            };
+
+            // Load saved config
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    config.activeProvider = parsed.activeProvider || 'ollama';
+                    if (parsed.providers) {
+                        for (let p in parsed.providers) {
+                            if (config.providers[p]) {
+                                Object.assign(config.providers[p], parsed.providers[p]);
+                            }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn('Could not load AI config from localStorage', e);
+            }
+
+            // System prompt for Playwright Architecture tutor
+            const SYSTEM_PROMPT = `You are the Playwright Architecture Expert Tutor embedded in the Chapter 230 Interactive Deep Dive guide.
+Your role is to explain internal browser automation architecture, protocols, and implementation details clearly, accurately, and concisely.
+
+Core Architectural Principles to reference when appropriate:
+- Playwright's 3-Layer Architecture: Node.js client process -> Playwright Driver process (JSON-RPC) -> WebSocket -> Browser CDP/Juggler
+- Comparison with Selenium WebDriver: Selenium uses stateless HTTP REST requests for every action (~20-50ms latency per command with repeated TCP/TLS handshakes). Playwright uses a single, persistent, bidirectional WebSocket connection (~0.5ms command roundtrip).
+- Browser Hierarchy: Browser (isolated OS process) -> BrowserContext (isolated Incognito profile with dedicated cookies, localStorage, cache, proxy) -> Page (browser tab) -> Frame. BrowserContext creation takes ~2ms and avoids launching multiple browser processes.
+- Actionability Checks: Before executing actions like click(), Playwright automatically checks: Attached to DOM, Visible, Stable (not animating), Enabled (not disabled), Editable, and Receiving Events (not obscured by overlays).
+- Protocol details: Chrome DevTools Protocol (CDP) for Chromium, custom Juggler protocol for Firefox and WebKit, and emerging WebDriver BiDi standard.
+- Network interception and route mocking operate directly at the browser network stack without proxy overhead.
+
+Keep explanations technical yet accessible, direct, and structured with clean markdown. When providing code examples, use concise Playwright snippets.`;
+
+            // State
+            let chatMessages = [
+                {
+                    role: 'assistant',
+                    content: `Hello! I'm your **Playwright Architecture AI Tutor**. As you explore this chapter, feel free to ask about any layer, protocol, WebSocket flow, or actionability detail.\n\nYou can switch between **Local Ollama**, **Groq**, **DeepSeek**, or any **Cloud** model in Settings ⚙️.`
+                }
+            ];
+            let isGenerating = false;
+            let currentAbortController = null;
+
+            // DOM Elements
+            const modal = document.getElementById('aiModal');
+            const floatingTrigger = document.getElementById('aiFloatingTrigger');
+            const navOpenBtn = document.getElementById('navOpenAiBtn');
+            const closeBtn = document.getElementById('aiCloseBtn');
+            const expandBtn = document.getElementById('aiExpandBtn');
+            const clearChatBtn = document.getElementById('aiClearChatBtn');
+            const toggleSettingsBtn = document.getElementById('aiToggleSettingsBtn');
+            const settingsPanel = document.getElementById('aiSettingsPanel');
+            const tabButtons = document.querySelectorAll('.ai-tab-btn');
+            const endpointInput = document.getElementById('aiEndpointInput');
+            const modelInput = document.getElementById('aiModelInput');
+            const keyInput = document.getElementById('aiKeyInput');
+            const keyGroup = document.getElementById('aiKeyGroup');
+            const keyToggle = document.getElementById('aiKeyToggle');
+            const saveSettingsBtn = document.getElementById('aiSaveSettingsBtn');
+            const testConnBtn = document.getElementById('aiTestConnBtn');
+            const connStatus = document.getElementById('aiConnStatus');
+            const providerTip = document.getElementById('aiProviderTip');
+            const modelPill = document.getElementById('aiModelPill');
+            const activeProviderText = document.getElementById('aiActiveProviderText');
+            const activeModelLabel = document.getElementById('aiActiveModelLabel');
+            const chatBody = document.getElementById('aiChatBody');
+            const userInput = document.getElementById('aiUserInput');
+            const sendBtn = document.getElementById('aiSendBtn');
+            const chipPills = document.querySelectorAll('.ai-chip-pill');
+
+            function saveConfig() {
+                try {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
+                } catch (e) {
+                    console.warn('Error saving AI config', e);
+                }
+            }
+
+            function updateUIForProvider(provKey) {
+                const prov = config.providers[provKey];
+                tabButtons.forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.prov === provKey);
+                });
+                endpointInput.value = prov.endpoint || '';
+                modelInput.value = prov.model || '';
+                keyInput.value = prov.apiKey || '';
+                providerTip.innerHTML = prov.tip || '';
+
+                if (provKey === 'ollama') {
+                    keyGroup.style.display = 'none';
+                } else {
+                    keyGroup.style.display = 'flex';
+                }
+
+                // Update Header Pill
+                activeProviderText.textContent = prov.name;
+                activeModelLabel.textContent = prov.model || 'model';
+                modelPill.className = 'ai-model-pill';
+                if (provKey === 'groq') modelPill.classList.add('configured-groq');
+                if (provKey === 'deepseek') modelPill.classList.add('configured-deepseek');
+
+                connStatus.className = 'ai-conn-status';
+                connStatus.style.display = 'none';
+            }
+
+            function openModal() {
+                modal.classList.add('open');
+                floatingTrigger.style.display = 'none';
+                userInput.focus();
+            }
+
+            function closeModal() {
+                modal.classList.remove('open');
+                floatingTrigger.style.display = 'flex';
+            }
+
+            function toggleModal() {
+                if (modal.classList.contains('open')) {
+                    closeModal();
+                } else {
+                    openModal();
+                }
+            }
+
+            // Copy helper
+            window.copyAiCode = function(btn) {
+                const codeEl = btn.closest('.ai-code-card').querySelector('code');
+                if (codeEl) {
+                    navigator.clipboard.writeText(codeEl.innerText).then(() => {
+                        btn.textContent = '✓ Copied!';
+                        setTimeout(() => { btn.textContent = 'Copy'; }, 1800);
+                    });
+                }
+            };
+
+            function escapeHtml(text) {
+                const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+                return text.replace(/[&<>"']/g, m => map[m]);
+            }
+
+            function renderMarkdown(text) {
+                if (!text) return '';
+                let html = text;
+
+                // Code blocks with syntax copy
+                html = html.replace(/```([a-zA-Z0-9_\-]+)?\n([\s\S]*?)```/g, (match, lang, code) => {
+                    const cleanLang = lang ? lang.trim() : 'code';
+                    const escapedCode = escapeHtml(code.trim());
+                    return `<div class="ai-code-card">
+                        <div class="ai-code-header">
+                            <span>${cleanLang}</span>
+                            <button class="ai-copy-btn" onclick="copyAiCode(this)">Copy</button>
+                        </div>
+                        <pre><code>${escapedCode}</code></pre>
+                    </div>`;
+                });
+
+                // Inline code
+                html = html.replace(/`([^`]+)`/g, (match, p1) => `<code>${escapeHtml(p1)}</code>`);
+
+                // Bold
+                html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+
+                // Italic
+                html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+
+                // Headings
+                html = html.replace(/^### (.*$)/gim, '<h4>$1</h4>');
+                html = html.replace(/^## (.*$)/gim, '<h4>$1</h4>');
+
+                // Lists
+                html = html.replace(/^\s*[-*]\s+(.*$)/gim, '<li>$1</li>');
+                html = html.replace(/(<li>.*<\/li>)/gims, '<ul>$1</ul>');
+
+                // Paragraphs
+                const parts = html.split(/\n\s*\n/);
+                return parts.map(p => {
+                    p = p.trim();
+                    if (!p) return '';
+                    if (p.startsWith('<div class="ai-code-card"') || p.startsWith('<h4>') || p.startsWith('<ul>')) return p;
+                    return `<p>${p.replace(/\n/g, '<br>')}</p>`;
+                }).join('');
+            }
+
+            function renderMessages() {
+                chatBody.innerHTML = '';
+                chatMessages.forEach(msg => {
+                    const row = document.createElement('div');
+                    row.className = `ai-message-row ${msg.role}`;
+
+                    const avatar = document.createElement('div');
+                    avatar.className = 'ai-avatar';
+                    avatar.textContent = msg.role === 'user' ? '👤' : '🎭';
+
+                    const bubble = document.createElement('div');
+                    bubble.className = 'ai-bubble';
+                    bubble.innerHTML = renderMarkdown(msg.content);
+
+                    row.appendChild(avatar);
+                    row.appendChild(bubble);
+                    chatBody.appendChild(row);
+                });
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }
+
+            async function sendMessage(text) {
+                if (!text || isGenerating) return;
+
+                const userText = text.trim();
+                if (!userText) return;
+
+                userInput.value = '';
+                userInput.style.height = 'auto';
+
+                // Add User Message
+                chatMessages.push({ role: 'user', content: userText });
+                renderMessages();
+
+                // Setup Assistant Placeholder
+                const assistantMsg = { role: 'assistant', content: '' };
+                chatMessages.push(assistantMsg);
+
+                const row = document.createElement('div');
+                row.className = 'ai-message-row assistant';
+                row.innerHTML = `
+                    <div class="ai-avatar">🎭</div>
+                    <div class="ai-bubble"><span class="ai-cursor"></span></div>
+                `;
+                chatBody.appendChild(row);
+                chatBody.scrollTop = chatBody.scrollHeight;
+
+                const bubble = row.querySelector('.ai-bubble');
+
+                // Provider Config
+                const prov = config.providers[config.activeProvider];
+                const endpoint = prov.endpoint;
+                const model = prov.model;
+                const apiKey = prov.apiKey;
+
+                isGenerating = true;
+                sendBtn.classList.add('stop');
+                sendBtn.innerHTML = '⏹';
+                sendBtn.title = 'Stop Generating';
+
+                currentAbortController = new AbortController();
+
+                try {
+                    const headers = {
+                        'Content-Type': 'application/json'
+                    };
+                    if (apiKey) {
+                        headers['Authorization'] = `Bearer ${apiKey}`;
+                    }
+
+                    const payloadMessages = [
+                        { role: 'system', content: SYSTEM_PROMPT }
+                    ];
+
+                    // Append last 6 turns for context
+                    const recentTurns = chatMessages.slice(0, -1).slice(-6);
+                    recentTurns.forEach(m => {
+                        payloadMessages.push({ role: m.role, content: m.content });
+                    });
+
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: headers,
+                        body: JSON.stringify({
+                            model: model,
+                            messages: payloadMessages,
+                            stream: true,
+                            temperature: 0.3
+                        }),
+                        signal: currentAbortController.signal
+                    });
+
+                    if (!response.ok) {
+                        let errText = await response.text();
+                        try {
+                            const errJson = JSON.parse(errText);
+                            errText = errJson.error?.message || errText;
+                        } catch (e) {}
+                        throw new Error(`HTTP ${response.status}: ${errText}`);
+                    }
+
+                    // Handle SSE stream
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder('utf-8');
+                    let accumulated = '';
+                    let buffer = '';
+
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+
+                        buffer += decoder.decode(value, { stream: true });
+                        const lines = buffer.split('\n');
+                        buffer = lines.pop() || '';
+
+                        for (const line of lines) {
+                            const trimmed = line.trim();
+                            if (!trimmed || trimmed.startsWith(':')) continue;
+                            if (trimmed === 'data: [DONE]') continue;
+
+                            if (trimmed.startsWith('data: ')) {
+                                try {
+                                    const json = JSON.parse(trimmed.slice(6));
+                                    const chunk = json.choices?.[0]?.delta?.content || '';
+                                    accumulated += chunk;
+                                    assistantMsg.content = accumulated;
+                                    bubble.innerHTML = renderMarkdown(accumulated) + '<span class="ai-cursor"></span>';
+                                    chatBody.scrollTop = chatBody.scrollHeight;
+                                } catch (err) {
+                                    // Non-JSON SSE chunk, skip
+                                }
+                            }
+                        }
+                    }
+
+                    if (!accumulated && buffer) {
+                        try {
+                            const json = JSON.parse(buffer.replace(/^data:\s*/, ''));
+                            accumulated += json.choices?.[0]?.delta?.content || '';
+                        } catch (e) {}
+                    }
+
+                    assistantMsg.content = accumulated || '(No response received from model)';
+                    bubble.innerHTML = renderMarkdown(assistantMsg.content);
+
+                } catch (err) {
+                    if (err.name === 'AbortError') {
+                        assistantMsg.content += ' *(Generation stopped)*';
+                        bubble.innerHTML = renderMarkdown(assistantMsg.content);
+                    } else {
+                        console.error('AI error:', err);
+                        let tipMessage = '';
+                        if (config.activeProvider === 'ollama' && (err.message.includes('Failed to fetch') || err.message.includes('NetworkError'))) {
+                            tipMessage = `<br><br><small style="color:#fbbf24;">⚠️ <strong>Ollama connection failed</strong>: Ensure Ollama is running (<code>ollama serve</code>) and CORS is allowed. Run <code>set OLLAMA_ORIGINS=* && ollama serve</code> or test Groq/Cloud in Settings ⚙️.</small>`;
+                        } else if (!apiKey && config.activeProvider !== 'ollama') {
+                            tipMessage = `<br><br><small style="color:#fbbf24;">⚠️ Please configure your API key in Settings ⚙️ for <strong>${prov.name}</strong>.</small>`;
+                        }
+                        assistantMsg.content = `❌ **Error**: ${err.message}${tipMessage}`;
+                        bubble.innerHTML = assistantMsg.content;
+                    }
+                } finally {
+                    isGenerating = false;
+                    currentAbortController = null;
+                    sendBtn.classList.remove('stop');
+                    sendBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>`;
+                    sendBtn.title = 'Send (Enter)';
+                    chatBody.scrollTop = chatBody.scrollHeight;
+                }
+            }
+
+            // Event Listeners
+            floatingTrigger.addEventListener('click', openModal);
+            if (navOpenBtn) {
+                navOpenBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    openModal();
+                });
+            }
+            closeBtn.addEventListener('click', closeModal);
+
+            expandBtn.addEventListener('click', () => {
+                modal.classList.toggle('expanded');
+                expandBtn.classList.toggle('active', modal.classList.contains('expanded'));
+            });
+
+            clearChatBtn.addEventListener('click', () => {
+                if (confirm('Clear the conversation history?')) {
+                    chatMessages = [
+                        {
+                            role: 'assistant',
+                            content: `Conversation reset. Feel free to ask any question about Playwright architecture!`
+                        }
+                    ];
+                    renderMessages();
+                }
+            });
+
+            toggleSettingsBtn.addEventListener('click', () => {
+                const isOpen = settingsPanel.classList.toggle('open');
+                toggleSettingsBtn.classList.toggle('active', isOpen);
+            });
+
+            tabButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetProv = btn.dataset.prov;
+                    config.activeProvider = targetProv;
+                    updateUIForProvider(targetProv);
+                });
+            });
+
+            if (keyToggle) {
+                keyToggle.addEventListener('click', () => {
+                    if (keyInput.type === 'password') {
+                        keyInput.type = 'text';
+                        keyToggle.textContent = 'Hide';
+                    } else {
+                        keyInput.type = 'password';
+                        keyToggle.textContent = 'Show';
+                    }
+                });
+            }
+
+            saveSettingsBtn.addEventListener('click', () => {
+                const active = config.activeProvider;
+                config.providers[active].endpoint = endpointInput.value.trim();
+                config.providers[active].model = modelInput.value.trim();
+                config.providers[active].apiKey = keyInput.value.trim();
+                saveConfig();
+                updateUIForProvider(active);
+                connStatus.className = 'ai-conn-status success';
+                connStatus.textContent = '✓ Configuration saved!';
+                connStatus.style.display = 'block';
+                setTimeout(() => {
+                    settingsPanel.classList.remove('open');
+                    toggleSettingsBtn.classList.remove('active');
+                }, 900);
+            });
+
+            testConnBtn.addEventListener('click', async () => {
+                const active = config.activeProvider;
+                const endpoint = endpointInput.value.trim();
+                const model = modelInput.value.trim();
+                const apiKey = keyInput.value.trim();
+
+                connStatus.className = 'ai-conn-status';
+                connStatus.style.display = 'block';
+                connStatus.style.color = '#38bdf8';
+                connStatus.textContent = 'Testing connection...';
+
+                try {
+                    const headers = { 'Content-Type': 'application/json' };
+                    if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`;
+
+                    const testRes = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: headers,
+                        body: JSON.stringify({
+                            model: model,
+                            messages: [{ role: 'user', content: 'hi' }],
+                            max_tokens: 3,
+                            stream: false
+                        })
+                    });
+
+                    if (!testRes.ok) {
+                        const err = await testRes.text();
+                        throw new Error(`HTTP ${testRes.status}: ${err}`);
+                    }
+
+                    connStatus.className = 'ai-conn-status success';
+                    connStatus.textContent = `✅ Success! Connected to ${config.providers[active].name} (${model})`;
+                } catch (err) {
+                    connStatus.className = 'ai-conn-status error';
+                    connStatus.textContent = `❌ Failed: ${err.message}`;
+                }
+            });
+
+            chipPills.forEach(chip => {
+                chip.addEventListener('click', () => {
+                    const prompt = chip.dataset.prompt;
+                    if (prompt) {
+                        sendMessage(prompt);
+                    }
+                });
+            });
+
+            userInput.addEventListener('input', () => {
+                userInput.style.height = 'auto';
+                userInput.style.height = Math.min(userInput.scrollHeight, 120) + 'px';
+            });
+
+            userInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    if (isGenerating && currentAbortController) {
+                        currentAbortController.abort();
+                    } else {
+                        sendMessage(userInput.value);
+                    }
+                }
+            });
+
+            sendBtn.addEventListener('click', () => {
+                if (isGenerating && currentAbortController) {
+                    currentAbortController.abort();
+                } else {
+                    sendMessage(userInput.value);
+                }
+            });
+
+            // Keyboard shortcut: Ctrl + / or Cmd + /
+            window.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === '/') {
+                    e.preventDefault();
+                    toggleModal();
+                } else if (e.key === 'Escape' && modal.classList.contains('open')) {
+                    closeModal();
+                }
+            });
+
+            // Initial render
+            updateUIForProvider(config.activeProvider);
+            renderMessages();
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initArchitectureAi);
+        } else {
+            initArchitectureAi();
+        }
     </script>
+
+    <!-- ═══════════════════════════ AI ARCHITECTURE TUTOR WIDGET ═══════════════════════════ -->
+    <button class="ai-floating-trigger" id="aiFloatingTrigger" aria-label="Open AI Architecture Tutor" title="Ask Architecture AI (Ctrl+/)">
+        <span class="ai-pulse"></span>
+        <span>🤖 Ask AI</span>
+        <span class="ai-badge">Ctrl+/</span>
+    </button>
+
+    <div class="ai-modal" id="aiModal" role="dialog" aria-modal="true" aria-labelledby="aiModalTitle">
+        <!-- Header -->
+        <div class="ai-header">
+            <div class="ai-header-brand">
+                <span class="ai-header-title" id="aiModalTitle">
+                    <span>🤖</span> Architecture AI
+                </span>
+                <span class="ai-model-pill" id="aiModelPill">
+                    <span class="status-dot"></span>
+                    <span id="aiActiveProviderText">Ollama</span>
+                </span>
+            </div>
+            <div class="ai-header-tools">
+                <button class="ai-tool-btn" id="aiToggleSettingsBtn" title="Model & API Settings" aria-label="Settings">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                </button>
+                <button class="ai-tool-btn" id="aiClearChatBtn" title="Clear Conversation" aria-label="Clear Chat">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                </button>
+                <button class="ai-tool-btn" id="aiExpandBtn" title="Expand / Restore Window" aria-label="Resize">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                </button>
+                <button class="ai-tool-btn" id="aiCloseBtn" title="Close (Esc)" aria-label="Close">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Collapsible Settings Panel -->
+        <div class="ai-settings" id="aiSettingsPanel">
+            <div class="ai-settings-tabs">
+                <button class="ai-tab-btn active" data-prov="ollama">🦙 Ollama</button>
+                <button class="ai-tab-btn" data-prov="groq">⚡ Groq</button>
+                <button class="ai-tab-btn" data-prov="deepseek">🧠 DeepSeek</button>
+                <button class="ai-tab-btn" data-prov="cloud">🌐 Cloud</button>
+            </div>
+
+            <div class="ai-form-group">
+                <label class="ai-form-label" for="aiEndpointInput">Endpoint URL</label>
+                <input type="text" class="ai-input" id="aiEndpointInput" placeholder="http://localhost:11434/v1/chat/completions">
+            </div>
+
+            <div class="ai-form-group">
+                <label class="ai-form-label" for="aiModelInput">Model Name</label>
+                <input type="text" class="ai-input" id="aiModelInput" placeholder="llama3.2">
+            </div>
+
+            <div class="ai-form-group" id="aiKeyGroup" style="display: none;">
+                <label class="ai-form-label" for="aiKeyInput">API Key (Stored locally in your browser)</label>
+                <div class="ai-key-wrapper">
+                    <input type="password" class="ai-input" id="aiKeyInput" placeholder="gsk_... or sk-...">
+                    <button type="button" class="ai-key-toggle" id="aiKeyToggle">Show</button>
+                </div>
+            </div>
+
+            <div class="ai-tip-box" id="aiProviderTip">
+                💡 <strong>Local Ollama</strong>: Runs completely offline on your machine. If connection is blocked by CORS from <code>file://</code>, start Ollama with <code>set OLLAMA_ORIGINS=* && ollama serve</code>.
+            </div>
+
+            <div class="ai-conn-status" id="aiConnStatus"></div>
+
+            <div class="ai-settings-actions">
+                <button class="ai-btn-sm ai-btn-primary" id="aiSaveSettingsBtn">Save & Apply</button>
+                <button class="ai-btn-sm ai-btn-secondary" id="aiTestConnBtn">Test Connection</button>
+            </div>
+        </div>
+
+        <!-- Quick Question Chips -->
+        <div class="ai-context-banner">
+            <span>Context: Playwright Architecture (Ch 230)</span>
+            <span id="aiActiveModelLabel">llama3.2</span>
+        </div>
+        <div class="ai-chips-scroll">
+            <button class="ai-chip-pill" data-prompt="Why is Playwright faster than Selenium? Explain the protocol differences.">⚡ Selenium vs PW</button>
+            <button class="ai-chip-pill" data-prompt="How does Playwright use WebSocket duplex framing to avoid HTTP latency?">🔌 WebSocket Duplex</button>
+            <button class="ai-chip-pill" data-prompt="Explain the difference and isolation between Browser, BrowserContext, and Page.">🌳 Context Isolation</button>
+            <button class="ai-chip-pill" data-prompt="What exact Actionability Checks run before Playwright clicks an element?">🎯 Actionability Checks</button>
+            <button class="ai-chip-pill" data-prompt="Explain Chrome DevTools Protocol (CDP) vs WebDriver BiDi.">📡 CDP vs BiDi</button>
+            <button class="ai-chip-pill" data-prompt="How does Playwright mock and intercept network requests without a proxy?">🌐 Network Mocking</button>
+        </div>
+
+        <!-- Chat Conversation Body -->
+        <div class="ai-chat-body" id="aiChatBody">
+            <div class="ai-message-row assistant">
+                <div class="ai-avatar">🎭</div>
+                <div class="ai-bubble">
+                    Hello! I'm your <strong>Playwright Architecture AI Tutor</strong>. As you explore this chapter, feel free to ask about any layer, protocol, WebSocket flow, or actionability detail. You can switch between <strong>Local Ollama</strong>, <strong>Groq</strong>, <strong>DeepSeek</strong>, or any <strong>Cloud</strong> model in Settings ⚙️.
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Box -->
+        <div class="ai-footer">
+            <div class="ai-input-row">
+                <textarea class="ai-textarea" id="aiUserInput" placeholder="Ask any question about Playwright architecture..." rows="1"></textarea>
+                <button class="ai-send-btn" id="aiSendBtn" aria-label="Send question" title="Send (Enter)">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                </button>
+            </div>
+            <div class="ai-input-hint">Enter to send • Shift+Enter for new line • Ctrl+/ to toggle</div>
+        </div>
+    </div>
 </body>
 </html>

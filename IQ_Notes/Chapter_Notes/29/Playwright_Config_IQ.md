@@ -1,6 +1,6 @@
-# 227 — Playwright Configuration & Multi-Browser Test Runner Setup
+# Playwright Configuration & Multi-Browser Test Runner Setup
 
-**File:** `29_Playwright/01_Playwright_Fundamentals/playwright.config.ts`
+**File:** `29_Playwright/playwright.config.ts`
 
 ## Overview
 This file explores the core runner configuration of Playwright Test via `defineConfig`. It specifies how tests are discovered (`testDir`), executed in parallel (`fullyParallel`, `workers`), retried under CI environments (`retries`, `forbidOnly`), reported (`reporter: 'html'`), debugged via traces and video recordings (`trace: 'on-first-retry'`, `video: 'retain-on-failure'`), and executed across multi-engine browser matrices (Chromium, Firefox, WebKit).
