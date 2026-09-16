@@ -116,7 +116,8 @@ page.getByTestId('custom-data-grid-row-1');
 ### 2.1 Essential Page Navigation & Interactions
 | Method | Description | Auto-Waits? |
 | :--- | :--- | :--- |
-| `page.goto(url, options)` | Navigates to target URL and waits for `'load'` by default. | Yes |
+| `page.goto(url, options)` | Navigates to target URL. Options: `waitUntil: 'domcontentloaded'|'load'|'networkidle'`, `timeout`, `referer`. | Yes |
+| `browser.newContext(options)` | Instantiates isolated incognito context. Supports `extraHTTPHeaders` (e.g. `Referer`), `viewport`, `locale`. | N/A (Setup) |
 | `locator.fill(value)` | Clears text and types new string into input or textarea. | Yes (visible, editable, enabled) |
 | `locator.click(options)` | Scrolls into view, waits for stability, and clicks center. | Yes (visible, stable, enabled) |
 | `locator.press(key)` | Dispatches real keyboard keydown, keypress, keyup events. | Yes |
@@ -307,5 +308,7 @@ Master the fundamentals, write resilient tests, and elevate your SDET engineerin
 - **[235 — Playwright Test Annotations: skip, fixme, only, and fail](./235_Test_Annotations_IQ.md)** — Declarative execution control, conditional skips, fixme bug tracking, and `forbidOnly` CI protection.
 - **[236 — Test Suite Architecture: test.describe Grouping & CLI Filtering](./236_Test_Describe_Grouping_IQ.md)** — Hierarchical describe blocks, scoped hooks, serial execution, and regex CLI filtering (`-g`).
 - **[237 — Locator Commands: Lazy Resolution, Multiple Element Filtering & Actionability](./237_Locator_Commands_IQ.md)** — Lazy resolution, strict mode enforcement, element filtering, and actionability checks.
+- **[238 — Context-Level HTTP Headers & Custom Referer Configuration](./238_Referrer_IQ.md)** — Context-wide `extraHTTPHeaders`, affiliate attribution tracking, and referer persistence across multiple page navigations.
+- **[239 — CSS Selector Strategies, Navigation Lifecycle & Form Authentication](./239_Fresh_IQ.md)** — Core CSS selectors, `page.goto` lifecycle options (`waitUntil: 'domcontentloaded'`), and negative login automation with web-first retrying assertions.
 - **[Playwright Configuration & Multi-Browser Test Runner Setup](./Playwright_Config_IQ.md)** — Centralized configuration, projects cascade, and parallel execution.
 - **[Playwright Architecture Deep Dive](./Playwright_Architecture_DeepDive_IQ.md)** — Complete protocol stack (TCP → WebSocket → CDP), Selenium vs Playwright architecture, Chromium vs Chrome, 6-layer deep insights, and BLAST framework.
