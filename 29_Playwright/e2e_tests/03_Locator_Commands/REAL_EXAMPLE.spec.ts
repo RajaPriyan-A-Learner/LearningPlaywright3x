@@ -1,7 +1,10 @@
 import {test,expect} from '@playwright/test';
 
+
+const baseURL="https://katalon-demo-cura.herokuapp.com/";
+
 test('Login to the herokuapp',async ({page})=>{
-    await page.goto("https://katalon-demo-cura.herokuapp.com/",{
+    await page.goto(baseURL,{
         waitUntil: "domcontentloaded"
     });
     await page.locator("#btn-make-appointment").click();
@@ -10,6 +13,7 @@ test('Login to the herokuapp',async ({page})=>{
     await page.locator('#txt-username').fill(username);
     await page.locator('#txt-password').fill(password);
     await page.locator('#btn-login').click();
+    await expect(page).toHaveURL(baseURL+"#appointment");
     const makeAppointmentHeader = page.locator('#appointment h2');
     await expect(makeAppointmentHeader).toHaveText("Make Appointment");
 });
