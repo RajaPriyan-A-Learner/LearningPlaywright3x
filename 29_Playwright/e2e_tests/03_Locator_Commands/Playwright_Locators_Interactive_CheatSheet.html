@@ -1,0 +1,1610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Playwright Locators & Architecture White Paper | Interactive Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-primary: #0a0d14;
+      --bg-secondary: #111622;
+      --bg-card: rgba(21, 28, 44, 0.7);
+      --bg-card-hover: rgba(28, 38, 60, 0.85);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-focus: #3b82f6;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      
+      --accent-blue: #3b82f6;
+      --accent-purple: #8b5cf6;
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --accent-cyan: #06b6d4;
+
+      --tier-s: #10b981;
+      --tier-a: #06b6d4;
+      --tier-b: #3b82f6;
+      --tier-c: #f59e0b;
+      --tier-d: #f43f5e;
+
+      --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --glass-blur: blur(14px);
+      --transition-fast: 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-smooth: 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #f8fafc;
+      --bg-secondary: #f1f5f9;
+      --bg-card: rgba(255, 255, 255, 0.85);
+      --bg-card-hover: #ffffff;
+      --border-color: rgba(0, 0, 0, 0.08);
+      --border-focus: #2563eb;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-dim: #94a3b8;
+      --glass-blur: blur(10px);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background-color var(--transition-smooth), color var(--transition-smooth);
+    }
+
+    /* Ambient Glow Backgrounds */
+    .ambient-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .glow-orb-1 {
+      position: absolute;
+      top: -10%;
+      left: 15%;
+      width: 650px;
+      height: 650px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+      filter: blur(80px);
+    }
+    .glow-orb-2 {
+      position: absolute;
+      top: 40%;
+      right: 5%;
+      width: 550px;
+      height: 550px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, rgba(0, 0, 0, 0) 70%);
+      filter: blur(90px);
+    }
+
+    /* Container */
+    .app-container {
+      position: relative;
+      z-index: 1;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 0 1.5rem 5rem 1.5rem;
+    }
+
+    /* Top Navigation */
+    .top-nav {
+      position: sticky;
+      top: 1rem;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      padding: 0.85rem 1.75rem;
+      background: var(--bg-card);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--border-color);
+      border-radius: 1rem;
+      margin-bottom: 2.5rem;
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.4);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 900;
+      box-shadow: 0 8px 16px -4px rgba(59, 130, 246, 0.5);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: color var(--transition-fast);
+      padding: 0.4rem 0.6rem;
+      border-radius: 0.5rem;
+    }
+
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .theme-toggle-btn {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 0.5rem 0.8rem;
+      border-radius: 0.6rem;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all var(--transition-fast);
+    }
+
+    .theme-toggle-btn:hover {
+      color: var(--text-main);
+      border-color: var(--text-dim);
+    }
+
+    /* Hero Header */
+    .hero-section {
+      text-align: center;
+      padding: 2.5rem 1rem 3.5rem 1rem;
+      max-width: 950px;
+      margin: 0 auto;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-radius: 9999px;
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      color: var(--accent-blue);
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-title {
+      font-size: clamp(2.2rem, 5vw, 3.4rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.25rem;
+      background: linear-gradient(135deg, #ffffff 30%, var(--text-muted) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    [data-theme="light"] .hero-title {
+      background: linear-gradient(135deg, #0f172a 30%, #475569 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .stats-grid {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .stat-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.65rem 1.25rem;
+      background: var(--bg-card);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--border-color);
+      border-radius: 0.75rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .stat-number {
+      color: var(--accent-cyan);
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+
+    /* Live Search & Filter Bar */
+    .search-filter-card {
+      background: var(--bg-card);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--border-color);
+      border-radius: 1.25rem;
+      padding: 1.5rem 2rem;
+      margin-bottom: 3rem;
+      box-shadow: 0 15px 35px -10px rgba(0,0,0,0.3);
+    }
+
+    .search-input-wrapper {
+      position: relative;
+      margin-bottom: 1.25rem;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 1.25rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+      font-size: 1.2rem;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 1rem 1.25rem 1rem 3.25rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 0.85rem;
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all var(--transition-fast);
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+    }
+
+    .filter-chips {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .filter-chip-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-right: 0.5rem;
+      letter-spacing: 0.05em;
+    }
+
+    .filter-chip {
+      padding: 0.4rem 0.95rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 9999px;
+      font-size: 0.825rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .filter-chip:hover {
+      color: var(--text-main);
+      border-color: var(--text-dim);
+    }
+
+    .filter-chip.active {
+      background: rgba(59, 130, 246, 0.2);
+      border-color: var(--accent-blue);
+      color: var(--text-main);
+    }
+
+    /* Section Cards */
+    .content-section {
+      margin-bottom: 4rem;
+      scroll-margin-top: 6rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .section-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.25rem 0.7rem;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.07);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+    }
+
+    /* Live 4-Way Interactive Showdown Studio */
+    .studio-card {
+      background: var(--bg-card);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--border-color);
+      border-radius: 1.25rem;
+      overflow: hidden;
+      margin-bottom: 3.5rem;
+      box-shadow: 0 20px 45px -15px rgba(0,0,0,0.4);
+    }
+
+    .studio-header {
+      padding: 1.5rem 2rem;
+      background: rgba(0, 0, 0, 0.2);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .studio-scenario-select {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.65rem 1.25rem;
+      border-radius: 0.75rem;
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .studio-scenario-select:focus {
+      border-color: var(--accent-blue);
+    }
+
+    .studio-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+      padding: 2rem;
+    }
+
+    .studio-box {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: transform var(--transition-fast), border-color var(--transition-fast);
+    }
+
+    .studio-box:hover {
+      transform: translateY(-3px);
+      border-color: var(--text-dim);
+    }
+
+    .studio-box.recommended {
+      border-color: rgba(16, 185, 129, 0.5);
+      background: linear-gradient(180deg, rgba(16, 185, 129, 0.08) 0%, var(--bg-secondary) 100%);
+    }
+
+    .studio-box-badge {
+      align-self: flex-start;
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.3rem 0.75rem;
+      border-radius: 9999px;
+      margin-bottom: 1rem;
+    }
+
+    .badge-s { background: rgba(16, 185, 129, 0.15); color: var(--tier-s); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-b { background: rgba(59, 130, 246, 0.15); color: var(--tier-b); border: 1px solid rgba(59, 130, 246, 0.3); }
+    .badge-c { background: rgba(245, 158, 11, 0.15); color: var(--tier-c); border: 1px solid rgba(245, 158, 11, 0.3); }
+    .badge-d { background: rgba(244, 63, 94, 0.15); color: var(--tier-d); border: 1px solid rgba(244, 63, 94, 0.3); }
+
+    .studio-box-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .code-preview-box {
+      position: relative;
+      background: #06090e;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 0.65rem;
+      padding: 1rem;
+      margin: 1rem 0;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: #38bdf8;
+      word-break: break-all;
+      flex-grow: 1;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: rgba(255, 255, 255, 0.08);
+      border: none;
+      color: var(--text-muted);
+      padding: 0.3rem 0.6rem;
+      border-radius: 0.4rem;
+      font-size: 0.75rem;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      font-weight: 600;
+      transition: all var(--transition-fast);
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+    }
+
+    .studio-box-verdict {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Comparison Table */
+    .table-container {
+      background: var(--bg-card);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--border-color);
+      border-radius: 1.25rem;
+      overflow-x: auto;
+      margin-bottom: 3.5rem;
+      box-shadow: 0 15px 35px -10px rgba(0,0,0,0.3);
+    }
+
+    .rosetta-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    .rosetta-table th {
+      background: rgba(0, 0, 0, 0.25);
+      color: var(--text-dim);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+      padding: 1.15rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .rosetta-table td {
+      padding: 1.15rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: middle;
+    }
+
+    .rosetta-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .code-cell {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      background: rgba(0, 0, 0, 0.15);
+      padding: 0.45rem 0.75rem;
+      border-radius: 0.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .code-cell.xpath { color: #f43f5e; }
+    .code-cell.css { color: #60a5fa; }
+    .code-cell.pw { color: #34d399; font-weight: 600; }
+
+    /* Interactive Actionability Simulator */
+    .simulator-card {
+      background: var(--bg-card);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--border-color);
+      border-radius: 1.25rem;
+      padding: 2.25rem;
+      margin-bottom: 3.5rem;
+    }
+
+    .sim-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.25rem;
+      margin: 1.75rem 0;
+    }
+
+    .sim-step {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 0.85rem;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 0.75rem;
+      transition: all var(--transition-fast);
+    }
+
+    .sim-step.active {
+      border-color: var(--accent-emerald);
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .sim-indicator {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: var(--text-dim);
+      transition: all var(--transition-fast);
+    }
+
+    .sim-step.active .sim-indicator {
+      background: var(--accent-emerald);
+      color: #fff;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+    }
+
+    .sim-btn-trigger {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      color: #fff;
+      border: none;
+      padding: 0.85rem 1.75rem;
+      border-radius: 0.75rem;
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.5);
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .sim-btn-trigger:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 25px -5px rgba(59, 130, 246, 0.6);
+    }
+
+    /* Research White Paper Architecture Visualizer */
+    .paper-card {
+      background: var(--bg-card);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--border-color);
+      border-radius: 1.25rem;
+      padding: 2.5rem;
+      margin-bottom: 3.5rem;
+      line-height: 1.7;
+    }
+
+    .paper-card h3 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      margin: 1.75rem 0 0.75rem 0;
+      color: var(--text-main);
+    }
+
+    .paper-card p {
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+    }
+
+    .arch-flow-diagram {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .arch-track {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .arch-track-header {
+      font-weight: 800;
+      font-size: 1.05rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .arch-step-box {
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px dashed var(--border-color);
+      border-radius: 0.6rem;
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .arch-step-box.highlight {
+      border: 1px solid var(--accent-emerald);
+      background: rgba(16, 185, 129, 0.1);
+      color: #34d399;
+      font-weight: 600;
+    }
+
+    /* Tab Nav for Catalogue */
+    .tab-nav {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 2rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      font-weight: 700;
+      padding: 0.75rem 1.25rem;
+      border-radius: 0.6rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all var(--transition-fast);
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .tab-btn.active {
+      color: var(--text-main);
+      background: var(--bg-card);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      border: 1px solid var(--border-color);
+    }
+
+    .tab-pane {
+      display: none;
+    }
+
+    .tab-pane.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 900px) {
+      .top-nav {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .nav-links {
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .hero-title {
+        font-size: 2.2rem;
+      }
+      .studio-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #10b981;
+      color: #ffffff;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.75rem;
+      font-weight: 700;
+      font-size: 0.9rem;
+      box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.5);
+      z-index: 1000;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Glow -->
+  <div class="ambient-bg">
+    <div class="glow-orb-1"></div>
+    <div class="glow-orb-2"></div>
+  </div>
+
+  <div class="app-container">
+    
+    <!-- Top Navigation Bar -->
+    <nav class="top-nav">
+      <a href="#" class="nav-brand">
+        <div class="brand-icon">🎭</div>
+        <span>Playwright Locator Hub</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#showdown">Showdown</a></li>
+        <li><a href="#rosetta">Conversion Matrix</a></li>
+        <li><a href="#catalogues">Locator Catalogues</a></li>
+        <li><a href="#actionability">Actionability</a></li>
+        <li><a href="#whitepaper">Research White Paper</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button id="themeToggle" class="theme-toggle-btn">
+          <span id="themeIcon">☀️</span>
+          <span id="themeLabel">Light Mode</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Hero Header -->
+    <header class="hero-section">
+      <div class="badge-pill">
+        <span>⚡</span> Enterprise Test Engineering 2026
+      </div>
+      <h1 class="hero-title">Mastering Playwright Locators & Architectural Resilience</h1>
+      <p class="hero-subtitle">
+        A deep-dive research hub comparing <strong>XPath</strong>, <strong>CSS Selectors</strong>, and <strong>Playwright ARIA Built-ins</strong>. Understand why Accessibility-first locators eliminate 90% of test flakiness.
+      </p>
+
+      <div class="stats-grid">
+        <div class="stat-badge"><span class="stat-number">13</span> XPath Navigational Axes</div>
+        <div class="stat-badge"><span class="stat-number">20+</span> CSS Pseudo-classes & Selectors</div>
+        <div class="stat-badge"><span class="stat-number">7</span> Semantic ARIA Built-ins</div>
+        <div class="stat-badge"><span class="stat-number">6-Point</span> Auto-Waiting Checklist</div>
+      </div>
+    </header>
+
+    <!-- Live Search & Filter -->
+    <div class="search-filter-card">
+      <div class="search-input-wrapper">
+        <span class="search-icon">🔍</span>
+        <input 
+          type="text" 
+          id="globalSearchInput" 
+          class="search-input" 
+          placeholder="Search any locator, attribute, axis or Playwright method (e.g. getByRole, following-sibling, :has, text)..." 
+        />
+      </div>
+      <div class="filter-chips">
+        <span class="filter-chip-label">Quick Filter:</span>
+        <button class="filter-chip active" data-filter="all">All</button>
+        <button class="filter-chip" data-filter="pw">Playwright Built-in</button>
+        <button class="filter-chip" data-filter="css">CSS Selectors</button>
+        <button class="filter-chip" data-filter="xpath">XPath</button>
+        <button class="filter-chip" data-filter="special">Special / Shadow DOM</button>
+      </div>
+    </div>
+
+    <!-- 1. Interactive 4-Way Showdown Studio -->
+    <section id="showdown" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span>🥊</span> Live 4-Way Locator Showdown
+        </h2>
+        <span class="section-badge">Side-by-Side Architectural Evaluation</span>
+      </div>
+
+      <div class="studio-card">
+        <div class="studio-header">
+          <div>
+            <strong>Select Test Flow Scenario:</strong>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.2rem;">Watch how the exact same element resolves across all 4 strategies.</p>
+          </div>
+          <select id="scenarioSelector" class="studio-scenario-select">
+            <option value="wingify_email">Wingify Login: Email Input Box (app.wingify.com)</option>
+            <option value="wingify_password">Wingify Login: Password Box</option>
+            <option value="cura_appointment">Katalon CURA: 'Make Appointment' Button/Link</option>
+            <option value="table_user_delete">Data Table: Delete Button for User 'admin@vwo.com'</option>
+            <option value="shadow_dom_toggle">Web Component: Toggle Switch inside Shadow DOM</option>
+          </select>
+        </div>
+
+        <div class="studio-grid" id="studioGrid">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Universal Conversion Matrix (Rosetta Stone) -->
+    <section id="rosetta" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span>🗺️</span> The Universal Conversion Matrix (Rosetta Stone)
+        </h2>
+        <span class="section-badge">12 Everyday Patterns Translated</span>
+      </div>
+
+      <div class="table-container">
+        <table class="rosetta-table">
+          <thead>
+            <tr>
+              <th style="width: 20%;">Target Requirement</th>
+              <th style="width: 26%;">XPath (XML Tree)</th>
+              <th style="width: 26%;">CSS Selector (Style Engine)</th>
+              <th style="width: 28%;">Playwright Native (ARIA / Resilient)</th>
+            </tr>
+          </thead>
+          <tbody id="rosettaTableBody">
+            <!-- Populated via JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 3. Locator Catalogues with Tabs -->
+    <section id="catalogues" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span>📚</span> Exhaustive Locator Catalogues
+        </h2>
+        <span class="section-badge">Deep-Dive Syntax Reference</span>
+      </div>
+
+      <!-- Tab Navigation -->
+      <div class="tab-nav">
+        <button class="tab-btn active" data-tab="tab-pw">🎭 Playwright Built-in (Tier S)</button>
+        <button class="tab-btn" data-tab="tab-css">🎨 CSS Selectors (Tier B)</button>
+        <button class="tab-btn" data-tab="tab-xpath">📐 XPath & 13 Axes (Tier D)</button>
+        <button class="tab-btn" data-tab="tab-special">🔮 Supercharged & Shadow DOM</button>
+      </div>
+
+      <!-- Tab 1: Playwright Built-in -->
+      <div id="tab-pw" class="tab-pane active">
+        <div class="studio-grid" style="padding: 0;">
+          <div class="studio-box recommended">
+            <span class="studio-box-badge badge-s">Accessibility First</span>
+            <h4 class="studio-box-title"><code>page.getByRole(role, options)</code></h4>
+            <p class="studio-box-verdict">Queries the browser's computed ARIA accessibility tree. The gold standard for resilient automation.</p>
+            <div class="code-preview-box">
+              <code>await page.getByRole('textbox', { name: 'Email', exact: true }).fill('admin@vwo.com');</code>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+            </div>
+            <small style="color: var(--text-dim);">Roles: button, link, textbox, checkbox, heading, dialog, alert, tab, combobox</small>
+          </div>
+
+          <div class="studio-box recommended">
+            <span class="studio-box-badge badge-s">Form Association</span>
+            <h4 class="studio-box-title"><code>page.getByLabel(text, options)</code></h4>
+            <p class="studio-box-verdict">Locates form controls via <code>&lt;label for&gt;</code>, <code>aria-label</code>, or <code>aria-labelledby</code>.</p>
+            <div class="code-preview-box">
+              <code>await page.getByLabel('Password', { exact: true }).fill('secret123');</code>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+            </div>
+            <small style="color: var(--text-dim);">Matches accessible label bindings directly.</small>
+          </div>
+
+          <div class="studio-box recommended">
+            <span class="studio-box-badge badge-s">Testing Contract</span>
+            <h4 class="studio-box-title"><code>page.getByTestId(testId)</code></h4>
+            <p class="studio-box-verdict">Explicit contract between Dev and QA. Immune to all HTML and CSS restyling.</p>
+            <div class="code-preview-box">
+              <code>await page.getByTestId('submit-order-button').click();</code>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+            </div>
+            <small style="color: var(--text-dim);">Configurable attribute in playwright.config.ts (default: data-testid)</small>
+          </div>
+
+          <div class="studio-box">
+            <span class="studio-box-badge badge-b">Sub-Tree Filtering</span>
+            <h4 class="studio-box-title"><code>.filter({ has, hasText })</code></h4>
+            <p class="studio-box-verdict">Filters existing locators by nested child elements or text without string concatenation.</p>
+            <div class="code-preview-box">
+              <code>const userRow = page.getByRole('row').filter({ has: page.getByText('admin@vwo.com') });<br>await userRow.getByRole('button', { name: 'Delete' }).click();</code>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: CSS Selectors -->
+      <div id="tab-css" class="tab-pane">
+        <div class="studio-grid" style="padding: 0;">
+          <div class="studio-box">
+            <span class="studio-box-badge badge-b">Combinators & Hierarchy</span>
+            <h4 class="studio-box-title">Descendant, Child & Siblings</h4>
+            <div class="code-preview-box">
+              <code>div.container > ul.menu > li.active + li</code>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+            </div>
+            <p class="studio-box-verdict">Evaluated right-to-left by browser CSS engine with C++ hardware acceleration.</p>
+          </div>
+
+          <div class="studio-box">
+            <span class="studio-box-badge badge-b">Modern CSS Relational</span>
+            <h4 class="studio-box-title"><code>:has()</code> (Parent Selector)</h4>
+            <div class="code-preview-box">
+              <code>article.card:has(h3.badge-pro) button.cta</code>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+            </div>
+            <p class="studio-box-verdict">Allows targeting parents based on descendants natively in CSS4.</p>
+          </div>
+
+          <div class="studio-box">
+            <span class="studio-box-badge badge-b">Substring Attribute Matching</span>
+            <h4 class="studio-box-title"><code>^=</code>, <code>$=</code>, <code>*=</code></h4>
+            <div class="code-preview-box">
+              <code>input[id^="usr_"][name$="_email"][class*="required" i]</code>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+            </div>
+            <p class="studio-box-verdict">Supports starts-with, ends-with, contains, and case-insensitive flags.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 3: XPath & 13 Axes -->
+      <div id="tab-xpath" class="tab-pane">
+        <div class="studio-grid" style="padding: 0;">
+          <div class="studio-box">
+            <span class="studio-box-badge badge-d">Bidirectional Axes</span>
+            <h4 class="studio-box-title">The 13 XPath Axes</h4>
+            <div class="code-preview-box">
+              <code>//input/following-sibling::span<br>//table/descendant::td[1]<br>//input/ancestor::form</code>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+            </div>
+            <p class="studio-box-verdict">Axes: parent, child, ancestor, descendant, following, preceding, following-sibling, preceding-sibling, self, ancestor-or-self, descendant-or-self, attribute, namespace.</p>
+          </div>
+
+          <div class="studio-box">
+            <span class="studio-box-badge badge-d">Built-in Functions</span>
+            <h4 class="studio-box-title">String & Normalization</h4>
+            <div class="code-preview-box">
+              <code>//button[normalize-space(text())='Sign In']<br>//div[contains(@class, 'error') and not(@hidden)]</code>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+            </div>
+            <p class="studio-box-verdict">XPath is 1-indexed. Bypasses browser layout engines; slow on large DOMs.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 4: Special Locators -->
+      <div id="tab-special" class="tab-pane">
+        <div class="studio-grid" style="padding: 0;">
+          <div class="studio-box recommended">
+            <span class="studio-box-badge badge-s">Automatic Piercing</span>
+            <h4 class="studio-box-title">Shadow DOM Support</h4>
+            <p class="studio-box-verdict">Playwright automatically pierces open Shadow DOM boundaries without manual <code>getShadowRoot()</code>.</p>
+            <div class="code-preview-box">
+              <code>await page.locator('settings-page').getByRole('button', { name: 'Save' }).click();</code>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+            </div>
+          </div>
+
+          <div class="studio-box">
+            <span class="studio-box-badge badge-b">Layout Proximity</span>
+            <h4 class="studio-box-title">Visual Layout Math</h4>
+            <p class="studio-box-verdict">Find elements based on physical pixel relationships on the screen.</p>
+            <div class="code-preview-box">
+              <code>page.locator('input').filter({ has: page.locator(':right-of(label:text("Age"))') })</code>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+            </div>
+            <small style="color: var(--text-dim);">:left-of, :right-of, :above, :below, :near</small>
+          </div>
+
+          <div class="studio-box">
+            <span class="studio-box-badge badge-b">Frame Isolation</span>
+            <h4 class="studio-box-title"><code>page.frameLocator()</code></h4>
+            <p class="studio-box-verdict">Seamless iframe automation without tedious context switching.</p>
+            <div class="code-preview-box">
+              <code>await page.frameLocator('#stripe-frame').getByRole('textbox', { name: 'Card' }).fill('4242');</code>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Playwright 6-Point Actionability Simulator -->
+    <section id="actionability" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span>🛡️</span> Playwright 6-Point Actionability Simulator
+        </h2>
+        <span class="section-badge">Zero Flakiness Engine</span>
+      </div>
+
+      <div class="simulator-card">
+        <h3>How Playwright Guarantees Resilience Before Every Action</h3>
+        <p style="color: var(--text-muted); margin-top: 0.5rem;">
+          In Selenium or Cypress, clicking an element that is animating or covered throws an error. Playwright automatically verifies these 6 conditions before dispatching the event:
+        </p>
+
+        <div class="sim-grid">
+          <div class="sim-step" id="stepAttached">
+            <div class="sim-indicator">1</div>
+            <strong>Attached</strong>
+            <small style="color: var(--text-dim);">In DOM / Shadow DOM</small>
+          </div>
+
+          <div class="sim-step" id="stepVisible">
+            <div class="sim-indicator">2</div>
+            <strong>Visible</strong>
+            <small style="color: var(--text-dim);">Non-empty bounding box</small>
+          </div>
+
+          <div class="sim-step" id="stepStable">
+            <div class="sim-indicator">3</div>
+            <strong>Stable</strong>
+            <small style="color: var(--text-dim);">CSS transitions settled</small>
+          </div>
+
+          <div class="sim-step" id="stepEvents">
+            <div class="sim-indicator">4</div>
+            <strong>Receives Events</strong>
+            <small style="color: var(--text-dim);">No overlays/spinners</small>
+          </div>
+
+          <div class="sim-step" id="stepEnabled">
+            <div class="sim-indicator">5</div>
+            <strong>Enabled</strong>
+            <small style="color: var(--text-dim);">Not disabled</small>
+          </div>
+
+          <div class="sim-step" id="stepEditable">
+            <div class="sim-indicator">6</div>
+            <strong>Editable</strong>
+            <small style="color: var(--text-dim);">Not readonly</small>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+          <button id="simRunBtn" class="sim-btn-trigger">
+            <span>▶️</span> Run Auto-Wait Simulation
+          </button>
+          <span id="simStatusText" style="font-weight: 700; color: var(--text-muted);">Status: Ready to simulate click()</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Research White Paper on Locator Engines -->
+    <section id="whitepaper" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span>🔬</span> Research White Paper: Architectural Deep-Dive
+        </h2>
+        <span class="section-badge">Theoretical Foundations & Computation</span>
+      </div>
+
+      <div class="paper-card">
+        <h3>Abstract</h3>
+        <p>
+          End-to-end web testing has transitioned through three generations: from XML tree traversal (XPath) to style-based parsing (CSS Selectors), and ultimately to assistive accessibility modeling (Playwright ARIA Trees). This paper analyses the computational mechanics and resilience equations of each paradigm.
+        </p>
+
+        <!-- Visual Architecture Flow -->
+        <div class="arch-flow-diagram">
+          <div class="arch-track">
+            <div class="arch-track-header" style="color: #f43f5e;">
+              <span>1️⃣</span> XPath Query Engine
+            </div>
+            <div class="arch-step-box">HTML Document String</div>
+            <div class="arch-step-box">XPath Lexer & Parser (AST)</div>
+            <div class="arch-step-box">XML DOM Level 3 Node Traversal</div>
+            <div class="arch-step-box" style="color: #f43f5e; border-color: rgba(244, 63, 94, 0.4);">
+              ⚠️ Blind to CSS & Screen Visibility
+            </div>
+          </div>
+
+          <div class="arch-track">
+            <div class="arch-track-header" style="color: #60a5fa;">
+              <span>2️⃣</span> CSS Style Recalculation Engine
+            </div>
+            <div class="arch-step-box">DOM Tree Nodes</div>
+            <div class="arch-step-box">Right-to-Left Evaluator (Key Selector)</div>
+            <div class="arch-step-box">Bloom Filter & Style Map Hash</div>
+            <div class="arch-step-box" style="color: #60a5fa; border-color: rgba(96, 165, 250, 0.4);">
+              ⚠️ Coupled to Class Names & Styling
+            </div>
+          </div>
+
+          <div class="arch-track" style="border-color: rgba(16, 185, 129, 0.4);">
+            <div class="arch-track-header" style="color: #34d399;">
+              <span>3️⃣</span> Playwright ARIA Engine
+            </div>
+            <div class="arch-step-box">Live Render Tree & Pixel Geometry</div>
+            <div class="arch-step-box">W3C Computed Accessible Name Algorithm</div>
+            <div class="arch-step-box highlight">Accessibility Tree (ARIA Model)</div>
+            <div class="arch-step-box highlight">
+              🏆 Exact Human Perception Match
+            </div>
+          </div>
+        </div>
+
+        <h3>The Mechanics of Computed Accessible Name</h3>
+        <p>
+          When Playwright runs <code>page.getByRole('button', { name: 'Submit' })</code>, it does <em>not</em> conduct a simplistic string search. It invokes the browser's native accessibility calculation:
+        </p>
+        <ol style="margin-left: 1.5rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+          <li>Inspects <code>aria-labelledby</code> ID references.</li>
+          <li>Evaluates explicit <code>aria-label</code> strings.</li>
+          <li>Reads host language bindings (such as <code>&lt;label for="id"&gt;</code> or form control placeholder).</li>
+          <li>Recursively computes visible text nodes within the element's subtree.</li>
+          <li>Falls back to title or alt attribute values.</li>
+        </ol>
+
+        <h3>Why Playwright Locators Never Go "Stale"</h3>
+        <p>
+          In legacy frameworks (Selenium), an element lookup returns a static remote reference pointer. When a modern framework (React, Vue, Svelte) modifies state and re-renders the component, that pointer points to a detached node, throwing the dreaded <code>StaleElementReferenceException</code>.
+        </p>
+        <p>
+          Playwright locators are <strong>lazy recipes</strong>. They do not store pointers in memory; they re-evaluate the locator recipe at the exact microsecond an interaction is dispatched. Re-renders are absorbed seamlessly without test failures.
+        </p>
+
+        <h3>Conclusion: The Hierarchy of Locator Reliability</h3>
+        <p>
+          Testing against the accessibility tree ensures that tests only fail when a feature is truly broken for end users. If an engineer refactors CSS classes from BEM to Tailwind, or swaps a native <code>&lt;button&gt;</code> for a custom accessible component, Playwright tests continue to pass with zero modifications.
+        </p>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast">Code copied to clipboard!</div>
+
+  <script>
+    // --- Scenarios Data for 4-Way Showdown ---
+    const scenarios = {
+      wingify_email: {
+        title: "Wingify Login: Email Input Box",
+        url: "https://app.wingify.com/#/login",
+        pw: "page.getByRole('textbox', { name: 'Email', exact: true })",
+        css: "page.locator('input#login-username[type=\"email\"]')",
+        xpath: "page.locator('//input[@id=\"login-username\"]')",
+        normal: "page.locator('#login-username')",
+        pwVerdict: "🏆 Gold Standard. ARIA-backed, resilient against class & layout refactors.",
+        cssVerdict: "🥈 Good, but tightly coupled to HTML element tag and ID.",
+        xpathVerdict: "🚩 Fragile XML traversal, verbose syntax.",
+        normalVerdict: "⚠️ Mediocre. Brittle if IDs are dynamically generated."
+      },
+      wingify_password: {
+        title: "Wingify Login: Password Box",
+        url: "https://app.wingify.com/#/login",
+        pw: "page.getByRole('textbox', { name: 'Password' })",
+        css: "page.locator('input#login-password[type=\"password\"]')",
+        xpath: "page.locator('//input[@id=\"login-password\"]')",
+        normal: "page.locator('input[name=\"password\"]')",
+        pwVerdict: "🏆 Targets accessible role and label directly.",
+        cssVerdict: "🥈 Fast, but fails if input type or ID changes.",
+        xpathVerdict: "🚩 Overly verbose; bypasses fast-paths.",
+        normalVerdict: "⚠️ Breaks easily if attribute name updates."
+      },
+      cura_appointment: {
+        title: "Katalon CURA: 'Make Appointment' Button/Link",
+        url: "https://katalon-demo-cura.herokuapp.com/",
+        pw: "page.getByRole('link', { name: 'Make Appointment', exact: true })",
+        css: "page.locator('a#btn-make-appointment')",
+        xpath: "page.locator('//a[@id=\"btn-make-appointment\" and text()=\"Make Appointment\"]')",
+        normal: "page.locator('text=\"Make Appointment\"')",
+        pwVerdict: "🏆 Matches how sighted & assistive users find the link.",
+        cssVerdict: "🥈 Dependent on anchor tag and ID.",
+        xpathVerdict: "🚩 Redundant condition chaining in XPath.",
+        normalVerdict: "⚠️ Text selector is sensitive to case and copy changes."
+      },
+      table_user_delete: {
+        title: "Data Table: Delete Row for User 'admin@vwo.com'",
+        url: "Enterprise Dashboard Table",
+        pw: "page.getByRole('row').filter({ has: page.getByText('admin@vwo.com') }).getByRole('button', { name: 'Delete' })",
+        css: "page.locator('tr:has(td:has-text(\"admin@vwo.com\")) button.btn-delete')",
+        xpath: "page.locator('//tr[td[contains(text(), \"admin@vwo.com\")]]//button[@aria-label=\"Delete\"]')",
+        normal: "page.locator('text=admin@vwo.com >> xpath=../.. >> button')",
+        pwVerdict: "🏆 Elegant sub-tree filtering without messy string concatenation.",
+        cssVerdict: "🥈 Requires modern CSS :has() support, syntax is hard to parse.",
+        xpathVerdict: "🚩 Complex multi-axis XPath query, breaks easily.",
+        normalVerdict: "🚩 Anti-pattern: mixing text shortcuts with raw xpath steps."
+      },
+      shadow_dom_toggle: {
+        title: "Web Component: Toggle Switch inside Shadow DOM",
+        url: "Settings UI Component",
+        pw: "page.locator('settings-card').getByRole('switch', { name: 'Dark Mode' })",
+        css: "page.locator('settings-card >>> input[type=\"checkbox\"]')",
+        xpath: "/* XPath CANNOT pierce Shadow DOM directly! */",
+        normal: "page.locator('settings-card >> text=Dark Mode')",
+        pwVerdict: "🏆 Auto-pierces open Shadow DOM seamlessly out of the box.",
+        cssVerdict: "🥈 Requires specialized combinator syntax.",
+        xpathVerdict: "🚩 Complete failure: XPath engine cannot traverse shadow roots.",
+        normalVerdict: "⚠️ Does not target the actual toggle interaction."
+      }
+    };
+
+    // --- Rosetta Stone Data ---
+    const rosettaData = [
+      {
+        req: "Locate by ID",
+        xpath: '//*[@id="login-btn"]',
+        css: "#login-btn",
+        pw: "page.getByTestId(...) or page.locator('#login-btn')"
+      },
+      {
+        req: "Locate by Class",
+        xpath: '//*[contains(@class, "active")]',
+        css: ".active",
+        pw: "page.locator('.active')"
+      },
+      {
+        req: "Tag + Attribute",
+        xpath: '//button[@type="submit"]',
+        css: 'button[type="submit"]',
+        pw: "page.getByRole('button', { name: 'Submit' })"
+      },
+      {
+        req: "Attribute Starts-With",
+        xpath: '//input[starts-with(@id, "usr_")]',
+        css: 'input[id^="usr_"]',
+        pw: "page.locator('input[id^=\"usr_\"]')"
+      },
+      {
+        req: "Attribute Ends-With",
+        xpath: '//img[ends-with(@src, ".png")]',
+        css: 'img[src$=".png"]',
+        pw: "page.locator('img[src$=\".png\"]')"
+      },
+      {
+        req: "Attribute Contains",
+        xpath: '//div[contains(@class, "card")]',
+        css: 'div[class*="card"]',
+        pw: "page.locator('div[class*=\"card\"]')"
+      },
+      {
+        req: "Exact Visible Text",
+        xpath: '//*[text()="Save Changes"]',
+        css: '/* Not native in CSS */',
+        pw: "page.getByText('Save Changes', { exact: true })"
+      },
+      {
+        req: "Direct Child",
+        xpath: '//ul/li',
+        css: "ul > li",
+        pw: "page.locator('ul > li')"
+      },
+      {
+        req: "Any Descendant",
+        xpath: '//form//button',
+        css: "form button",
+        pw: "page.locator('form').getByRole('button')"
+      },
+      {
+        req: "Next Immediate Sibling",
+        xpath: '//label/following-sibling::input[1]',
+        css: "label + input",
+        pw: "page.locator('label + input')"
+      },
+      {
+        req: "Parent / Ancestor",
+        xpath: '//input/ancestor::form',
+        css: "form:has(input)",
+        pw: "page.locator('form').filter({ has: page.locator('input') })"
+      },
+      {
+        req: "N-th Element",
+        xpath: '(//button)[2]',
+        css: "button:nth-of-type(2)",
+        pw: "page.getByRole('button').nth(1)"
+      }
+    ];
+
+    // Render Studio Showdown
+    function renderStudio(key) {
+      const s = scenarios[key];
+      const grid = document.getElementById("studioGrid");
+      grid.innerHTML = `
+        <div class="studio-box recommended">
+          <span class="studio-box-badge badge-s">🏆 Playwright Built-in (Tier S)</span>
+          <h4 class="studio-box-title">Accessible ARIA Strategy</h4>
+          <div class="code-preview-box">
+            <code>${escapeHtml(s.pw)}</code>
+            <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+          </div>
+          <p class="studio-box-verdict">${s.pwVerdict}</p>
+        </div>
+
+        <div class="studio-box">
+          <span class="studio-box-badge badge-b">🥈 CSS Selector (Tier B)</span>
+          <h4 class="studio-box-title">Style Engine Strategy</h4>
+          <div class="code-preview-box">
+            <code>${escapeHtml(s.css)}</code>
+            <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+          </div>
+          <p class="studio-box-verdict">${s.cssVerdict}</p>
+        </div>
+
+        <div class="studio-box">
+          <span class="studio-box-badge badge-d">🚩 XPath (Tier D)</span>
+          <h4 class="studio-box-title">XML Path Strategy</h4>
+          <div class="code-preview-box">
+            <code>${escapeHtml(s.xpath)}</code>
+            <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+          </div>
+          <p class="studio-box-verdict">${s.xpathVerdict}</p>
+        </div>
+
+        <div class="studio-box">
+          <span class="studio-box-badge badge-c">⚠️ Normal / Text (Tier C)</span>
+          <h4 class="studio-box-title">String Shortcut Strategy</h4>
+          <div class="code-preview-box">
+            <code>${escapeHtml(s.normal)}</code>
+            <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+          </div>
+          <p class="studio-box-verdict">${s.normalVerdict}</p>
+        </div>
+      `;
+    }
+
+    // Render Rosetta Table
+    function renderRosettaTable(data) {
+      const tbody = document.getElementById("rosettaTableBody");
+      tbody.innerHTML = data.map(item => `
+        <tr>
+          <td><strong>${item.req}</strong></td>
+          <td>
+            <div class="code-cell xpath">
+              <span>${escapeHtml(item.xpath)}</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+            </div>
+          </td>
+          <td>
+            <div class="code-cell css">
+              <span>${escapeHtml(item.css)}</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+            </div>
+          </td>
+          <td>
+            <div class="code-cell pw">
+              <span>${escapeHtml(item.pw)}</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy</button>
+            </div>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    // Copy to Clipboard
+    window.copySnippet = function(button) {
+      const code = button.previousElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        showToast("Copied to clipboard!");
+        button.innerText = "Copied!";
+        setTimeout(() => button.innerText = "Copy", 1800);
+      });
+    };
+
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      toast.innerText = msg;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 2200);
+    }
+
+    // Search and Filter Handling
+    document.getElementById("globalSearchInput").addEventListener("input", function(e) {
+      const query = e.target.value.toLowerCase().trim();
+      filterRosetta(query);
+    });
+
+    function filterRosetta(query) {
+      if (!query) {
+        renderRosettaTable(rosettaData);
+        return;
+      }
+      const filtered = rosettaData.filter(item => 
+        item.req.toLowerCase().includes(query) ||
+        item.xpath.toLowerCase().includes(query) ||
+        item.css.toLowerCase().includes(query) ||
+        item.pw.toLowerCase().includes(query)
+      );
+      renderRosettaTable(filtered);
+    }
+
+    // Filter Chips
+    document.querySelectorAll(".filter-chip").forEach(chip => {
+      chip.addEventListener("click", () => {
+        document.querySelectorAll(".filter-chip").forEach(c => c.classList.remove("active"));
+        chip.classList.add("active");
+        const filter = chip.getAttribute("data-filter");
+        if (filter === "all") {
+          renderRosettaTable(rosettaData);
+        } else if (filter === "pw") {
+          filterRosetta("page.");
+        } else if (filter === "css") {
+          filterRosetta("css");
+        } else if (filter === "xpath") {
+          filterRosetta("//");
+        } else if (filter === "special") {
+          filterRosetta("shadow");
+        }
+      });
+    });
+
+    // Scenario Select
+    document.getElementById("scenarioSelector").addEventListener("change", (e) => {
+      renderStudio(e.target.value);
+    });
+
+    // Tab Navigation
+    document.querySelectorAll(".tab-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+        document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
+        btn.classList.add("active");
+        const targetId = btn.getAttribute("data-tab");
+        document.getElementById(targetId).classList.add("active");
+      });
+    });
+
+    // Actionability Simulation
+    const steps = ["stepAttached", "stepVisible", "stepStable", "stepEvents", "stepEnabled", "stepEditable"];
+    document.getElementById("simRunBtn").addEventListener("click", () => {
+      const btn = document.getElementById("simRunBtn");
+      const statusText = document.getElementById("simStatusText");
+      btn.disabled = true;
+      btn.style.opacity = "0.7";
+      
+      // Reset
+      steps.forEach(id => document.getElementById(id).classList.remove("active"));
+      statusText.innerText = "Playwright auto-waiting in progress...";
+      statusText.style.color = "var(--accent-amber)";
+
+      let i = 0;
+      const interval = setInterval(() => {
+        if (i < steps.length) {
+          document.getElementById(steps[i]).classList.add("active");
+          i++;
+        } else {
+          clearInterval(interval);
+          statusText.innerText = "✅ All 6 checks passed! Click dispatched seamlessly.";
+          statusText.style.color = "var(--accent-emerald)";
+          btn.disabled = false;
+          btn.style.opacity = "1";
+        }
+      }, 350);
+    });
+
+    // Theme Switcher
+    const themeBtn = document.getElementById("themeToggle");
+    const themeIcon = document.getElementById("themeIcon");
+    const themeLabel = document.getElementById("themeLabel");
+
+    themeBtn.addEventListener("click", () => {
+      const current = document.documentElement.getAttribute("data-theme");
+      if (current === "light") {
+        document.documentElement.removeAttribute("data-theme");
+        themeIcon.innerText = "☀️";
+        themeLabel.innerText = "Light Mode";
+      } else {
+        document.documentElement.setAttribute("data-theme", "light");
+        themeIcon.innerText = "🌙";
+        themeLabel.innerText = "Dark Mode";
+      }
+    });
+
+    // Initial render
+    renderStudio("wingify_email");
+    renderRosettaTable(rosettaData);
+  </script>
+</body>
+</html>
