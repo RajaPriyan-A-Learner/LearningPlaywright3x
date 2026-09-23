@@ -1,4 +1,14 @@
 
+# Credentials (VWO_USER / VWO_PASS) — never commit these
+.env
+user-session.json
+
+# Test Reports & Artifacts
+tta-report/
+reports/
+allure-results/
+allure-report/
+
 # Playwright
 node_modules/
 /test-results/
