@@ -1,0 +1,8 @@
+{
+  "runId": "20261002_224425",
+  "tests": {
+    "webkit › 07_WebTables\\REAL_EXAMPLE.spec.ts › Verify user can select the row by name": "failed",
+    "chromium › 07_WebTables\\REAL_EXAMPLE.spec.ts › Verify user can select the row by name": "failed",
+    "firefox › 07_WebTables\\REAL_EXAMPLE.spec.ts › Verify user can select the row by name": "failed"
+  }
+}

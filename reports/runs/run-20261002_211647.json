@@ -1,0 +1,6 @@
+{
+  "runId": "20261002_211647",
+  "tests": {
+    "chromium › 03_Locator_Commands\\REAL_EXAMPLE2.spec.ts › User validate the Login page URL is not updated if enters invalid credentials": "passed"
+  }
+}
