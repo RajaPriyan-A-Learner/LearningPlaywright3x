@@ -124,6 +124,12 @@ page.getByTestId('custom-data-grid-row-1');
 | `locator.check() / uncheck()` | Selects or deselects checkbox / radio button. | Yes |
 | `locator.selectOption(val)` | Selects matching `<option>` in `<select>` dropdown. | Yes |
 | `page.waitForURL(pattern)` | Waits until navigation matches URL string or RegExp. | Yes |
+| `locator.all()` / `allInnerTexts()` | Materializes every match as locators or strings. | Waits for first match |
+| `locator.filter({ hasText })` | Narrows a locator by descendant text. | Lazy |
+| `page.frameLocator(sel)` | Lazy handle to one iframe/frame document. | Yes (on child actions) |
+| `locator.dragTo(target)` | Pointer drag from source to target. | Yes |
+| `page.keyboard.press(key)` | Full keydown/keyup, including chords like `Shift+O`. | N/A |
+| `page.once('dialog', fn)` | Handle `alert` / `confirm` / `prompt` before auto-dismiss. | N/A |
 
 ### 2.2 Web-First Retrying Assertions vs Synchronous Matchers
 | Web-First Assertion | Synchronous Alternative (Do NOT use) | Purpose |
@@ -171,6 +177,14 @@ expect(page.getByRole('button')).toBeVisible();
 await expect(page.getByRole('button')).toBeVisible();
 ```
 
+### 3.4 Type-Only Imports under `verbatimModuleSyntax`
+`Locator`, `Page`, `FrameLocator`, and `Browser` are types. Import them as `type Locator` or the compiler leaves a runtime import that does not exist.
+
+### 3.5 Dialogs, Frames, and Paginated Tables
+- Register `page.once('dialog')` **before** the click that opens the alert; Playwright auto-dismisses otherwise.
+- Selectors never cross iframe boundaries — chain `frameLocator`.
+- `filter({ hasText })` on the current page plus Next is how you search paginated tables; `toBeVisible()` on page 1 will just timeout.
+
 ---
 
 ## 4. Interview-Ready Definitions
@@ -180,6 +194,8 @@ await expect(page.getByRole('button')).toBeVisible();
 - **Web-First Assertion:** An asynchronous assertion mechanism that automatically polls the DOM until expected conditions are satisfied or a configurable timeout is exceeded.
 - **Role-Based Locators:** Locators that query the accessibility tree (`getByRole`) rather than fragile CSS or XPath implementation details.
 - **Trace Viewer:** A post-mortem diagnostic GUI tool providing time-travel debugging, network inspection, console logs, and action filmstrips for failed test runs.
+- **FrameLocator:** A lazy, auto-waiting handle to a child document (`iframe` or named `<frame>`). Nested documents are chained `frameLocator` calls.
+- **Dialog fixture event:** Playwright's `page` `dialog` event wrapping native `alert`, `confirm`, and `prompt`. Unhandled dialogs are auto-dismissed.
 
 ---
 
@@ -199,6 +215,14 @@ await expect(page.getByRole('button')).toBeVisible();
 ### Q3: What is Strict Mode in Playwright locators?
 **Answer:**
 Playwright locators are strict by default. If a locator matches more than one element (e.g., `page.getByRole('button')` when 3 buttons exist), calling `click()` throws a `Strictness Violation Error`. This forces tests to be unambiguous. To resolve it, narrow the selector with `.filter()`, `.first()`, or explicit accessible names.
+
+### Q4: Why does `selectOption` fail on a React dropdown?
+**Answer:**
+`selectOption` only drives a real `<select>`. Custom comboboxes are buttons plus `role="option"` lists. Open the trigger, then `getByRole('option', { name })` (and `Escape` to close multi-select menus).
+
+### Q5: How do you handle a JS confirm in Playwright?
+**Answer:**
+Subscribe first: `page.once('dialog', d => d.accept())`, then click the button, then assert the on-page result. Clicking first races the auto-dismiss handler.
 
 ---
 
@@ -231,6 +255,12 @@ await loc.type('slow typing', { delay: 100 });
 await loc.check();
 await loc.selectOption('OptionValue');
 await loc.hover();
+await loc.dragTo(other);
+await loc.click({ button: 'right' });
+await page.keyboard.press('Control+A');
+await page.selectOption('#dropdown', 'Option 2');
+const frame = page.frameLocator('#frame-one');
+page.once('dialog', (d) => d.accept());
 
 // --- 3. Web-First Assertions ---
 await expect(loc).toBeVisible();
@@ -261,6 +291,9 @@ flowchart TD
             E --> F[Page / Tab 1]
             F --> G[Auto-Waiting & Actionability Engine]
             G --> H[Web-First Retrying Assertions]
+            F --> FL[FrameLocator / Nested iframes]
+            F --> DG[dialog: alert confirm prompt]
+            F --> TB[filter hasText / pagination Next]
         end
 
         subgraph Worker 2
@@ -319,3 +352,24 @@ Master the fundamentals, write resilient tests, and elevate your SDET engineerin
 - **[Playwright Locator Strategies: The Comprehensive Production & Architecture Guide](./Playwright_Locator_Strategies_DeepDive_IQ.md)** — Complete guide on lazy resolution, strict mode, actionability checks, role locators, filtering, shadow DOM, iframes, and decision matrices.
 - **[React UI ARIA Attributes & Playwright Checkbox Locator Strategies](./React_ARIA_Attributes_and_Checkbox_Locators_IQ.md)** — Detailed guide on HTML name vs accessible name for checkboxes, and comprehensive React UI ARIA attributes mapping to Playwright locators.
 - **[Playwright Custom Fixtures & Dependency Injection: The Complete `use()` Architectural Guide](./Playwright_Custom_Fixtures_Dependency_Injection_IQ.md)** — In-depth guide on the `use()` lifecycle callback, the sandwich execution model, on-demand dependency injection, and enterprise POM extension.
+- **[245 — Multiple Elements: allInnerTexts, all, and Strict Clicks](./245_Multiple_Element_IQ.md)** — List-group locators, looping strings vs Locator arrays.
+- **[246 — Typed Locator[] and verbatimModuleSyntax](./246_Multiple_Element2_IQ.md)** — `type Locator` imports for `.all()`.
+- **[247 — Web Table Spec Scaffold](./247_WebTable_IQ.md)** — Empty navigation shell before table locators.
+- **[248 — Empty Web Table Case](./248_Test_case1_IQ.md)** — Unfilled first table spec.
+- **[249 — Dynamic XPath Table Loops](./249_Test_case2_IQ.md)** — Row/column concatenation and following-sibling country lookup.
+- **[250 — locator.filter hasText](./250_Test_case3_IQ.md)** — Forgotten Password and footer Privacy Policy.
+- **[251 — CSS :has() Row Checkbox](./251_Test_case4_IQ.md)** — `tr:has(td:text(...))` then relative `input`.
+- **[252 — Paginated Table Scan](./252_Test_case5_pagination_IQ.md)** — While-loop Next until name or disabled.
+- **[253 — findRowByName Helper](./253_Test_case6_pagination2_IQ.md)** — `Promise<Locator>` pagination helper with type-only Page/Locator.
+- **[254 — Native selectOption](./254_Select_Testcase_IQ.md)** — Heroku `<select>` dropdown.
+- **[255 — Custom ARIA Combobox](./255_Custom_Dropdown_test_case_IQ.md)** — test id trigger plus `getByRole('option')`.
+- **[256 — Advanced react-select Widgets](./256_Advanced_custom_dropdown_IQ.md)** — Multi chips, Escape, async typeahead.
+- **[257 — frameLocator Form](./257_IFrame_Test_case1_IQ.md)** — Vehicle form inside `#frame-one`.
+- **[258 — Named Frameset](./258_Framework_Test_case_IQ.md)** — `name=main` / `name=side` plus frame inventory.
+- **[259 — Nested Iframes](./259_Nested_Iframe_IQ.md)** — Chained pact1 → pact2 → pact3 locators.
+- **[260 — Keyboard press/down/up](./260_Keyboard_test_case_IQ.md)** — keycode.info chords and Shift latch.
+- **[261 — dragTo force](./261_Hover_test_case_IQ.md)** — TTA column drag with `{ force: true }`.
+- **[262 — HTML5 dragTo](./262_Drag_Drop_IQ.md)** — the-internet column swap.
+- **[263 — Mouse Bounding-Box DnD](./263_Advance_Drag_drop_IQ.md)** — Kanban card via stepped `mouse.move`.
+- **[264 — Right-Click Context Menu](./264_Context_drag_drop_IQ.md)** — `{ button: 'right' }` then Copy.
+- **[265 — JS Alerts](./265_JS_Alerts_IQ.md)** — `dialog` for alert, confirm, and prompt.
