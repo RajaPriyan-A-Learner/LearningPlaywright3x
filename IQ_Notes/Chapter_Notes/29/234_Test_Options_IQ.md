@@ -64,6 +64,31 @@ test('mobile context', async ({ browser }) => {
 });
 ```
 
+### Code Breakdown: `234_Test_options.spec.ts`
+
+**Line-by-line Explanation:**
+*   `Line 3-14`: Demonstrates passing options to `browser.newContext()` to simulate a localized desktop environment.
+    *   `Line 5-9`: Sets a 1080p viewport, French locale, Paris timezone, fakes the GPS coordinates, and auto-grants geolocation permissions.
+*   `Line 16-28`: Demonstrates mobile device emulation.
+    *   `Line 17-23`: Defines a raw configuration object `iPhone` with a mobile viewport, mobile User-Agent string, high-DPI scaling (`deviceScaleFactor: 2`), and touch screen support.
+    *   `Line 24`: Applies the mobile configuration to the new context.
+
+**Why this approach was chosen:**
+The coder chose this inline approach using `browser.newContext(options)` to show how easily Playwright can spoof environment variables at the protocol level (CDP). It proves you don't need real mobile devices or VPNs to test geolocation and responsive mobile layouts.
+
+**Alternative Effective Way:**
+While doing this inline is great for one-off tests, hardcoding device properties is tedious.
+An alternative effective way is to use Playwright's built-in device dictionary and define these options globally in `playwright.config.ts`:
+```typescript
+import { devices } from '@playwright/test';
+// Inside playwright.config.ts projects array:
+{
+  name: 'Mobile Safari',
+  use: { ...devices['iPhone 14'], locale: 'fr-FR', geolocation: { ... } },
+}
+```
+This is much more effective because tests don't have to carry boilerplate setup logic, and they can be run across multiple emulated devices concurrently via the config matrix.
+
 ### Key Points
 - **Protocol-Level Mocking:** Geolocation, timezone, and locale overrides are enforced directly via browser debugging protocols (CDP), meaning `Intl.DateTimeFormat()` and `navigator.geolocation` reflect the configured options instantly.
 - **Permissions Bypass:** Passing `permissions: ['geolocation']` auto-grants browser location prompts without human popup interaction.

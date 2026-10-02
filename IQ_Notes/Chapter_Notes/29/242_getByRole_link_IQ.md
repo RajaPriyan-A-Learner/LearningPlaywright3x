@@ -45,6 +45,25 @@ test("Verify navigation to appointment flow on CURA healthcare", async ({ page }
 });
 ```
 
+### Code Breakdown: `242_getByRole_link.spec.ts`
+
+**Line-by-line Explanation:**
+*   `Line 3-6`: Starts the test case and navigates to the CURA demo homepage.
+*   `Line 7-8`: Creates a locator using `getByRole("link", { name: "Make Appointment", exact: true })` and immediately calls `.click()` on it.
+*   `Line 9`: Pauses the browser using `page.pause()` for manual inspection.
+
+**Why this approach was chosen:**
+The coder correctly identified that the "Make Appointment" button, despite likely looking like a button visually, is actually an anchor tag (`<a>`) navigating to another page. By using `getByRole("link")`, they align the test with the DOM's semantic reality rather than its CSS styling.
+
+**Alternative Effective Way:**
+The test currently just clicks and then pauses.
+An alternative effective way is to enforce a validation that the link actually worked, by asserting the resulting URL or checking the visibility of a new element on the destination page:
+```typescript
+await mainButton.click();
+await expect(page).toHaveURL(/.*profile\.php#login/);
+```
+This is more effective because E2E tests must verify that actions produce the expected state changes.
+
 ### Key Points
 
 - **Semantic Role Disambiguation:** Differentiates navigational hyperlinks (`role="link"`, `<a>`) from stateful action buttons (`role="button"`, `<button>`).

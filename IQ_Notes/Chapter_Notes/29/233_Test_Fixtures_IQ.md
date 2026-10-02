@@ -73,6 +73,28 @@ test("BCP - in app.vwo.com two roles", async ({ browser }) => {
 });
 ```
 
+### Code Breakdown: `233_Test_fixtures.spec.ts`
+
+**Line-by-line Explanation:**
+*   `Line 3-5`: A simple test utilizing the default `{ page }` fixture. Playwright automatically provides an isolated browser context and page.
+*   `Line 7-28`: A complex test utilizing the `{ browser }` fixture, which provides the shared browser instance but no default context.
+*   `Line 9-11`: Creates three distinct isolated contexts manually (Admin, User, Guest). Notice the typo in `guestConetxt`.
+*   `Line 13-20`: Creates a new page within each distinct context and navigates them to three different applications concurrently.
+*   `Line 23-25`: Manually closes the pages. (Note: the coder forgot to close the contexts in this specific snippet, which is a resource leak).
+
+**Why this approach was chosen:**
+The coder chose the `{ browser }` fixture here specifically to demonstrate how to simulate multiple concurrent users or roles within a single test. The `{ page }` fixture is limited to one session, whereas the `{ browser }` fixture allows infinite isolated `BrowserContext` sessions (admin, user, guest) to exist side-by-side.
+
+**Alternative Effective Way:**
+An alternative effective way to handle multi-role workflows without manually creating contexts inside tests is to create **Custom Fixtures**. You can extend the base test object to automatically provide `adminPage` and `userPage`:
+```typescript
+const test = base.extend({
+  adminPage: async ({ browser }, use) => { /* setup context */ await use(adminPage); },
+  userPage: async ({ browser }, use) => { /* setup context */ await use(userPage); }
+});
+```
+This is much more effective because the complex setup and teardown logic is abstracted away from the test body, avoiding mistakes like forgetting to call `.close()`.
+
 ### Key Points
 - **Automated Lifecycle vs Manual Teardown:** The `{ page }` fixture is automatically torn down by Playwright's test worker. However, any additional `BrowserContext` instances manually created via `browser.newContext()` inside a test block should be explicitly closed.
 - **True Multi-Site Concurrent Sessions:** The second test demonstrates navigating three completely different domains simultaneously with zero cookie bleeding.

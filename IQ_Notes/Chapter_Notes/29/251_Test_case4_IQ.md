@@ -24,6 +24,29 @@ await page
   .click();
 ```
 
+### Code Breakdown: `251_Test_case4.spec.ts`
+
+**Line-by-line Explanation:**
+*   `Line 4`: Navigates to the webtable page.
+*   `Line 6`: Contains a commented-out legacy XPath query (`//td[text()="..."]/preceding-sibling::td/input`), representing the old way of navigating backwards from a cell to a checkbox.
+*   `Line 9`: Uses the CSS pseudo-class `:has()` to find a table row (`tr`) that explicitly contains a table cell (`td`) with the exact text 'Rohan.Mehta'.
+*   `Line 10-12`: Chaining from that specific row, it locates the descendant `input` element (the checkbox), selects the `.first()` one, and clicks it.
+*   `Line 18`: Introduces a hardcoded 5-second sleep for visual observation.
+
+**Why this approach was chosen:**
+The coder utilized the CSS `:has()` selector to elegantly avoid complex XPath traversals. Instead of finding the cell and walking "backwards" up the DOM to find the parent row or previous sibling, `:has()` allows the locator to target the parent row directly based on its children's content, making the subsequent search for the `input` much simpler.
+
+**Alternative Effective Way:**
+The use of `:has(td:text('...'))` is a proprietary Playwright selector engine feature that works well, but using Playwright's built-in `.filter()` API provides better readability and type safety.
+An alternative effective way is:
+```typescript
+await page.locator('tr')
+          .filter({ has: page.getByText('Rohan.Mehta', { exact: true }) })
+          .getByRole('checkbox')
+          .check();
+```
+This is more effective because it uses semantic roles (`getByRole('checkbox')`) and native API filtering, which makes the intent clearer than embedding custom pseudo-selectors in string queries.
+
 ### Key Points
 
 - `:has()` keeps the row as the primary object; child locators stay relative.

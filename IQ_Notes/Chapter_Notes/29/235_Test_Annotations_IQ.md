@@ -57,6 +57,30 @@ test.describe('Login Page', () => {
 // npx playwright test -g "Login Page"
 ```
 
+### Code Breakdown: `235_Test_Annotations.spec.ts`
+
+**Line-by-line Explanation:**
+*   `Line 3-22`: Groups related tests using `test.describe('Login Page')`.
+*   `Line 5-10`: Defines two standard, executable test cases.
+*   `Line 12-14`: Uses `test.fixme()`. This test is explicitly marked as broken and will not run, but it flags to the team that a bug exists.
+*   `Line 16-18`: Uses `test.skip()`. This test is unconditionally skipped and won't execute.
+*   `Line 19-21`: Contains a commented-out `test.only()`. If uncommented, it would force the test runner to ignore all other tests in the suite and execute *only* this specific block.
+*   `Line 24`: A comment showing how to execute this specific `describe` block from the command line using the `-g` (grep) flag.
+
+**Why this approach was chosen:**
+The coder chose to showcase all the native annotations in a single file to contrast their behaviors. It visually demonstrates how developers can temporarily disable flaky tests (`skip`), document known bugs (`fixme`), and isolate a single test for fast local debugging (`only`).
+
+**Alternative Effective Way:**
+Instead of hardcoding unconditional skips like `test.skip(...)`, an alternative effective way is to conditionally skip tests based on the environment or browser being used. 
+For example:
+```typescript
+test('Safari specific feature', async ({ page, browserName }) => {
+  test.skip(browserName !== 'webkit', 'Only run on Safari');
+  // test logic...
+});
+```
+This is more effective because it makes tests dynamic across different CI runners without requiring manual code changes to enable/disable them.
+
 ### Key Points
 - **Difference between `skip` and `fixme`:** Both bypass execution, but `fixme` explicitly conveys developer intent: "This test is broken and needs fixing," preventing ignored tests from rotting silently.
 - **Conditional Annotations:** Annotations can also be evaluated dynamically inside the test body: `test.skip(browserName === 'webkit', 'This feature is not supported on Safari');`.

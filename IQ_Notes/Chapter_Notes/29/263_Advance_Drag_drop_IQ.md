@@ -26,6 +26,29 @@ await page.mouse.move(tBox.x + tBox.width / 2, tBox.y + tBox.height / 2, { steps
 await page.mouse.up();
 ```
 
+### Code Breakdown: `263_Advance_Drag_drop.spec.ts`
+
+**Line-by-line Explanation:**
+*   `Line 4`: Navigates to a Kanban board widget demo.
+*   `Line 7-8`: Locates the source card (`#card-write-spec`) and extracts its physical bounding box (`x`, `y`, `width`, `height`).
+*   `Line 10-11`: Locates the target drop zone (`[data-status="in-progress"]`) and extracts its bounding box.
+*   `Line 13-14`: Calculates the center of the source box, moves the mouse there, and presses the left mouse button (`down()`).
+*   `Line 15-16`: Calculates the center of the target box, slowly moves the mouse there in `10` steps (to trigger drag-over events), and releases the button (`up()`).
+
+**Why this approach was chosen:**
+The coder chose to manually orchestrate the mouse events (`move`, `down`, `move`, `up`) because complex, JS-driven drag-and-drop libraries (like react-beautiful-dnd or SortableJS) often ignore standard HTML5 drag events. By moving the mouse in `{ steps: 10 }`, they give the browser's event loop time to fire `mousemove` and `mouseenter` events, allowing the Kanban board's physics engine to calculate insertion points correctly.
+
+**Alternative Effective Way:**
+Calculating the center of bounding boxes manually `(x + width / 2)` is verbose and prone to null-pointer errors if the element is off-screen.
+An alternative effective way is to let Playwright handle the centering implicitly using locator-based mouse interactions:
+```typescript
+await source.hover();
+await page.mouse.down();
+await target.hover({ steps: 10 });
+await page.mouse.up();
+```
+This is significantly more effective as `.hover()` automatically scrolls the element into view and places the cursor exactly in its center, removing the need for manual math.
+
 ### Key Points
 
 - Center-of-box math (`x + width / 2`) hits the draggable handle.

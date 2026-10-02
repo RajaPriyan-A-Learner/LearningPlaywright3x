@@ -24,6 +24,23 @@ test('web table case 1 — find country by name', async ({ page }) => {
 });
 ```
 
+### Code Breakdown: `248_Test_case1.spec.ts`
+
+**Line-by-line Explanation:**
+*   `Line 1`: The file is completely empty.
+
+**Why this approach was chosen:**
+The coder left this file completely empty, acting as a structural placeholder for the directory.
+
+**Alternative Effective Way:**
+Empty files are silently ignored by the Playwright test runner, which can lead to false confidence if a team member thinks "Test Case 1" is executing and passing.
+An alternative effective way is to explicitly mark the test as `fixme` or `skip` with a descriptive message rather than leaving it empty, or simply delete the file until the test is ready to be written:
+```typescript
+import { test } from '@playwright/test';
+test.fixme('Test case 1 - Pending implementation', async () => {});
+```
+This ensures the suite actively reports that work is pending.
+
 ### Key Points
 
 - An empty spec is not a passing test; the runner simply finds no tests in that file.

@@ -39,6 +39,28 @@ test("Verify the error message in the wingify free trial", async ({ page }) => {
 });
 ```
 
+### Code Breakdown: `241_getByRole_textbox.spec.ts`
+
+**Line-by-line Explanation:**
+*   `Line 1-3`: Standard Playwright test setup navigating to Wingify login.
+*   `Line 6-8`: Navigates to the login page and instantiates locators using `getByRole("textbox")`. For the email field, it specifies `{ name: "Email", exact: true }`. For the password field, it specifies `{ name: "Password" }`.
+*   `Line 10`: Contains a commented out `.nth(1)`, indicating a past attempt to resolve multiple elements before switching to the accessible name strategy.
+*   `Line 11-12`: Fills the retrieved textboxes with credentials.
+*   `Line 14`: Pauses the execution for manual debugging using the Playwright Inspector.
+
+**Why this approach was chosen:**
+The coder chose `getByRole("textbox")` because it represents the most semantic and accessible way to interact with input fields. By adding `{ name: "Email", exact: true }`, they ensure the locator binds strictly to the exact label of the input, making the test resilient to underlying structural changes (like ID or class changes).
+
+**Alternative Effective Way:**
+While `getByRole("textbox")` is excellent, using it for the password field (`Line 8`) can sometimes be incorrect depending on the HTML. If the password field is `<input type="password">`, it typically does *not* have the ARIA role of "textbox".
+An alternative effective way for passwords is using `getByLabel()` or a standard placeholder locator:
+```typescript
+const password = page.getByLabel("Password");
+// or
+const password = page.getByPlaceholder("Enter Password");
+```
+This is more effective because it safely queries native inputs regardless of their internal ARIA role mappings.
+
 ### Key Points
 
 - **Semantic Role Matching:** `textbox` matches `<input type="text">`, `<input type="email">`, `<textarea>`, and elements with `role="textbox"`.

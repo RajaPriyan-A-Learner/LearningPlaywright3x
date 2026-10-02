@@ -22,6 +22,27 @@ await columnA.dragTo(columnB);
 await expect(columnB).toContainText('A');
 ```
 
+### Code Breakdown: `262_Drag_Drop.spec.ts`
+
+**Line-by-line Explanation:**
+*   `Line 4`: Navigates to the Heroku Drag and Drop page.
+*   `Line 6-7`: Grabs the two columns, `columnA` and `columnB`.
+*   `Line 9`: Executes the standard `await columnA.dragTo(columnB)` command.
+*   `Line 10-12`: Contains multiple `page.pause()` commands.
+
+**Why this approach was chosen:**
+The coder chose this file to demonstrate the simplest possible invocation of `.dragTo()` without any options like `{ force: true }`. Since the Heroku demo uses standard, cleanly implemented HTML5 drag-and-drop events (`dragstart`, `dragenter`, `drop`), Playwright's native abstraction works perfectly out of the box.
+
+**Alternative Effective Way:**
+The test completely lacks any assertion to verify that the drag-and-drop actually succeeded (e.g., that the columns swapped their header text).
+An alternative effective way is to explicitly assert the state change in the DOM after the drag operation completes:
+```typescript
+await columnA.dragTo(columnB);
+await expect(columnA.locator('header')).toHaveText('B');
+await expect(columnB.locator('header')).toHaveText('A');
+```
+This is effective because it closes the loop on the test—proving the drag was interpreted correctly by the application logic.
+
 ### Key Points
 
 - Same locator ids as 261, different origin and event implementation.

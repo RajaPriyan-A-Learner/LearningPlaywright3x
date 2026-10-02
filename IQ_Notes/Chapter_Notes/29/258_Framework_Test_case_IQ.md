@@ -27,6 +27,30 @@ const sideFrame = page.frameLocator('[name="side"]');
 await sideFrame.getByTestId('side-link-registration').click();
 ```
 
+### Code Breakdown: `258_Framework_Test_case.spec.ts`
+
+**Line-by-line Explanation:**
+*   `Line 6`: Declares a `FrameLocator` named `mainFrame` using the name attribute `[name="main"]`.
+*   `Line 7-8`: Targets an `h2` heading inside that frame and prints its text.
+*   `Line 11-12`: Extracts all `<frame>` tags on the entire page using `.all()` and logs the total count.
+*   `Line 14-17`: Loops through each frame object to extract and print its `name` and `src` attributes.
+*   `Line 20-21`: Creates a second `FrameLocator` for `[name="side"]` and clicks a link completely isolated inside that side frame.
+
+**Why this approach was chosen:**
+The coder chose this approach to demonstrate handling legacy HTML `<frameset>` and `<frame>` tags (which behave similarly to `<iframe>`). By using `.all()` to find all frame nodes, they can audit the page structure. By explicitly declaring separate `FrameLocator` variables (`mainFrame`, `sideFrame`), they keep actions clearly scoped to their respective contexts without getting confused about which DOM is active.
+
+**Alternative Effective Way:**
+Using `//frame` XPath is slightly outdated.
+An alternative effective way to count all frames using modern CSS is:
+```typescript
+const allFrames = await page.locator('frame, iframe').all();
+```
+Additionally, `Locator.all()` does not automatically wait for frames to load. If frames are injected dynamically by JavaScript, an effective way is to wait for them first:
+```typescript
+await page.locator('frame').first().waitFor();
+const allFrames = await page.locator('frame').all();
+```
+
 ### Key Points
 
 - Named framesets still appear in modern training apps; `name` is the stable key.

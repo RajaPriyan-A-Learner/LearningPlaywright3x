@@ -24,9 +24,10 @@ For every code file (`.js`, `.ts`, `.spec.ts`) found in step 1, check the corres
   - `## Main Concept`
   - A complete, working code block (```javascript or ```typescript) matching the referenced file.
   - `## Line-by-Line Code Breakdown & Coder Rationale`:
-    - For every code file (`.js`, `.ts`, `.spec.ts`) referenced, break down the code **line by line** (or key logical blocks line by line).
-    - **Why the Coder Chose This:** Explain explicitly why the author wrote each line that way (e.g., why dynamic imports vs static imports, why checking `fs.existsSync`, why using `page.waitForURL` regex, why headless mode, why specific fixtures `{ page, context }`).
-    - **Effective Alternative Ways:** Compare the current choice with more modern, robust, or alternative patterns (e.g., Playwright global setup vs `test.beforeAll`, custom storage vs `baseURL` auth fixtures, UI login vs API token injection, environment variables vs configuration files) detailing the pros, cons, and performance/scalability trade-offs.
+    - **IMPORTANT: You MUST execute the instructions in the `md-code-explainer` skill to generate this section.**
+    - For every code file (`.js`, `.ts`, `.spec.ts`) referenced, use `md-code-explainer` to break down the code **line by line** (or key logical blocks line by line).
+    - **Why the Coder Chose This:** Ensure the `md-code-explainer` explains explicitly why the author wrote each line that way (e.g., why dynamic imports vs static imports, why checking `fs.existsSync`, why using `page.waitForURL` regex, why headless mode, why specific fixtures `{ page, context }`).
+    - **Effective Alternative Ways:** Ensure the `md-code-explainer` compares the current choice with more modern, robust, or alternative patterns (e.g., Playwright global setup vs `test.beforeAll`, custom storage vs `baseURL` auth fixtures, UI login vs API token injection, environment variables vs configuration files) detailing the pros, cons, and performance/scalability trade-offs.
   - `## Common Mistakes`
   - `## Summary`
 

@@ -57,6 +57,25 @@ async function run() {
 run();
 ```
 
+### Code Breakdown: `229_Older_Playwright.spec.ts`
+
+**Line-by-line Explanation:**
+*   `Line 1`: Imports the `chromium` browser driver and necessary TypeScript types (`Browser`, `BrowserContext`, `Page`).
+*   `Line 3-18`: Declares the main async function `run()` to handle the full procedural flow.
+*   `Line 4`: Manually launches the Chromium browser process with `headless: false` so the UI is visible.
+*   `Line 5`: Creates a new `BrowserContext`, acting as an isolated incognito session.
+*   `Line 6`: Opens a new `page` (tab) inside the context.
+*   `Line 8`: Navigates to `https://example.com`.
+*   `Line 9`: Retrieves and prints the page title to the console.
+*   `Line 12-14`: Cleans up the resources explicitly in reverse order: first the page, then the context, then the browser process.
+*   `Line 20`: Invokes the `run()` function.
+
+**Why this approach was chosen:**
+The coder chose this standalone script approach to demonstrate the underlying mechanics of Playwright without the abstraction of the `@playwright/test` test runner. This is useful for writing custom scraping scripts, utility bots, or learning exactly how Playwright handles resource allocation and memory management.
+
+**Alternative Effective Way:**
+If the goal is to write E2E tests, the alternative effective way is to use Playwright's test runner (`test` function from `@playwright/test`). This automatically handles the browser, context, and page creation/teardown via fixtures (e.g., `test('test', async ({ page }) => { ... })`). This is more effective for testing because it provides built-in parallelization, retries, reporting, and tracing without manual boilerplate.
+
 ### Key Points
 - **Explicit Types:** Under TypeScript with `"verbatimModuleSyntax": true`, `Browser`, `BrowserContext`, and `Page` must be imported as type-only specifiers (`type Browser`, etc.).
 - **Deterministic Teardown:** Resources must be closed in reverse order of creation (`page` → `context` → `browser`) to avoid hung processes and unreleased port locks.

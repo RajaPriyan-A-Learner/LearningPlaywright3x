@@ -61,6 +61,29 @@ async function multiUserTest() {
 multiUserTest();
 ```
 
+### Code Breakdown: `228_multiple_context.spec.ts`
+
+**Line-by-line Explanation:**
+*   `Line 1`: Imports the `chromium` browser instance directly from `@playwright/test`.
+*   `Line 2-21`: Defines an asynchronous function `multiUserTest` to encapsulate the logic.
+*   `Line 3`: Launches the Chromium browser explicitly in non-headless mode (UI visible).
+*   `Line 4-8`: Creates an isolated session for an "Admin" user.
+    *   `Line 5`: Creates a new `BrowserContext` (`adminContext`), acting as a clean incognito session.
+    *   `Line 6`: Opens a new tab (`adminPage`) within that context.
+    *   `Line 7`: Navigates to the VWO login page.
+*   `Line 10-14`: Creates a separate isolated session for a "Viewer" user.
+    *   `Line 11-13`: Similar to the Admin, creates a totally separate `viewerContext` and `viewerPage`, then navigates to the login page.
+*   `Line 17-19`: Gracefully closes both contexts and finally the browser process to free up system resources.
+*   `Line 22`: Executes the function.
+
+**Why this approach was chosen:**
+The coder chose this imperative approach (manually launching the browser and contexts) to clearly demonstrate Playwright's low-level architecture and how multi-tenancy works under the hood. It visually proves that two completely isolated sessions can run simultaneously within a single browser instance, which is incredibly useful for simulating real-time collaboration (like a chat app or document editing) without the heavy resource cost of opening multiple browsers.
+
+**Alternative Effective Way:**
+Alternatively, if this were part of an actual test suite, you should use Playwright's built-in `test` runner and its fixtures instead of manually launching the browser. 
+For example, you could inject `browser` as a fixture: `test('multi-user', async ({ browser }) => { ... })`. 
+This is more effective because Playwright's test runner automatically handles the browser lifecycle, parallel execution, reporting, and teardown, making the code cleaner and less prone to resource leaks if an error occurs.
+
 ### Key Points
 - **Zero Cross-Talk:** Modifying cookies or logging in on `adminPage` has zero impact on `viewerPage`.
 - **Resource Efficiency:** Spawning a new `BrowserContext` takes roughly 1–2 milliseconds and insignificant RAM, compared to hundreds of milliseconds and hundreds of megabytes for a new `Browser`.

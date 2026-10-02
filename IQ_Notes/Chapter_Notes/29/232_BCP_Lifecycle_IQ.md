@@ -63,6 +63,28 @@ async function run() {
 run();
 ```
 
+### Code Breakdown: `232_BCP.spec.ts`
+
+**Line-by-line Explanation:**
+*   `Line 1`: Imports the `chromium` driver and TypeScript types for `Browser`, `BrowserContext`, and `Page`.
+*   `Line 3-26`: Declares a standalone async function `run()` to manually control the browser stack.
+*   `Line 6-7`: `chromium.launch` starts the heavyweight browser process (Level 1) in non-headless mode.
+*   `Line 11-12`: `browser.newContext()` creates a fast, isolated session profile (Level 2).
+*   `Line 16-17`: `context1.newPage()` creates an actual tab/window (Level 3) for the session.
+*   `Line 21-23`: Explicitly closes the page, the context, and finally the browser in strict reverse order to free memory and prevent hung processes.
+
+**Why this approach was chosen:**
+The coder chose this raw approach to visually demonstrate the BCP (Browser -> Context -> Page) architecture that Playwright uses internally. By not using the `test` runner, it makes the explicit creation and teardown steps completely visible to the learner.
+
+**Alternative Effective Way:**
+For real-world test suites, manually spawning the browser and context is unnecessary boilerplate. An alternative effective way is to just use the built-in `{ page }` or `{ context }` fixtures provided by `@playwright/test`:
+```typescript
+test('example', async ({ page }) => {
+  // page and context are automatically created and destroyed!
+});
+```
+This is far more effective as it delegates lifecycle management, parallelization, and cleanup entirely to the Playwright runner.
+
 ### Key Points
 - **Performance Advantage:** In Playwright Test runner, the `Browser` process is kept alive while each test receives a brand new `BrowserContext` and `Page`. This gives full isolation with zero process-spawn overhead.
 - **Strict Reverse-Order Disposal:** Always close resources in the exact opposite order of instantiation: `page.close()` → `context.close()` → `browser.close()`.

@@ -27,6 +27,28 @@ while (true) {
 const email = await row.locator('td[data-col="email"]').innerText();
 ```
 
+### Code Breakdown: `252_Test_case5_pagination.spec.ts`
+
+**Line-by-line Explanation:**
+*   `Line 8`: Initializes an infinite `while (true)` loop to scan pages sequentially.
+*   `Line 9`: Looks for a row containing the name 'Luca Greco' using the `.filter({ hasText: ... })` method.
+*   `Line 10-12`: Evaluates `row.count()`. If the element is found on the current page (count > 0), the loop immediately breaks.
+*   `Line 13-17`: If the row is not found, it locates the 'Next' pagination button. It checks if the button is disabled (meaning it reached the last page) and throws an error if true. Otherwise, it clicks 'Next' to load the next page and loops again.
+*   `Line 20-24`: Once the loop breaks (the row was found), it uses scoped locators (`data-col`) to extract the email and country cells from that specific row and prints them.
+
+**Why this approach was chosen:**
+The coder chose this `while` loop pattern because Playwright's auto-waiting mechanisms only work on the current DOM state. Playwright cannot inherently know it needs to click "Next Page" to find an element. This explicit loop manually controls the pagination state machine, proving how to handle datasets larger than a single view.
+
+**Alternative Effective Way:**
+While the `while (true)` loop works, if the 'Next' button's `disabled` state isn't perfectly synchronized with the DOM update, it might throw a false positive or click too early.
+An alternative effective way is to rely on API interception rather than UI pagination if the goal is purely data validation:
+```typescript
+const response = await page.waitForResponse('**/api/employees?page=*');
+const data = await response.json();
+const user = data.employees.find(e => e.name === 'Luca Greco');
+```
+If UI testing is strictly required, the loop is correct, but the click (`await next.click()`) should ideally be paired with an assertion that the table content actually changed before the next iteration begins, avoiding race conditions.
+
 ### Key Points
 
 - Rebind `row` each iteration; do not reuse a locator that was empty on page 1 without re-filtering (re-creating is safest).

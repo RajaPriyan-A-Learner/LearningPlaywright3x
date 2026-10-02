@@ -74,6 +74,28 @@ test("set referer for entire context across multiple navigations", async ({ brow
 });
 ```
 
+### Code Breakdown: `238_Referrer.spec.ts`
+
+**Line-by-line Explanation:**
+*   `Line 1`: Imports the `test` runner.
+*   `Line 2-16`: Defines a test that injects the `browser` fixture to manually control the context lifecycle.
+*   `Line 4-8`: Creates a new `BrowserContext` and leverages the `extraHTTPHeaders` option to globally set the `Referer` HTTP header to "https://thetestingacademy.com".
+*   `Line 9`: Opens a new page within this specially configured context.
+*   `Line 10-11`: Navigates to the first URL (vwo.com). Under the hood, this request will silently include the injected Referer header.
+*   `Line 12-13`: Navigates to a second URL. Because the header is set at the context level, this navigation *also* includes the Referer header without needing to specify it again.
+
+**Why this approach was chosen:**
+The coder chose this method to demonstrate a powerful global configuration technique. By setting the Referer at the context level rather than on individual `page.goto` calls, they ensure that *every* request (including API calls, images, and subsequent navigations) inherits this header, perfectly simulating a user clicking through from an affiliate partner site.
+
+**Alternative Effective Way:**
+If you need this referer applied to every single test in your project, an alternative effective way is to define it globally inside `playwright.config.ts`:
+```typescript
+use: {
+  extraHTTPHeaders: { 'Referer': 'https://thetestingacademy.com' }
+}
+```
+This is more effective for suite-wide policies, abstracting the configuration away from the test code and allowing you to just use the default `{ page }` fixture.
+
 ### Key Points
 - **RFC Spelling Quirk:** The HTTP header is spelled `Referer` (single 'r'), but the JavaScript DOM property is `document.referrer` (double 'r'). Playwright's `extraHTTPHeaders` map uses the HTTP header name `"Referer"`.
 - **Global Inheritance:** Every asset request (scripts, stylesheets, images, fetch/XHR calls) initiated by any page inside the context will transmit this header unless overridden by browser security policies.

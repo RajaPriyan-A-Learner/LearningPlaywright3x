@@ -56,6 +56,29 @@ test.describe('Login Page', () => {
 //    npx playwright test --grep-invert "Login Page"
 ```
 
+### Code Breakdown: `236_Test_Describe.spec.ts`
+
+**Line-by-line Explanation:**
+*   `Line 1`: Imports the `test` and `expect` utilities.
+*   `Line 3-22`: Wraps related tests inside a `test.describe` block named 'Login Page', establishing a suite boundary.
+*   `Line 5-10`: Contains two normal, operational test cases targeting the application URL.
+*   `Line 12-14`: Uses `test.fixme()` for a broken test (PayPal checkout), which will not execute but remains in reports as a known issue.
+*   `Line 16-18`: Uses `test.skip()` to unconditionally bypass another checkout test.
+*   `Line 19-21`: Contains a commented-out `test.only()`, which if active, would exclusively run that single test and skip all others in the suite.
+*   `Line 24`: Provides a CLI instruction (`-g "Login Page"`) on how to execute this exact describe block.
+
+**Why this approach was chosen:**
+The coder structured the tests this way to visually demonstrate all the native Playwright annotations in one place. Grouping tests via `describe` allows applying hooks (like `beforeEach`) to a subset of tests, and using annotations properly tracks the operational status of different workflows without deleting code.
+
+**Alternative Effective Way:**
+Instead of hardcoding `test.skip()` or `test.fixme()`, an alternative effective way is to use conditional skipping based on the browser or environment:
+```typescript
+test('checkout', async ({ browserName }) => {
+  test.skip(browserName === 'webkit', 'PayPal not supported on Safari');
+});
+```
+This is more effective because it makes tests universally portable across different environments and configurations without needing manual intervention.
+
 ### Key Points
 - **Scoped Lifecycle Hooks:** Hooks (`test.beforeEach`, `test.afterEach`) declared inside a `test.describe()` block run exclusively for the tests defined within that block.
 - **Suite Modes:**

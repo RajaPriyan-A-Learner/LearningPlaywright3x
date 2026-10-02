@@ -31,6 +31,38 @@ const row = await findRowByName(page, 'Luca Greco');
 const email = await row.locator('td[data-col="email"]').innerText();
 ```
 
+### Code Breakdown: `253_Test_case6_pagination2.spec.ts`
+
+**Line-by-line Explanation:**
+*   `Line 3`: Defines an asynchronous helper function `findRowByName` that accepts a `Page` object and a `name` string, returning a `Promise<Locator>`.
+*   `Line 4-14`: Encapsulates the same pagination `while (true)` loop logic from Test Case 5.
+*   `Line 7`: Instead of just breaking the loop, it explicitly `return row`, passing the resolved `Locator` back to the caller.
+*   `Line 17-26`: The main test body. It navigates to the page and calls the helper function (`await findRowByName(page, 'Luca Greco')`).
+*   `Line 22-24`: Uses the returned `Locator` to cleanly chain child locators and extract the email and country.
+
+**Why this approach was chosen:**
+The coder chose to abstract the complex pagination logic into a reusable helper function. By returning a Playwright `Locator` instead of just primitive strings (like the extracted text), they retain the ability to perform further Playwright actions (like clicking or asserting) on that specific row in the main test flow.
+
+**Alternative Effective Way:**
+Passing the `page` object into helper functions is a standard Page Object Model (POM) pattern.
+An alternative effective way, specific to Playwright, is to create a custom Fixture instead of a loose helper function:
+```typescript
+// Define custom fixture
+const test = base.extend({
+  tableHelper: async ({ page }, use) => {
+    await use({
+      findRow: async (name) => { /* pagination logic */ }
+    });
+  }
+});
+
+// Use in test
+test('Verify row', async ({ tableHelper }) => {
+  const row = await tableHelper.findRow('Luca Greco');
+});
+```
+This is more effective for large suites because fixtures are automatically injected and managed by Playwright's execution context, reducing import clutter and manual object passing.
+
 ### Key Points
 
 - Helpers that return locators compose better than helpers that return strings.

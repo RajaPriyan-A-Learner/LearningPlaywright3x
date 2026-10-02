@@ -42,6 +42,31 @@ test("go directly to dashboard2 — Test2", async ({ page }) => {
 });
 ```
 
+### Code Breakdown: `243_Custom_reporting_Test_wingify.spec.ts`
+
+**Line-by-line Explanation:**
+*   `Line 6-9`: Configures the entire test file to use a pre-authenticated session state (`user-session.json`). This skips the login UI flow for all tests in this file.
+*   `Line 12-31`: Defines three virtually identical test cases (`Test1`, `Test2`, `Test3`).
+*   `Line 13`: Navigates directly to the authenticated dashboard URL.
+*   `Line 14`: Uses `expect(page).toHaveURL(/dashboard/)` to confirm the authentication state was successfully restored.
+*   `Line 15-16`: Logs a message and halts for 3 seconds (`waitForTimeout(3000)`).
+
+**Why this approach was chosen:**
+The coder chose this repetitive structure to simulate a scenario where multiple tests require the same authenticated starting point. By using `storageState`, they avoid the heavy performance penalty of logging in three separate times. The tests are identical likely to generate a rich, multi-row report output when running with a custom reporter.
+
+**Alternative Effective Way:**
+Having three hardcoded duplicate tests violates DRY (Don't Repeat Yourself).
+An alternative effective way to generate multiple identical test executions for reporting or load-simulation is to use parameterized testing with a loop:
+```typescript
+for (let i = 1; i <= 3; i++) {
+  test(`go directly to dashboard — Test${i}`, async ({ page }) => {
+    await page.goto("https://app.wingify.com/#/dashboard?accountId=1281316");
+    await expect(page).toHaveURL(/dashboard/);
+  });
+}
+```
+This is much more effective and maintainable than copy-pasting the test block.
+
 ### Key Points
 
 - **Authentication Bypass with `storageState`:** Injecting cookies and local storage tokens directly into the `BrowserContext` allows each worker to land immediately on the dashboard, saving 5–10 seconds per test.

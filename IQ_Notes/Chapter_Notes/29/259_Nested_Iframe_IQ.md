@@ -24,6 +24,31 @@ await frame2.locator('#jex').fill('Wife');
 await frame3.locator('#glaf').fill('Playwright');
 ```
 
+### Code Breakdown: `259_Nested_Iframe.spec.ts`
+
+**Line-by-line Explanation:**
+*   `Line 4`: Navigates to a complex nested iframe testing page.
+*   `Line 5`: Locates the outermost iframe (`#pact1`).
+*   `Line 6`: Locates the middle iframe (`#pact2`) *by chaining off* `frame1`.
+*   `Line 7`: Locates the innermost iframe (`#pact3`) *by chaining off* `frame2`.
+*   `Line 9-11`: Fills input fields located within each respective nested layer.
+*   `Line 13-14`: Reads a header from the outermost frame to prove context switching works seamlessly.
+
+**Why this approach was chosen:**
+The coder correctly demonstrated that `frameLocator()` can be chained off another `frameLocator()`. If `pact3` lives inside `pact2` which lives inside `pact1`, Playwright cannot jump straight into `pact3` from the `page` object. It must pierce each boundary sequentially.
+
+**Alternative Effective Way:**
+Creating intermediate variables (`frame1`, `frame2`) is great for readability, but if a test only needs to interact with the deepest level, it can be cumbersome.
+An alternative effective way to reach the deepest frame directly in a single fluent chain is:
+```typescript
+const deepestFrame = page
+    .frameLocator('#pact1')
+    .frameLocator('#pact2')
+    .frameLocator('#pact3');
+await deepestFrame.locator('#glaf').fill('Playwright');
+```
+This is effective because it reduces variable clutter while still maintaining the strict boundary-piercing requirements.
+
 ### Key Points
 
 - Nesting is composition of frame locators, not CSS descendants.

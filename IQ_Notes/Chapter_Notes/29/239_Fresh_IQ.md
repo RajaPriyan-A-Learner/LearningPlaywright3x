@@ -86,6 +86,22 @@ test('Verify VWO negative login flow and error notification banner', async ({ pa
 });
 ```
 
+### Code Breakdown: `239_Fresh.spec.ts`
+
+**Line-by-line Explanation:**
+*   `Line 3-9`: Navigates to the VWO login page with custom options: waiting only until the DOM is loaded (not fully network idle), setting a strict 3-second timeout, and injecting a custom referer.
+*   `Line 33-35`: Creates locator references using raw CSS ID selectors (e.g., `#login-username`).
+*   `Line 37-39`: Executes the form fill and click actions. Playwright auto-waits for these elements to be interactable.
+*   `Line 41-43`: Locates the error message box and utilizes the retrying web-first assertion `toContainText` to verify the authentication failure message.
+*   `Line 45`: Triggers `page.pause()`, which halts execution and opens the Playwright Inspector for manual debugging.
+
+**Why this approach was chosen:**
+The coder used CSS selectors to demonstrate legacy locating strategies on applications that lack accessibility attributes. They used `waitUntil: 'domcontentloaded'` to explicitly optimize the navigation speed, proving you don't always need to wait for the entire page's heavy assets to load before interacting with the login form.
+
+**Alternative Effective Way:**
+The use of `page.pause()` is an anti-pattern when committing code to version control, as it will freeze CI/CD pipelines indefinitely. 
+An alternative effective way to debug without leaving blocking code is to run Playwright with the `--ui` flag (`npx playwright test --ui`), which provides a full time-travel debugger without needing to mutate the test scripts.
+
 ---
 
 ## Common Mistakes

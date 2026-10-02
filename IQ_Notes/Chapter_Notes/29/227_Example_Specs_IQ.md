@@ -41,6 +41,25 @@ test('get started link', async ({ page }) => {
 });
 ```
 
+### Code Breakdown: `227_example.spec.ts`
+
+**Line-by-line Explanation:**
+*   `Line 1`: Imports the necessary testing functions `test` and `expect` from the `@playwright/test` library.
+*   `Line 3-8`: Defines a test block named 'has title' using `test()`. It uses the `page` fixture asynchronously to interact with the browser.
+    *   `Line 4`: Navigates to the Playwright official website.
+    *   `Line 7`: Asserts that the page title contains the word "Playwright" using a regular expression.
+*   `Line 10-18`: Defines a second test block named 'get started link'.
+    *   `Line 11`: Navigates to the Playwright website.
+    *   `Line 14`: Uses the user-facing role locator `getByRole` to find the 'link' with the accessible name 'Get started' and performs a click action.
+    *   `Line 17`: Asserts that a heading element with the name 'Installation' is visible on the resulting page.
+
+**Why this approach was chosen:**
+The coder chose this method because it perfectly demonstrates Playwright's core philosophy: web-first assertions and user-centric locators. Using `getByRole` instead of CSS or XPath selectors ensures the tests interact with the application just like a real user relying on accessibility trees. Using fixtures like `{ page }` provides a fresh, isolated browser context for each test, ensuring zero state leakage.
+
+**Alternative Effective Way:**
+Alternatively, to avoid repetitive navigation steps (`await page.goto('https://playwright.dev/');`) in every test within the file, you could use a `test.beforeEach` hook to navigate to the base URL before each test. 
+This is more effective because it reduces boilerplate code, keeps the individual tests focused strictly on the assertions, and improves maintainability.
+
 ### Key Points
 - **Fixtures:** The `{ page }` argument is a fresh, isolated `Page` instance created inside a new `BrowserContext` for every test run.
 - **Accessibility Tree Alignment:** Using `getByRole` guarantees that tests validate the exact DOM accessibility tree used by screen readers and real users.

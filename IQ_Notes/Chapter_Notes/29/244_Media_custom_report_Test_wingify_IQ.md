@@ -52,6 +52,22 @@ for (const n of [1, 2, 3]) {
 }
 ```
 
+### Code Breakdown: `244_Media_custom_report_Test_wingify.spec.ts`
+
+**Line-by-line Explanation:**
+*   `Line 12-17`: Overrides the test configuration dynamically using `test.use()` to force the capture of screenshots, videos, and traces for *every* test, and applies the saved authentication state.
+*   `Line 21-40`: Loops three times to dynamically generate three tests (`Test1`, `Test2`, `Test3`).
+*   `Line 24-27`: Uses `test.step()` to wrap the dashboard navigation. This creates a logical grouping in the HTML/Allure report.
+*   `Line 29-31`: Uses `test.step()` to explicitly verify that the login form (`#login-username`) is hidden, proving the session works.
+*   `Line 33-38`: Uses `test.step()` to take a full-page screenshot and attaches it directly to the test results using `testInfo.attach()`.
+
+**Why this approach was chosen:**
+The coder chose `test.use` to force media collection specifically for this file, rather than enabling it globally in `playwright.config.ts`, which would slow down the entire suite. They used `test.step()` extensively to ensure the custom reporter generates a beautiful, nested tree of actions rather than a flat list of commands.
+
+**Alternative Effective Way:**
+Calling `page.screenshot({ fullPage: true })` inside every test iteration takes a significant amount of time and disk space, especially for large SPAs.
+An alternative effective way, unless explicit visual regression testing is needed on every step, is to rely on Playwright's native `screenshot: 'only-on-failure'` in the config. For custom reports, you can utilize the automatic DOM snapshots inside the `trace.zip` rather than generating heavy standalone PNGs.
+
 ### Key Points
 
 - **`test.step()` for Hierarchical Traceability:** Breaking test logic into named steps creates distinct collapsible entries in the custom HTML report and trace viewer with individual timing indicators.
@@ -72,3 +88,29 @@ for (const n of [1, 2, 3]) {
 
 ## Summary
 Rich media capture transforms test automation reports from simple green/red scorecards into full diagnostic dashboards. With screenshots, video replays, and step-level traces embedded directly into custom HTML reports, engineers and AI assistants can isolate and remediate regressions with zero guesswork.
+
+---
+
+## Frequently Asked Questions (FAQ)
+
+### Can we change the format of artifacts? (PNG to JPEG, WebM to MP4, ZIP to JSON)
+
+**1. Screenshots (`.png` ➔ `.jpg` / `.jpeg`)**
+- **Auto-screenshots (in config):** ❌ **No.** Playwright's built-in `screenshot: 'on'` configuration *always* generates `.png` files. You cannot change this globally.
+- **Manual screenshots:** ✅ **Yes.** If you use `page.screenshot()`, you can explicitly set the `type` parameter to JPEG and attach it to your report manually:
+  ```typescript
+  // Taking a JPEG screenshot and attaching it
+  await testInfo.attach('custom-screenshot', {
+      body: await page.screenshot({ type: 'jpeg', quality: 80 }), // quality 0-100
+      contentType: 'image/jpeg',
+  });
+  ```
+
+**2. Video (`.webm` ➔ `.mp4`)**
+- **Native Playwright:** ❌ **No.** Playwright only records videos in `.webm` format natively. This is because WebM recording is deeply integrated into Chromium and WebKit's rendering engines and is extremely fast and lightweight. MP4 requires heavy external encoders.
+- **Workaround:** If your company *requires* `.mp4` (e.g., for compatibility with an older reporting dashboard), you must use a post-processing script with a tool like **FFmpeg** to convert the `.webm` files to `.mp4` after the test run completes.
+
+**3. Traces (`.zip` ➔ `.json`)**
+- **Native Playwright:** ❌ **No.** Playwright strictly generates traces as `.zip` archives. 
+- **Why?** A trace is not just a single JSON file. It contains multiple files: `trace.network`, `trace.actions`, plus hundreds of tiny assets (CSS files, images, font files) needed to perfectly recreate the DOM snapshots in the Trace Viewer. 
+- **Workaround:** If you are building a custom AI bot or dashboard and just want the JSON data of what actions occurred, you can technically **unzip** the `trace.zip` file programmatically using NodeJS (`adm-zip` or `yauzl`) and read the `trace.actions` JSON file inside it. However, you cannot tell Playwright to skip the `.zip` generation natively.
