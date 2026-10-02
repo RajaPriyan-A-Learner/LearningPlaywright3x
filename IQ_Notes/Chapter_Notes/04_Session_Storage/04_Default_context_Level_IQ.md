@@ -29,6 +29,37 @@ test('Manager approves Employee request', async ({ browser }: { browser: Browser
 });
 ```
 
+## Optimized Pattern (Using `try...finally`)
+Using a `try...finally` block is a highly recommended practice when manually managing contexts. It guarantees that the contexts are closed even if an assertion (like `expect`) fails midway through the test, preventing background resource leakage.
+
+```typescript
+import { test, expect, type Browser } from '@playwright/test';
+
+test('Manager approves Employee request', async ({ browser }: { browser: Browser }) => {
+    // 1. Initialize contexts outside the try block so they are accessible in finally
+    const employeeContext = await browser.newContext({
+        storageState: './playwright/.auth/employee.json'
+    });
+    const managerContext = await browser.newContext({
+        storageState: './playwright/.auth/manager.json'
+    });
+
+    try {
+        const employeePage = await employeeContext.newPage();
+        await employeePage.goto('/requests/new');
+        await employeePage.getByRole('button', { name: 'Submit' }).click();
+
+        const managerPage = await managerContext.newPage();
+        await managerPage.goto('/admin/approvals');
+        await expect(managerPage.getByText('New Request')).toBeVisible();
+    } finally {
+        // 2. Guaranteed to close contexts even on failure
+        await employeeContext.close();
+        await managerContext.close();
+    }
+});
+```
+
 ## Line-by-Line Code Breakdown & Coder Rationale
 - `async ({ browser }: { browser: Browser }) => {`: 
   - **Why the Coder Chose This:** Instead of using the default `page` or `context` fixtures, the coder uses the raw `browser` fixture. This allows the creation of multiple distinct, completely isolated incognito-like contexts.

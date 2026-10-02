@@ -35,8 +35,11 @@ test('Admin dashboard check', async ({ adminPage }) => {
 ```
 
 ## Line-by-Line Code Breakdown & Coder Rationale
-- `import { test as base, type Page} from '@playwright/test'`: Aliases `test` to `base` to allow extending it.
-- `type AuthRole = { adminPage: Page; userPage: Page; };`: Types the new fixtures.
+- `import { test as base, type Page} from '@playwright/test'`: 
+  - **Why the alias (`as base`)?** It prevents a naming collision. By renaming the original Playwright test object to `base`, it frees up the word `test` so we can export our own custom version (`export const test = ...`).
+- `type AuthRole = { adminPage: Page; userPage: Page; };`: 
+  - **What is this?** Similar to an `interface` or `class` in C#, it defines a strict contract.
+  - **Strict Validation:** Because we defined both `adminPage` and `userPage`, if we implement `base.extend<AuthRole>({...})` but forget to include the logic for `userPage`, **TypeScript will throw a compile-time error**. It forces you to implement exactly what you promised in the `AuthRole` type.
 - `export const test = base.extend<AuthRole>({`: 
   - **Why the Coder Chose This:** Extends Playwright's base test runner to inject custom logic. This is the ultimate pattern for DRY (Don't Repeat Yourself) testing in Playwright.
 - `adminPage: async ({ browser }, use) => { ... await use(page); ... }`:
