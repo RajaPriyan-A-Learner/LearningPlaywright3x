@@ -13,16 +13,20 @@ This skill automates the validation, documentation generation, and publishing of
 When the user asks to trigger "Go Pikachu", execute the following steps precisely:
 
 ### 1. Scan the Current Chapter
-Identify the current working chapter directory based on the user's open files or recent context (e.g., `11_chapter_Function`). Scan and list all `.js` files located in this directory.
+Identify the current working chapter directory based on the user's open files or recent context (e.g., `11_chapter_Function`, `29_Playwright/e2e_tests/04_Session_Storage`). Scan and list all `.js`, `.ts`, and `.spec.ts` files located in this directory.
 
 ### 2. Scaffold and Validate IQ Documentation
-For every `.js` file found in step 1, check the corresponding `IQ_Notes/Chapter_Notes/<chapter_num>/` directory for an associated `_IQ.md` file (e.g., `92_Spread_Function_IQ.md`).
+For every code file (`.js`, `.ts`, `.spec.ts`) found in step 1, check the corresponding `IQ_Notes/Chapter_Notes/<chapter_num>/` directory for an associated `_IQ.md` file (e.g., `92_Spread_Function_IQ.md`).
 - **If missing:** Create it using the `write_to_file` tool.
-- **Content Rules:** You MUST populate the file with real, high-quality content. NEVER use placeholders (e.g., "Write a brief description..."). 
+- **Content Rules:** You MUST populate the file with real, high-quality, comprehensive content. NEVER use placeholders (e.g., "Write a brief description...").
 - **Required Sections:** Each `_IQ.md` file MUST contain:
   - `## Overview`
   - `## Main Concept`
-  - A working Javascript code block (```javascript)
+  - A complete, working code block (```javascript or ```typescript) matching the referenced file.
+  - `## Line-by-Line Code Breakdown & Coder Rationale`:
+    - For every code file (`.js`, `.ts`, `.spec.ts`) referenced, break down the code **line by line** (or key logical blocks line by line).
+    - **Why the Coder Chose This:** Explain explicitly why the author wrote each line that way (e.g., why dynamic imports vs static imports, why checking `fs.existsSync`, why using `page.waitForURL` regex, why headless mode, why specific fixtures `{ page, context }`).
+    - **Effective Alternative Ways:** Compare the current choice with more modern, robust, or alternative patterns (e.g., Playwright global setup vs `test.beforeAll`, custom storage vs `baseURL` auth fixtures, UI login vs API token injection, environment variables vs configuration files) detailing the pros, cons, and performance/scalability trade-offs.
   - `## Common Mistakes`
   - `## Summary`
 
