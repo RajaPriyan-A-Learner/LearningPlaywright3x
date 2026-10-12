@@ -1,0 +1,8 @@
+{
+  "runId": "20261003_134002",
+  "tests": {
+    "webkit › 07_WebTables\\OrangeHRM.spec.ts › Add a new employee to the PIM and delete it": "failed",
+    "chromium › 07_WebTables\\OrangeHRM.spec.ts › Add a new employee to the PIM and delete it": "failed",
+    "firefox › 07_WebTables\\OrangeHRM.spec.ts › Add a new employee to the PIM and delete it": "failed"
+  }
+}

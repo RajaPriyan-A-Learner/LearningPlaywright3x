@@ -1,0 +1,8 @@
+{
+  "runId": "20261003_172814",
+  "tests": {
+    "chromium › 07_WebTables\\FlipKart.spec.ts › Fetch the Camera results from Flipkart site": "passed",
+    "firefox › 07_WebTables\\FlipKart.spec.ts › Fetch the Camera results from Flipkart site": "passed",
+    "webkit › 07_WebTables\\FlipKart.spec.ts › Fetch the Camera results from Flipkart site": "timedOut"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "runId": "20261003_172923",
+  "tests": {
+    "chromium › 07_WebTables\\FlipKart.spec.ts › Fetch the Camera results from Flipkart site": "passed"
+  }
+}

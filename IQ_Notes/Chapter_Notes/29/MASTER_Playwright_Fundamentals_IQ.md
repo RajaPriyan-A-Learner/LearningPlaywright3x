@@ -373,3 +373,29 @@ Master the fundamentals, write resilient tests, and elevate your SDET engineerin
 - **[263 — Mouse Bounding-Box DnD](./263_Advance_Drag_drop_IQ.md)** — Kanban card via stepped `mouse.move`.
 - **[264 — Right-Click Context Menu](./264_Context_drag_drop_IQ.md)** — `{ button: 'right' }` then Copy.
 - **[265 — JS Alerts](./265_JS_Alerts_IQ.md)** — `dialog` for alert, confirm, and prompt.
+- **[07_WebTables_FlipKart — E-Commerce Pagination & Table Scraper](./07_WebTables_FlipKart_IQ.md)** — Dynamic catalog pagination loop and batch data extraction.
+- **[07_WebTables_OrangeHRM — Full CRUD & Dynamic Table Row Operations](./07_WebTables_OrangeHRM_IQ.md)** — Enterprise data grid automation, row-scoped actions, and mutation barriers.
+- **[266 — Locating SVG Elements and Search Automation](./266_Svg_Spec_IQ.md)** — SVG vector icons, click dispatching, and product result extraction.
+- **[267 — Interactive SVG Charts & Shape Widgets](./267_Advance_Svg_Test_case_IQ.md)** — Interactive SVG bar charts, vector shape attributes, and dynamic updates.
+- **[268 — Vector Geographic Map Navigation with XPath name()](./268_Svg_Map_IQ.md)** — XML namespace XPath traversal on geographic SVG maps.
+- **[269 — Clean CSS Selector for Vector Shapes](./269_Svg_optimized_testcase_IQ.md)** — Native CSS path selectors and attribute ends-with filtering.
+- **[270 — Piercing Open Shadow DOM & Nested Web Components](./270_Shadow_DOM_TC_IQ.md)** — Automatic shadow DOM traversal and encapsulated custom element interaction.
+- **[271 — Single File Upload with setInputFiles](./271_FileUpload_TC_IQ.md)** — Cross-platform file input injection without native OS dialogs.
+- **[272 — File Upload on Custom Widget Inputs](./272_FileUpload_TC2_IQ.md)** — Uploading to custom-styled and hidden file inputs.
+- **[273 — In-Memory Buffer File Uploads](./273_FileUpload_TC3_IQ.md)** — Synthetic binary uploads using Node.js `Buffer.from` objects.
+- **[274 — Multi-File Upload from Disk with Assertions](./274_FileUpload_TC4_IQ.md)** — Batch file selection and UI container state verification.
+- **[275 — Mixed MIME Types & Format Validation](./275_FileUpload_TC5_IQ.md)** — Simultaneous multi-format uploads (PDF, JPG, DOC) and accept filtering.
+- **[276 — External Shared Fixtures Directory Architecture](./276_FileUpload_TC6_IQ.md)** — Centralized test asset architecture with relative path resolution.
+- **[277 — Intercepting Browser Downloads with waitForEvent](./277_FileDownload_TC_IQ.md)** — Race-free file download interception via `Promise.all` and disk persistence.
+- **[278 — Viewport Scrolling & Window Evaluation](./278_ScrollTo_IQ.md)** — `scrollIntoViewIfNeeded`, `window.scrollTo`, and viewport displacement.
+- **[279 — Infinite Scrolling Lists & expect.poll Assertions](./279_Lazy_scroll_IQ.md)** — Sentinel scroll triggering and asynchronous count polling.
+- **[280 — AbortController Signals in Actionability Checks](./280_Abort_signal_scrollTo_IQ.md)** — Modern cancellation signals for terminating long-running actionability waits.
+- **[281 — Generic Synchronous Assertions & Primitives](./281_Expect_TC1_IQ.md)** — In-memory value testing with `toBe`, `toEqual`, and comparison matchers.
+- **[282 — Web-First DOM Assertions: Visibility, Attributes & Counts](./282_Expect_TC2_IQ.md)** — Auto-retrying DOM state validation with custom timeout overrides.
+- **[283 — Soft Assertions & Assertion Negation](./283_Expect_TC3_IQ.md)** — Multi-field inspection with `expect.soft` and negative matcher inversion.
+- **[284 — State Matchers: Checked, Enabled, Visible & Title RegExp](./284_Expect_TC4_IQ.md)** — Interactive state verification and regex-based title matching.
+- **[285 — Annotations: test.skip, test.slow, test.fixme & test.fail](./285_Test_Hook_TC1_IQ.md)** — Declarative execution control and environment-specific constraints.
+- **[286 — Structured Reporting with test.step](./286_Test_Hooks_TC2_IQ.md)** — Hierarchical test organization and granular execution milestone timing.
+- **[287 — Suite Lifecycle: beforeAll, beforeEach, afterEach & afterAll](./287_Test_Hooks_TC3_IQ.md)** — Worker and test lifecycle hooks with screenshot-on-failure capture.
+- **[288 — Serial Mode & Execution Ordering](./288_Test_hooks_TC4_IQ.md)** — Sequential dependency chains and fail-fast skip behavior via `test.describe.serial`.
+- **[289 — File-Level Mode Configuration & Tag Filtering](./289_Test_Hooks_TC5_IQ.md)** — Dynamic mode configuration and `--grep` tag execution filtering.
